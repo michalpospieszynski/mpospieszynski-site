@@ -1,0 +1,9 @@
+flowchart LR
+    pr[Pull request] --> ci{GitHub Actions}
+    ci --> bt[Backend: gradlew check<br/>unit + Testcontainers]
+    ci --> ft[Frontend: lint, test,<br/>i18n key check, SSR build]
+    ci --> e2e[Playwright: PL and EN<br/>smoke tests]
+    main[Merge to main] --> img[Build images<br/>api + web]
+    img --> ghcr[(GHCR)]
+    ghcr --> deploy[SSH to VPS:<br/>compose pull and up -d]
+    deploy --> smoke[Health check<br/>/ and /en]

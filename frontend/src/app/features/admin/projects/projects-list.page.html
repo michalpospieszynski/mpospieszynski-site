@@ -1,0 +1,106 @@
+<div class="adm-page">
+  <div class="adm-head">
+    <h1 class="adm-title adm-grow">{{ 'admin.projects.title' | transloco }}</h1>
+    <a mat-flat-button routerLink="/admin/projekty/nowy" data-testid="project-new">{{ 'admin.projects.new' | transloco }}</a>
+  </div>
+
+  <nav class="adm-tabs" [attr.aria-label]="'admin.projects.filterLabel' | transloco">
+    @for (f of filters; track f) {
+      <a
+        class="adm-tab"
+        routerLink="/admin/projekty"
+        [queryParams]="{ status: f === 'ALL' ? null : f }"
+        [class.active]="filter() === f"
+        [attr.aria-current]="filter() === f ? 'page' : null"
+        [attr.data-testid]="'filter-' + f"
+      >
+        {{ 'admin.projects.filter.' + f | transloco }}
+      </a>
+    }
+  </nav>
+
+  @if (items(); as list) {
+    @if (list.length) {
+      @if (filter() !== 'ALL') {
+        <p class="adm-muted adm-small">{{ 'admin.projects.reorderHint' | transloco }}</p>
+      }
+      <div class="adm-table-wrap">
+        <table class="adm-table" data-testid="projects-table">
+          <thead>
+            <tr>
+              @if (filter() === 'ALL') {
+                <th scope="col"><span class="visually-hidden">{{ 'admin.projects.col.order' | transloco }}</span></th>
+              }
+              <th scope="col">{{ 'admin.projects.col.title' | transloco }}</th>
+              <th scope="col">{{ 'admin.projects.col.status' | transloco }}</th>
+              <th scope="col">{{ 'admin.projects.col.featured' | transloco }}</th>
+              <th scope="col">{{ 'admin.projects.col.en' | transloco }}</th>
+              <th scope="col">{{ 'admin.projects.col.updated' | transloco }}</th>
+              <th scope="col"><span class="visually-hidden">{{ 'admin.projects.col.actions' | transloco }}</span></th>
+            </tr>
+          </thead>
+          <tbody cdkDropList [cdkDropListDisabled]="filter() !== 'ALL'" (cdkDropListDropped)="drop($event)">
+            @for (p of list; track p.id; let i = $index; let last = $last) {
+              <tr cdkDrag cdkDragLockAxis="y" data-testid="project-row" [attr.data-id]="p.id">
+                @if (filter() === 'ALL') {
+                  <td class="adm-nowrap">
+                    <span class="adm-handle" cdkDragHandle aria-hidden="true">⋮⋮</span>
+                    <button type="button" class="adm-mini" [disabled]="i === 0" (click)="move(i, -1)"
+                      [attr.aria-label]="'admin.common.moveUp' | transloco: { name: p.titlePl }">↑</button>
+                    <button type="button" class="adm-mini" [disabled]="last" (click)="move(i, 1)"
+                      [attr.aria-label]="'admin.common.moveDown' | transloco: { name: p.titlePl }">↓</button>
+                  </td>
+                }
+                <td><a [routerLink]="['/admin/projekty', p.id]" class="title">{{ p.titlePl }}</a></td>
+                <td><span class="adm-chip" [attr.data-state]="p.status">{{ 'admin.projects.status.' + p.status | transloco }}</span></td>
+                <td>
+                  <mat-checkbox
+                    [checked]="!!p.featured"
+                    (change)="setFeatured(p, $event.checked)"
+                    [aria-label]="'admin.projects.featuredToggle' | transloco: { title: p.titlePl }"
+                    data-testid="featured"
+                  />
+                </td>
+                <td><span class="adm-chip" [attr.data-state]="p.enStatus" data-testid="en-status">{{ 'admin.lang.status.' + p.enStatus | transloco }}</span></td>
+                <td class="adm-muted adm-small">{{ relativeTime(p.updatedAt) }}</td>
+                <td>
+                  <button
+                    mat-button
+                    type="button"
+                    [matMenuTriggerFor]="menu"
+                    [attr.aria-label]="'admin.common.more' | transloco: { name: p.titlePl }"
+                    data-testid="project-menu"
+                  >
+                    <span aria-hidden="true">⋯</span>
+                  </button>
+                  <mat-menu #menu="matMenu">
+                    <a mat-menu-item [routerLink]="['/admin/projekty', p.id]">{{ 'admin.common.edit' | transloco }}</a>
+                    <a mat-menu-item [routerLink]="['/admin/projekty', p.id, 'podglad']" [queryParams]="{ lang: 'pl' }" target="_blank">
+                      {{ 'admin.projects.previewPl' | transloco }}
+                    </a>
+                    <a mat-menu-item [routerLink]="['/admin/projekty', p.id, 'podglad']" [queryParams]="{ lang: 'en' }" target="_blank">
+                      {{ 'admin.projects.previewEn' | transloco }}
+                    </a>
+                    @if (p.status === 'PUBLISHED') {
+                      <button mat-menu-item type="button" (click)="unpublish(p)" data-testid="menu-unpublish">{{ 'admin.common.unpublish' | transloco }}</button>
+                    } @else {
+                      <button mat-menu-item type="button" (click)="publish(p)" data-testid="menu-publish">{{ 'admin.common.publish' | transloco }}</button>
+                    }
+                    @if (p.status !== 'ARCHIVED') {
+                      <button mat-menu-item type="button" (click)="archive(p)" data-testid="menu-archive">{{ 'admin.projects.archive' | transloco }}</button>
+                    }
+                    <button mat-menu-item type="button" class="adm-danger" (click)="remove(p)" data-testid="menu-delete">{{ 'admin.common.delete' | transloco }}</button>
+                  </mat-menu>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    } @else {
+      <p class="adm-empty" data-testid="projects-empty">
+        {{ (filter() === 'ALL' ? 'admin.projects.empty' : 'admin.projects.emptyFilter') | transloco }}
+      </p>
+    }
+  }
+</div>

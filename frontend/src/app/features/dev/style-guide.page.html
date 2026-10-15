@@ -1,0 +1,174 @@
+<main id="content" class="sg">
+  <header class="sg__head">
+    <h1>Style guide</h1>
+    <p class="text-muted measure">
+      Dev-only page (DIRECTION.md). Tokens live in <code>src/styles/tokens.scss</code>; the contrast table is computed
+      from the live values (one dark theme).
+    </p>
+  </header>
+
+  <section class="sg__section" aria-labelledby="sg-colours">
+    <h2 id="sg-colours">Colours</h2>
+    <ul role="list" class="sg__swatches">
+      @for (colour of colours(); track colour.token) {
+        <li class="sg__swatch">
+          <span class="sg__chip" [style.background]="'var(' + colour.token + ')'"></span>
+          <span>{{ colour.token }}</span>
+          <span class="text-small text-muted tnum">{{ colour.value }}</span>
+        </li>
+      }
+    </ul>
+  </section>
+
+  <section class="sg__section" aria-labelledby="sg-contrast">
+    <h2 id="sg-contrast">Contrast</h2>
+    @if (contrast().length) {
+      <table class="sg__table">
+        <thead>
+          <tr>
+            <th scope="col">Pair</th>
+            <th scope="col">Ratio</th>
+            <th scope="col">Minimum</th>
+            <th scope="col">Result</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of contrast(); track row.label) {
+            <tr [class.sg__fail]="!row.pass">
+              <td>{{ row.label }}</td>
+              <td class="tnum">{{ row.ratio.toFixed(2) }}</td>
+              <td class="tnum">{{ row.min }}</td>
+              <td>{{ row.pass ? 'passes' : 'FAILS' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    } @else {
+      <p class="text-muted">Computed in the browser once the page has loaded.</p>
+    }
+  </section>
+
+  <section class="sg__section" aria-labelledby="sg-type">
+    <h2 id="sg-type">Type sizes</h2>
+    <div class="sg__type">
+      @for (step of typeSteps; track step.token) {
+        <div>
+          <p class="text-small text-muted">{{ step.token }} · {{ step.use }}</p>
+          <p [class.sg__display]="step.display" [style.font-size]="'var(' + step.token + ')'">{{ step.sample }}</p>
+        </div>
+      }
+    </div>
+    <p>Manrope, cyfry tabelaryczne: <span class="tnum">2024–2026 · 25 min · 4 h</span></p>
+  </section>
+
+  <section class="sg__section" aria-labelledby="sg-surfaces">
+    <h2 id="sg-surfaces">Surfaces</h2>
+    <div class="sg__surfaces">
+      <div class="sg__surface">
+        <h3>Ground</h3>
+        <p class="text-muted">Secondary text.</p>
+        <a href="/dev/style-guide">Focus ring</a>
+      </div>
+      <div class="sg__surface section--band">
+        <h3>Band</h3>
+        <p class="text-muted">Secondary text.</p>
+        <a href="/dev/style-guide">Focus ring</a>
+      </div>
+      <div class="card">
+        <h3>Card</h3>
+        <p class="text-soft">Form labels.</p>
+        <a href="/dev/style-guide">Focus ring</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="sg__section" aria-labelledby="sg-components">
+    <h2 id="sg-components">Components</h2>
+
+    <h3>Buttons</h3>
+    <div class="sg__row">
+      <ui-button>Porozmawiajmy o projekcie</ui-button>
+      <ui-button variant="ghost">Zobacz usługi</ui-button>
+      <ui-button variant="text" link="/">Więcej o mnie</ui-button>
+      <ui-button [disabled]="true">Wyłączony</ui-button>
+    </div>
+    <div class="sg__row">
+      <ui-button size="lg">Napisz do mnie</ui-button>
+      <ui-button size="lg" variant="ghost">Zobacz projekty</ui-button>
+      <ui-button variant="ghost" [pressed]="true">Wybrany projekt</ui-button>
+      <ui-button variant="ghost" [pressed]="false">Inny projekt</ui-button>
+    </div>
+    <ul role="list" class="tags">
+      <li class="tag">Outline tag</li>
+      <li class="tag tag--solid">Solid tag</li>
+    </ul>
+
+    <h3>Tech tags and availability</h3>
+    <div class="sg__row">
+      <ui-tech-tag slug="java" name="Java" />
+      <ui-tech-tag slug="spring-boot" name="Spring Boot" />
+      <ui-tech-tag slug="postgresql" name="PostgreSQL" />
+    </div>
+    <div class="sg__stack">
+      <ui-availability status="OPEN" />
+      <ui-availability status="LIMITED" from="1 grudnia 2026" />
+      <ui-availability status="CLOSED" />
+    </div>
+
+    <h3>Projects</h3>
+    <ui-project-feature
+      title="System przetwarzania zamówień"
+      outcome="Nocne przetwarzanie skrócone z 4 godzin do 25 minut."
+      link="/projekty/system-zamowien"
+      meta="Klient · 2025"
+      [tags]="[{ slug: 'java', name: 'Java' }, { slug: 'kafka', name: 'Apache Kafka' }]"
+    />
+    <ui-project-feature
+      title="Raporty sprzedaży"
+      outcome="Raport ładuje się w 2 sekundy zamiast 40."
+      link="/projekty/raporty-sprzedazy"
+      meta="Open source · 2022"
+      [polishOnly]="true"
+    />
+    <div>
+      <ui-project-item title="Migracja płatności" link="/projekty/migracja-platnosci" kind="Klient" [tech]="['Java', 'PostgreSQL']" year="2024" />
+      <ui-project-item title="API rezerwacji" link="/projekty/api-rezerwacji" kind="Klient" [tech]="['Spring Boot']" year="2024" />
+    </div>
+
+    <h3>Section, empty state, fallback</h3>
+    <ui-section heading="Wybrane projekty" intro="Krótki wstęp do sekcji.">
+      <ui-empty message="Nie ma jeszcze projektów w tej kategorii.">
+        <ui-button variant="text" link="/">Wszystkie projekty</ui-button>
+      </ui-empty>
+    </ui-section>
+    <p lang="en">English page with a <ui-lang-fallback>fragment po polsku</ui-lang-fallback> marked as Polish.</p>
+
+    <h3>Form field</h3>
+    <form class="sg__form" (submit)="$event.preventDefault()">
+      <ui-field #emailField controlId="sg-email" label="E-mail" hint="Odpowiem na ten adres." error="Podaj prawidłowy adres e-mail.">
+        <input id="sg-email" type="email" autocomplete="email" aria-invalid="true" [attr.aria-describedby]="emailField.describedBy()" />
+      </ui-field>
+      <ui-field #messageField controlId="sg-message" label="Wiadomość">
+        <textarea id="sg-message" rows="4" [attr.aria-describedby]="messageField.describedBy()"></textarea>
+      </ui-field>
+    </form>
+
+    <h3>Markdown</h3>
+    <ui-markdown [markdown]="markdownSample" />
+  </section>
+
+  <section class="sg__section" aria-labelledby="sg-axe">
+    <h2 id="sg-axe">Accessibility</h2>
+    <div class="sg__row">
+      <ui-button variant="ghost" (click)="runAxe()">Run axe on this page</ui-button>
+    </div>
+    <p role="status" data-testid="axe-result">{{ axeResult() }}</p>
+    @if (axeViolations().length) {
+      <ul>
+        @for (v of axeViolations(); track v.id) {
+          <li>{{ v.impact }} · {{ v.id }}: {{ v.help }} ({{ v.nodes }})</li>
+        }
+      </ul>
+    }
+  </section>
+</main>

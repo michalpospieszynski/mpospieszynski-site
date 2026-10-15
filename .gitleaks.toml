@@ -1,0 +1,9 @@
+# Secret scan for CI (.github/workflows/ci.yml): gitleaks' default rules, plus an allowlist for local test fixtures
+# that are public by design. Allow exact values only, never whole files or rules, so a real key next to them is
+# still caught.
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "The Supabase CLI's fixed publishable key for the local stack (e2e helpers, dev fallback in server.ts)"
+regexes = ['''sb_publishable_ACJWlzQHlZjBrEguHvfOxg_3BJgxAaH''']

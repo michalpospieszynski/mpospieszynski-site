@@ -1,0 +1,25 @@
+sequenceDiagram
+    autonumber
+    actor V as Visitor
+    participant W as Angular (browser)
+    participant T as Cloudflare Turnstile
+    participant B as Spring Boot API
+    participant D as Supabase PostgreSQL
+    participant M as SMTP provider
+    actor O as Owner
+
+    V->>W: Fill in the form, press "Wyślij wiadomość"
+    W->>T: Invisible challenge
+    T-->>W: Token
+    W->>B: POST /api/v1/public/contact (fields, locale, token, honeypot)
+    B->>B: Rate limit by hashed CF-Connecting-IP
+    B->>T: siteverify(token)
+    T-->>B: Success
+    B->>B: Validate, honeypot check
+    B->>D: INSERT contact_message (NEW, locale)
+    B-->>W: 202 Accepted
+    W-->>V: "Wiadomość wysłana" / "Message sent"
+    B--)M: After commit (async): notify owner (Polish)
+    M--)O: New message email
+    B--)M: Auto-reply in the visitor's language
+    M--)V: Confirmation email

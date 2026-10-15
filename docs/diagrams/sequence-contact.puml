@@ -1,0 +1,32 @@
+@startuml sequence-contact
+title Contact form submission
+
+skinparam shadowing false
+skinparam defaultFontName "Helvetica"
+autonumber
+
+actor "Visitor" as p_visitor
+participant "Angular\n(browser)" as p_ng
+participant "Cloudflare\nTurnstile" as p_turnstile
+participant "Spring Boot API" as p_api
+database "Supabase PostgreSQL" as p_db
+participant "SMTP provider" as p_smtp
+actor "Owner" as p_owner
+
+p_visitor -> p_ng : fill form, "Wyślij wiadomość"
+p_ng -> p_turnstile : invisible challenge
+p_turnstile --> p_ng : token
+p_ng -> p_api : POST /api/v1/public/contact\n(fields, locale, token, honeypot)
+p_api -> p_api : rate limit by hashed CF-Connecting-IP
+p_api -> p_turnstile : siteverify(token)
+p_turnstile --> p_api : success
+p_api -> p_api : validate, honeypot check
+p_api -> p_db : INSERT contact_message (NEW, locale)
+p_db --> p_api : ok
+p_api --> p_ng : 202 Accepted
+p_ng --> p_visitor : "Wiadomość wysłana" / "Message sent"
+p_api ->> p_smtp : notify owner (async, after commit)
+p_smtp ->> p_owner : new message email (Polish)
+p_api ->> p_smtp : auto-reply in visitor locale
+p_smtp ->> p_visitor : confirmation email
+@enduml

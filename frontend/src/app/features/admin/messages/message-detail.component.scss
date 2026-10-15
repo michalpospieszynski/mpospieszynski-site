@@ -1,0 +1,57 @@
+:host {
+  display: block;
+  animation: adm-enter var(--dur-sheet) var(--ease-out) both;
+}
+.back {
+  display: none;
+  margin-bottom: var(--space-3);
+  color: var(--color-ink);
+}
+@media (max-width: 959.98px) {
+  .back {
+    display: inline-block;
+  }
+}
+.name {
+  margin: 0 0 var(--space-3);
+  font-size: var(--step-body);
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+.name a {
+  color: var(--color-ink);
+  font-weight: 400;
+}
+.facts {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--space-1) var(--space-4);
+  margin: 0;
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--color-line);
+  font-size: var(--step-small);
+}
+.facts dt {
+  color: var(--color-muted);
+}
+.facts dd {
+  margin: 0;
+}
+.text {
+  margin: var(--space-4) 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.hint {
+  margin: 0 0 var(--space-2);
+  color: var(--color-muted);
+  font-size: var(--step-small);
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.suggested {
+  box-shadow: inset 0 0 0 2px var(--color-stage);
+}

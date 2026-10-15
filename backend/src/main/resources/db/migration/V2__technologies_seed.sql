@@ -1,0 +1,28 @@
+-- Common technologies with categories (reference data). Descriptions ("how I use it") are added in the admin.
+
+insert into technology (slug, name, category, sort_order) values
+    ('java',               'Java',               'LANGUAGE',       10),
+    ('kotlin',             'Kotlin',             'LANGUAGE',       20),
+    ('typescript',         'TypeScript',         'LANGUAGE',       30),
+    ('sql',                'SQL',                'LANGUAGE',       40),
+    ('spring-boot',        'Spring Boot',        'BACKEND',        10),
+    ('spring-security',    'Spring Security',    'BACKEND',        20),
+    ('hibernate',          'Hibernate',          'BACKEND',        30),
+    ('rest-api',           'REST API',           'BACKEND',        40),
+    ('openapi',            'OpenAPI',            'BACKEND',        50),
+    ('kafka',              'Apache Kafka',       'BACKEND',        60),
+    ('angular',            'Angular',            'FRONTEND',       10),
+    ('rxjs',               'RxJS',               'FRONTEND',       20),
+    ('postgresql',         'PostgreSQL',         'DATA',           10),
+    ('flyway',             'Flyway',             'DATA',           20),
+    ('redis',              'Redis',              'DATA',           30),
+    ('docker',             'Docker',             'INFRASTRUCTURE', 10),
+    ('kubernetes',         'Kubernetes',         'INFRASTRUCTURE', 20),
+    ('github-actions',     'GitHub Actions',     'INFRASTRUCTURE', 30),
+    ('cloudflare',         'Cloudflare',         'INFRASTRUCTURE', 40),
+    ('supabase',           'Supabase',           'INFRASTRUCTURE', 50),
+    ('gradle',             'Gradle',             'TOOLING',        10),
+    ('junit',              'JUnit',              'TOOLING',        20),
+    ('testcontainers',     'Testcontainers',     'TOOLING',        30),
+    ('archunit',           'ArchUnit',           'TOOLING',        40),
+    ('playwright',         'Playwright',         'TOOLING',        50);

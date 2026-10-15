@@ -1,0 +1,148 @@
+# CI (docs/IMPLEMENTATION-PLAN.md I3): every push and pull request. Uses no repository or environment secrets:
+# the e2e stack runs on local test values only (dev profile, local Supabase, Cloudflare's always-pass Turnstile keys).
+# The deploy workflow calls this one first (workflow_call), so pushes to main are checked there, once.
+name: CI
+
+on:
+  push:
+    branches-ignore: [main]
+  pull_request:
+  workflow_call:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name != 'push' || github.ref != 'refs/heads/main' }}
+
+env:
+  JAVA_VERSION: '21'
+  NODE_VERSION: '24'
+
+jobs:
+  secrets:
+    name: Secret scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0 # the whole history, not just the last commit
+      - name: gitleaks
+        # The CLI from its official image (no licence or token needed); rules and allowlist in .gitleaks.toml.
+        run: >
+          docker run --rm -v "$PWD:/repo" -w /repo zricethezav/gitleaks:v8.28.0
+          git --config /repo/.gitleaks.toml --redact --verbose --exit-code 1 /repo
+
+  backend:
+    name: Backend (unit, Testcontainers, ArchUnit)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin # the same JDK family as the production image (backend/Dockerfile)
+          java-version: ${{ env.JAVA_VERSION }}
+      - uses: gradle/actions/setup-gradle@v5
+      - name: gradlew check
+        run: sh gradlew check --no-daemon # sh: the execute bit may be missing in a Windows-made repository
+      - name: Test reports
+        if: failure()
+        uses: actions/upload-artifact@v5
+        with:
+          name: backend-test-reports
+          path: backend/build/reports
+          retention-days: 7
+
+  frontend:
+    name: Frontend (unit, i18n, contrast, SSR build)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+      - name: Unit tests
+        run: npx ng test --watch=false
+      - name: Translation keys match
+        run: npm run i18n:check
+      - name: Colour contrast
+        run: npm run check:contrast
+      - name: Production SSR build
+        run: npm run build
+
+  e2e:
+    name: End-to-end (Playwright, public + admin)
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      # Playwright starts `ng serve` itself (playwright.config.ts); CI=true gives retries and the GitHub reporter.
+      CI: 'true'
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: ${{ env.JAVA_VERSION }}
+      - uses: gradle/actions/setup-gradle@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: PostgreSQL and Mailpit
+        run: docker compose -f infra/docker-compose.dev.yml up -d --wait
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Local Supabase (Auth only, for the admin tests)
+        working-directory: frontend
+        # A fresh ES256 signing key per run (git-ignored) and only the containers the admin sign-in needs.
+        run: |
+          npm run supabase:keys
+          npx supabase start \
+            -x realtime,storage-api,imgproxy,mailpit,postgres-meta,studio,edge-runtime,logflare,vector,supavisor
+
+      - name: Start the API (dev profile, sample content)
+        working-directory: backend
+        run: |
+          sh gradlew bootJar --no-daemon --quiet
+          jar=$(find build/libs -name '*.jar' ! -name '*-plain.jar')
+          nohup java -jar "$jar" --spring.profiles.active=dev > api.log 2>&1 &
+          for _ in $(seq 1 60); do
+            curl -sf -o /dev/null 'http://localhost:8080/api/v1/public/profile?lang=pl' && exit 0
+            sleep 2
+          done
+          cat api.log
+          exit 1
+
+      - name: Playwright
+        working-directory: frontend
+        # Google Chrome is preinstalled on ubuntu-latest (channel: 'chrome'), so no browser download.
+        run: npx playwright test
+
+      - name: Reports and logs
+        if: failure()
+        uses: actions/upload-artifact@v5
+        with:
+          name: e2e-results
+          path: |
+            frontend/playwright-report
+            frontend/test-results
+            backend/api.log
+          retention-days: 7

@@ -1,0 +1,158 @@
+// Design tokens (DIRECTION.md; docs/redesign/HANDOFF.md §3): Emerald Ink with one accent, champagne.
+// The raw palette below is the only place hex values live (the graph's canvas colours in TS are the exception).
+// Components use the semantic --color-* names, which map onto the palette. Two themes: dark (the default on :root)
+// and light (:root[data-theme='light']), chosen by the visitor (core/theme/theme.service.ts, index.html).
+// Contrast of every text pair is checked by `npm run check:contrast` (pairs in contrast-pairs.json).
+
+:root {
+  color-scheme: dark;
+
+  // Palette ------------------------------------------------------------------------------------------------
+  --ink-900: #0c2620; // page background
+  --ink-800: #0f2e27; // graph card, projects band, tech-node fill
+  --ink-700: #12352d; // raised surfaces (form card), ghost-button hover
+  --ink-600: #1d4a3f; // hairlines, section borders
+  --ink-500: #2e6153; // control borders (buttons, outline tags)
+  --ink-400: #538474; // form-field borders: 3:1 on ink-900 and ink-700 (WCAG 1.4.11), lighter than the prototype's ink-500
+  --emerald-300: #7fb8a4; // tech nodes, idle graph edges
+  --champagne: #eadbc0; // primary text and the only accent
+  --champagne-hover: #f4ead7; // primary button hover
+  --champagne-line: #b9a57e; // borders on champagne surfaces
+  --text-muted: #9db3a8; // secondary text (about 7:1 on ink-900)
+  --text-body: #b7c8bf; // long body copy
+  --text-soft: #cfe0d7; // form labels, outline tags
+  --text-on-champagne: #0c2620;
+  --text-on-champagne-soft: #1e3a32;
+  --text-on-champagne-muted: #3c5a50;
+  --signal-error: #eba493; // form errors and "not taking projects" (always with words, never colour alone)
+  // Light theme: champagne paper with the same inks; the accent surfaces turn ink-800 with champagne text.
+  --paper-100: #fbf8f2; // raised surfaces (form card)
+  --paper-200: #f6f1e7; // page background
+  --paper-300: #ede4d2; // graph card, projects band
+  --paper-400: #dccfb6; // hairlines
+  --paper-600: #857553; // form-field borders (4:1 on paper-200)
+  --text-body-light: #26443b;
+  --text-muted-light: #4a665c;
+  --signal-ok-light: #2a5a4c;
+  --signal-error-light: #a13d27;
+
+  // Semantic names used by components ----------------------------------------------------------------------
+  --color-ground: var(--ink-900);
+  --color-band: var(--ink-800);
+  --color-raised: var(--ink-800);
+  --color-raised-2: var(--ink-700);
+  --color-line: var(--ink-600);
+  --color-control: var(--ink-500);
+  --color-field: var(--ink-400);
+  --color-ink: var(--champagne);
+  --color-body: var(--text-body);
+  --color-soft: var(--text-soft);
+  --color-muted: var(--text-muted);
+  // Accent surfaces (primary buttons, the project panel, calls to action): champagne here, ink in the light theme.
+  --color-stage: var(--champagne);
+  --color-stage-ink: var(--text-on-champagne);
+  --color-stage-soft: var(--text-on-champagne-soft);
+  --color-stage-muted: var(--text-on-champagne-muted);
+  --color-stage-hover: var(--champagne-hover);
+  --color-stage-line: var(--champagne-line);
+  --color-paper: var(--champagne);
+  --color-paper-ink: var(--text-on-champagne);
+  --color-paper-soft: var(--text-on-champagne-soft);
+  --color-focus: var(--champagne);
+  --color-code-accent: var(--emerald-300); // highlighted keywords in code
+  --color-ok: var(--emerald-300);
+  --color-busy: var(--signal-error);
+  --color-tech-node: var(--emerald-300);
+  --color-shadow: color-mix(in srgb, var(--ink-900) 70%, black);
+
+  // Type: Syne for headings and the brand, Manrope for everything else (both cover Polish).
+  --font-display: 'Syne Variable', 'Manrope Variable', sans-serif;
+  --font-text: 'Manrope Variable', 'Segoe UI', system-ui, sans-serif;
+
+  // The only five sizes on the site.
+  --step-small: 0.875rem;
+  --step-body: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+  --step-lead: clamp(1.25rem, 1.1rem + 0.55vw, 1.625rem);
+  --step-head: clamp(2rem, 3.4vw, 3rem);
+  --step-display: clamp(2.5rem, 4.6vw, 4.4rem);
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --space-9: 96px;
+  --space-10: 128px;
+
+  // Layout: one container, 32px sides (20px on small phones), 96px between sections.
+  --container: 1280px;
+  --page-gutter: 32px;
+  --section-pad: 96px;
+  --gutter: 32px;
+  --header-height: 72px;
+  --measure: 60ch;
+  --prose: 68ch;
+
+  // Shape: pills for controls, rounded cards; structure itself comes from 1px rules.
+  --radius-pill: 999px;
+  --radius-card: 28px;
+  --radius-form: 24px;
+  --radius-panel: 20px;
+  --radius-input: 12px;
+  --radius-tag: 14px;
+  --radius: var(--radius-panel);
+  --tap: 44px;
+
+  // Motion: feedback only, transform and opacity, plus the graph's unfold (DIRECTION.md, Motion).
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --dur-press: 120ms;
+  --dur-hover: 160ms;
+  --dur-sheet: 240ms;
+  --dur-panel: 350ms;
+  --rise: 12px;
+  --press: 0.97; // pressed buttons, pills and cards
+  --press-small: 0.94; // pressed small icon buttons
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
+
+  --color-ground: var(--paper-200);
+  --color-band: var(--paper-300);
+  --color-raised: var(--paper-300);
+  --color-raised-2: var(--paper-100);
+  --color-line: var(--paper-400);
+  --color-control: var(--champagne-line);
+  --color-field: var(--paper-600);
+  --color-ink: var(--ink-900);
+  --color-body: var(--text-body-light);
+  --color-soft: var(--text-on-champagne-soft);
+  --color-muted: var(--text-muted-light);
+  --color-stage: var(--ink-800);
+  --color-stage-ink: var(--champagne);
+  --color-stage-soft: var(--text-soft);
+  --color-stage-muted: var(--text-muted);
+  --color-stage-hover: var(--ink-600);
+  --color-stage-line: var(--ink-500);
+  --color-paper: var(--ink-800);
+  --color-paper-ink: var(--champagne);
+  --color-paper-soft: var(--text-soft);
+  --color-focus: var(--ink-800);
+  --color-code-accent: var(--signal-ok-light);
+  --color-ok: var(--signal-ok-light);
+  --color-busy: var(--signal-error-light);
+  --color-tech-node: var(--signal-ok-light);
+  --color-shadow: color-mix(in srgb, var(--ink-900) 28%, transparent);
+}
+
+@media (max-width: 480px) {
+  :root {
+    --page-gutter: 20px;
+    --gutter: 20px;
+    --section-pad: 72px;
+  }
+}

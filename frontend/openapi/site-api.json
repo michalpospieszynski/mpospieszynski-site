@@ -1,0 +1,3736 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "mpospieszynski.pl API",
+    "description": "Public content in Polish and English (?lang=pl|en) and the owner's admin API.",
+    "version": "v1"
+  },
+  "paths": {
+    "/api/v1/admin/technologies/{id}": {
+      "put": {
+        "tags": [
+          "admin-technologies-controller"
+        ],
+        "operationId": "saveAdminTechnology",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TechnologyInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminTechnology"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "supabase": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "admin-technologies-controller"
+        ],
+        "summary": "409 with the project count while it is used",
+        "operationId": "deleteAdminTechnology",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "supabase": []
+          }
+        ]
+      }
+    },
+    "/api/v1/admin/technologies/order": {
+      "put": {
+        "tags": [
+          "admin-technologies-controller"
+        ],
+        "summary": "Order within one category",
+        "operationId": "reorderAdminTechnologies",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TechnologyOrderRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "supabase": []
+          }
+        ]
+      }
+    },
+    "/api/v1/admin/services/{id}": {
+      "put": {
+        "tags": [
+          "admin-services-controller"
+        ],
+        "operationId": "saveAdminService",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ServiceInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminService"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "supabase": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "admin-services-controller"
+        ],
+        "summary": "409 while messages refer to it",
+        "operationId": "deleteAdminService",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "supabase": []
+          }
+        ]
+      },
+      "patch": {
+        "tags": [
+          "admin-services-controller"
+        ],
+        "operationId": "setAdminServiceActive",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ServiceActiveRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminService"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "supabase": []
+          }
+        ]
+      }
+    },
+    "/api/v1/admin/services/order": {
+      "put": {
+        "tags": [
+          "admin-services-controller"
+        ],
+        "operationId": "reorderAdminServices",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ServiceOrderRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "supabase": []
+          }
+        ]
+      }
+    },
+    "/api/v1/admin/projects/{id}": {
+      "get": {
+        "tags": [
+          "admin-projects-controller"
+        ],
+        "operationId": "getAdminProject",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminProject"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "supabase": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "admin-projects-controller"
+        ],
+        "summary": "Save; 409 when the version is stale",
+        "operationId": "saveAdminProject",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectSaved"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "supabase": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "admin-projects-controller"
+        ],
+        "operationId": "deleteAdminProject",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "supabase": []
+          }
+        ]
+      },
+      "patch": {
+        "tags": [
+          "admin-projects-controller"
+        ],
+        "operationId": "setAdminProjectFeatured",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectFeaturedRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectSaved"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "supabase": []
+          }
+        ]
+      }
+    },
+    "/api/v1/admin/projects/order": {
+      "put": {
+        "tags": [
+          "admin-projects-controller"
+        ],
+        "operationId": "reorderAdminProjects",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectOrderRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "supabase": []
+          }
+        ]
+      }
+    },
+    "/api/v1/admin/profile": {
+      "get": {
+        "tags": [
+          "admin-profile-controller"
+        ],
+        "operationId": "getAdminProfile",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminProfile"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "supabase": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "admin-profile-controller"
+        ],
+        "summary": "Save; 409 when the version is stale",
+        "operationId": "saveAdminProfile",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProfileInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminProfile"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "supabase": []
+          }
+        ]
+      }
+    },
+    "/api/v1/admin/media/{id}": {
+      "get": {
+        "tags": [
+          "admin-media-controller"
+        ],
+        "operationId": "getAdminMedia",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminMedia"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "supabase": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "admin-media-controller"
+        ],
+        "summary": "Alt texts and captions",
+        "operationId": "saveAdminMedia",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MediaInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminMedia"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "supabase": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "admin-media-controller"
+        ],
+        "summary": "409 while the file is used",
+        "operationId": "deleteAdminMedia",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "supabase": []
+          }
+        ]
+      }
+    },
+    "/api/v1/admin/faq/{id}": {
+      "put": {
+        "tags": [
+          "admin-services-controller"
+        ],
+        "operationId": "saveAdminFaq",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FaqInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminFaq"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "supabase": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "admin-services-controller"
+        ],
+        "operationId": "deleteAdminFaq",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "supabase": []
+          }
+        ]
+      }
+    },
+    "/api/v1/admin/faq/order": {
+      "put": {
+        "tags": [
+          "admin-services-controller"
+        ],
+        "operationId": "reorderAdminFaq",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FaqOrderRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "supabase": []
+          }
+        ]
+      }
+    },
+    "/api/v1/admin/expertise-areas/{id}": {
+      "put": {
+        "tags": [
+          "admin-expertise-areas-controller"
+        ],
+        "operationId": "saveAdminExpertiseArea",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AreaInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminExpertiseArea"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "supabase": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "admin-expertise-areas-controller"
+        ],
+        "operationId": "deleteAdminExpertiseArea",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "supabase": []
+          }
+        ]
+      }
+    },
+    "/api/v1/admin/expertise-areas/order": {
+      "put": {
+        "tags": [
+          "admin-expertise-areas-controller"
+        ],
+        "operationId": "reorderAdminExpertiseAreas",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AreaOrderRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "supabase": []
+          }
+        ]
+      }
+    },
+    "/api/v1/public/contact": {
+      "post": {
+        "tags": [
+          "public-contact-controller"
+        ],
+        "summary": "Contact form: 202, 400 with field errors, 403 bot check failed, 429 rate limited",
+        "operationId": "submitContactMessage",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContactRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContactAccepted"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/technologies": {
+      "get": {
+        "tags": [
+          "admin-technologies-controller"
+        ],
+        "operationId": "listAdminTechnologies",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AdminTechnology"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "supabase": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "admin-technologies-controller"
+        ],
+        "summary": "Create; only the name is required (category TOOLING)",
+        "operationId": "createAdminTechnology",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TechnologyInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminTechnology"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "supabase": []
+          }
+        ]
+      }
+    },
+    "/api/v1/admin/services": {
+      "get": {
+        "tags": [
+          "admin-services-controller"
+        ],
+        "operationId": "listAdminServices",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AdminService"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "supabase": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "admin-services-controller"
+        ],
+        "operationId": "createAdminService",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ServiceInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminService"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "supabase": []
+          }
+        ]
+      }
+    },
+    "/api/v1/admin/projects": {
+      "get": {
+        "tags": [
+          "admin-projects-controller"
+        ],
+        "summary": "All projects incl. drafts, with English status",
+        "operationId": "listAdminProjects",
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "DRAFT",
+                "PUBLISHED",
+                "ARCHIVED"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AdminProjectListItem"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "supabase": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "admin-projects-controller"
+        ],
+        "summary": "Create a draft",
+        "operationId": "createAdminProject",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectSaved"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "supabase": []
+          }
+        ]
+      }
+    },
+    "/api/v1/admin/projects/{id}/unpublish": {
+      "post": {
+        "tags": [
+          "admin-projects-controller"
+        ],
+        "operationId": "unpublishAdminProject",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectSaved"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "supabase": []
+          }
+        ]
+      }
+    },
+    "/api/v1/admin/projects/{id}/publish": {
+      "post": {
+        "tags": [
+          "admin-projects-controller"
+        ],
+        "summary": "Publish; 400 listing the missing fields",
+        "operationId": "publishAdminProject",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectSaved"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "supabase": []
+          }
+        ]
+      }
+    },
+    "/api/v1/admin/projects/{id}/archive": {
+      "post": {
+        "tags": [
+          "admin-projects-controller"
+        ],
+        "operationId": "archiveAdminProject",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectSaved"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "supabase": []
+          }
+        ]
+      }
+    },
+    "/api/v1/admin/profile/test-autoreply": {
+      "post": {
+        "tags": [
+          "admin-profile-controller"
+        ],
+        "summary": "Sends the saved auto-reply in `locale` to the owner's address",
+        "operationId": "sendTestAutoReply",
+        "parameters": [
+          {
+            "name": "locale",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "pl",
+              "enum": [
+                "pl",
+                "en"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TestMailResult"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "supabase": []
+          }
+        ]
+      }
+    },
+    "/api/v1/admin/media": {
+      "get": {
+        "tags": [
+          "admin-media-controller"
+        ],
+        "summary": "Newest first; q searches file names and alt texts",
+        "operationId": "listAdminMedia",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 48
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MediaPage"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "supabase": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "admin-media-controller"
+        ],
+        "summary": "JPG, PNG or WebP up to 5 MB",
+        "operationId": "uploadAdminMedia",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                },
+                "required": [
+                  "file"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminMedia"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "supabase": []
+          }
+        ]
+      }
+    },
+    "/api/v1/admin/faq": {
+      "get": {
+        "tags": [
+          "admin-services-controller"
+        ],
+        "operationId": "listAdminFaq",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AdminFaq"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "supabase": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "admin-services-controller"
+        ],
+        "operationId": "createAdminFaq",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FaqInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminFaq"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "supabase": []
+          }
+        ]
+      }
+    },
+    "/api/v1/admin/expertise-areas": {
+      "get": {
+        "tags": [
+          "admin-expertise-areas-controller"
+        ],
+        "operationId": "listAdminExpertiseAreas",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AdminExpertiseArea"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "supabase": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "admin-expertise-areas-controller"
+        ],
+        "operationId": "createAdminExpertiseArea",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AreaInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminExpertiseArea"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "supabase": []
+          }
+        ]
+      }
+    },
+    "/api/v1/admin/messages/{id}": {
+      "get": {
+        "tags": [
+          "admin-messages-controller"
+        ],
+        "summary": "Full message; a NEW message becomes READ",
+        "operationId": "getAdminMessage",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageDetail"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "supabase": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "admin-messages-controller"
+        ],
+        "operationId": "deleteAdminMessage",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "supabase": []
+          }
+        ]
+      },
+      "patch": {
+        "tags": [
+          "admin-messages-controller"
+        ],
+        "operationId": "setAdminMessageStatus",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MessageStatusRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "supabase": []
+          }
+        ]
+      }
+    },
+    "/api/v1/public/technologies": {
+      "get": {
+        "tags": [
+          "public-technologies-controller"
+        ],
+        "summary": "Technologies used by published projects, with counts",
+        "operationId": "listPublicTechnologies",
+        "parameters": [
+          {
+            "name": "lang",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "pl",
+              "enum": [
+                "pl",
+                "en"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TechnologyOption"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/public/skills": {
+      "get": {
+        "tags": [
+          "public-skills-controller"
+        ],
+        "summary": "Expertise areas with evidence, and technologies by category",
+        "operationId": "getPublicSkills",
+        "parameters": [
+          {
+            "name": "lang",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "pl",
+              "enum": [
+                "pl",
+                "en"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SkillsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/public/services": {
+      "get": {
+        "tags": [
+          "public-services-controller"
+        ],
+        "summary": "Active service offerings and the FAQ",
+        "operationId": "getPublicServices",
+        "parameters": [
+          {
+            "name": "lang",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "pl",
+              "enum": [
+                "pl",
+                "en"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServicesResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/public/projects": {
+      "get": {
+        "tags": [
+          "public-projects-controller"
+        ],
+        "summary": "Published projects, featured first, optionally filtered",
+        "operationId": "listPublicProjects",
+        "parameters": [
+          {
+            "name": "lang",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "pl",
+              "enum": [
+                "pl",
+                "en"
+              ]
+            }
+          },
+          {
+            "name": "kind",
+            "in": "query",
+            "description": "CLIENT, PERSONAL or OPEN_SOURCE; other values are ignored",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "tech",
+            "in": "query",
+            "description": "Technology slug; unknown slugs are ignored",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "featured",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectListItem"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/public/projects/{slug}": {
+      "get": {
+        "tags": [
+          "public-projects-controller"
+        ],
+        "summary": "Case study by its slug in that language; 404 when no published project has it",
+        "operationId": "getPublicProject",
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "lang",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "pl",
+              "enum": [
+                "pl",
+                "en"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectDetail"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/public/profile": {
+      "get": {
+        "tags": [
+          "public-profile-controller"
+        ],
+        "summary": "Owner profile in a language (Polish fallback)",
+        "operationId": "getPublicProfile",
+        "parameters": [
+          {
+            "name": "lang",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "pl",
+              "enum": [
+                "pl",
+                "en"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProfileResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/projects/{id}/preview": {
+      "get": {
+        "tags": [
+          "admin-projects-controller"
+        ],
+        "summary": "The public case study shape, drafts included",
+        "operationId": "previewAdminProject",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "lang",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "pl",
+              "enum": [
+                "pl",
+                "en"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectDetail"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "supabase": []
+          }
+        ]
+      }
+    },
+    "/api/v1/admin/projects/slug-available": {
+      "get": {
+        "tags": [
+          "admin-projects-controller"
+        ],
+        "operationId": "isAdminProjectSlugAvailable",
+        "parameters": [
+          {
+            "name": "locale",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "pl",
+                "en"
+              ]
+            }
+          },
+          {
+            "name": "slug",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "excludeId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectSlugAvailability"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "supabase": []
+          }
+        ]
+      }
+    },
+    "/api/v1/admin/messages": {
+      "get": {
+        "tags": [
+          "admin-messages-controller"
+        ],
+        "summary": "Newest first, with counts per status for the tabs",
+        "operationId": "listAdminMessages",
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessagePage"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "supabase": []
+          }
+        ]
+      }
+    },
+    "/api/v1/admin/media/{id}/usages": {
+      "get": {
+        "tags": [
+          "admin-media-controller"
+        ],
+        "operationId": "listAdminMediaUsages",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MediaUsage"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "supabase": []
+          }
+        ]
+      }
+    },
+    "/api/v1/admin/dashboard": {
+      "get": {
+        "tags": [
+          "admin-dashboard-controller"
+        ],
+        "operationId": "getAdminDashboard",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DashboardResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "supabase": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "TechnologyInput": {
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "LANGUAGE",
+              "BACKEND",
+              "FRONTEND",
+              "DATA",
+              "INFRASTRUCTURE",
+              "TOOLING"
+            ]
+          },
+          "showOnSkillsPage": {
+            "type": "boolean"
+          },
+          "sinceYear": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "translations": {
+            "$ref": "#/components/schemas/TechnologyTranslations"
+          }
+        }
+      },
+      "TechnologyTexts": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string"
+          }
+        }
+      },
+      "TechnologyTranslations": {
+        "type": "object",
+        "properties": {
+          "pl": {
+            "$ref": "#/components/schemas/TechnologyTexts"
+          },
+          "en": {
+            "$ref": "#/components/schemas/TechnologyTexts"
+          }
+        }
+      },
+      "AdminTechnology": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "version": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "LANGUAGE",
+              "BACKEND",
+              "FRONTEND",
+              "DATA",
+              "INFRASTRUCTURE",
+              "TOOLING"
+            ]
+          },
+          "showOnSkillsPage": {
+            "type": "boolean"
+          },
+          "sinceYear": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sortOrder": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "projectCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "enStatus": {
+            "type": "string",
+            "enum": [
+              "COMPLETE",
+              "PARTIAL",
+              "MISSING"
+            ]
+          },
+          "translations": {
+            "$ref": "#/components/schemas/TechnologyTranslations"
+          }
+        }
+      },
+      "TechnologyOrderRequest": {
+        "type": "object",
+        "properties": {
+          "ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        }
+      },
+      "ServiceInput": {
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "translations": {
+            "$ref": "#/components/schemas/ServiceTranslations"
+          }
+        }
+      },
+      "ServiceTexts": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "string"
+          },
+          "descriptionMd": {
+            "type": "string"
+          },
+          "deliverablesMd": {
+            "type": "string"
+          },
+          "priceNote": {
+            "type": "string"
+          }
+        }
+      },
+      "ServiceTranslations": {
+        "type": "object",
+        "properties": {
+          "pl": {
+            "$ref": "#/components/schemas/ServiceTexts"
+          },
+          "en": {
+            "$ref": "#/components/schemas/ServiceTexts"
+          }
+        }
+      },
+      "AdminService": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "version": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "sortOrder": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "enStatus": {
+            "type": "string",
+            "enum": [
+              "COMPLETE",
+              "PARTIAL",
+              "MISSING"
+            ]
+          },
+          "translations": {
+            "$ref": "#/components/schemas/ServiceTranslations"
+          }
+        }
+      },
+      "ServiceOrderRequest": {
+        "type": "object",
+        "properties": {
+          "ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        }
+      },
+      "ProjectInput": {
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "CLIENT",
+              "PERSONAL",
+              "OPEN_SOURCE"
+            ]
+          },
+          "featured": {
+            "type": "boolean"
+          },
+          "startedOn": {
+            "type": "string",
+            "format": "date"
+          },
+          "finishedOn": {
+            "type": "string",
+            "format": "date"
+          },
+          "repoUrl": {
+            "type": "string"
+          },
+          "liveUrl": {
+            "type": "string"
+          },
+          "coverMediaId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "galleryMediaIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "technologyIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "expertiseAreaIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "translations": {
+            "$ref": "#/components/schemas/ProjectTranslations"
+          }
+        }
+      },
+      "ProjectTexts": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string"
+          },
+          "problemMd": {
+            "type": "string"
+          },
+          "solutionMd": {
+            "type": "string"
+          },
+          "outcomeMd": {
+            "type": "string"
+          },
+          "lessonsMd": {
+            "type": "string"
+          },
+          "seoDescription": {
+            "type": "string"
+          }
+        }
+      },
+      "ProjectTranslations": {
+        "type": "object",
+        "properties": {
+          "pl": {
+            "$ref": "#/components/schemas/ProjectTexts"
+          },
+          "en": {
+            "$ref": "#/components/schemas/ProjectTexts"
+          }
+        }
+      },
+      "ProjectSaved": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "version": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "DRAFT",
+              "PUBLISHED",
+              "ARCHIVED"
+            ]
+          }
+        }
+      },
+      "ProjectOrderRequest": {
+        "type": "object",
+        "properties": {
+          "ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        }
+      },
+      "AvailabilitySettings": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "OPEN",
+              "LIMITED",
+              "CLOSED"
+            ]
+          },
+          "from": {
+            "type": "string",
+            "format": "date"
+          },
+          "visible": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ProfileInput": {
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "fullName": {
+            "type": "string"
+          },
+          "availability": {
+            "$ref": "#/components/schemas/AvailabilitySettings"
+          },
+          "socialLinks": {
+            "$ref": "#/components/schemas/SocialLinks"
+          },
+          "portraitMediaId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "siteProjectId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "translations": {
+            "$ref": "#/components/schemas/ProfileTranslations"
+          }
+        }
+      },
+      "ProfileTexts": {
+        "type": "object",
+        "properties": {
+          "headline": {
+            "type": "string"
+          },
+          "introMd": {
+            "type": "string"
+          },
+          "aboutMd": {
+            "type": "string"
+          },
+          "approachMd": {
+            "type": "string"
+          },
+          "locationLabel": {
+            "type": "string"
+          },
+          "autoreplySubject": {
+            "type": "string"
+          },
+          "autoreplyBodyMd": {
+            "type": "string"
+          }
+        }
+      },
+      "ProfileTranslations": {
+        "type": "object",
+        "properties": {
+          "pl": {
+            "$ref": "#/components/schemas/ProfileTexts"
+          },
+          "en": {
+            "$ref": "#/components/schemas/ProfileTexts"
+          }
+        }
+      },
+      "SocialLinks": {
+        "type": "object",
+        "properties": {
+          "github": {
+            "type": "string"
+          },
+          "linkedin": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          }
+        }
+      },
+      "AdminProfile": {
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "fullName": {
+            "type": "string"
+          },
+          "availability": {
+            "$ref": "#/components/schemas/AvailabilitySettings"
+          },
+          "socialLinks": {
+            "$ref": "#/components/schemas/SocialLinks"
+          },
+          "portraitMediaId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "siteProjectId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "enStatus": {
+            "type": "string",
+            "enum": [
+              "COMPLETE",
+              "PARTIAL",
+              "MISSING"
+            ]
+          },
+          "translations": {
+            "$ref": "#/components/schemas/ProfileTranslations"
+          }
+        }
+      },
+      "MediaInput": {
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "translations": {
+            "$ref": "#/components/schemas/MediaTranslations"
+          }
+        }
+      },
+      "MediaTexts": {
+        "type": "object",
+        "properties": {
+          "altText": {
+            "type": "string"
+          },
+          "caption": {
+            "type": "string"
+          }
+        }
+      },
+      "MediaTranslations": {
+        "type": "object",
+        "properties": {
+          "pl": {
+            "$ref": "#/components/schemas/MediaTexts"
+          },
+          "en": {
+            "$ref": "#/components/schemas/MediaTexts"
+          }
+        }
+      },
+      "AdminMedia": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "version": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "url": {
+            "type": "string"
+          },
+          "originalName": {
+            "type": "string"
+          },
+          "mimeType": {
+            "type": "string"
+          },
+          "width": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "height": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sizeBytes": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "usageCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "translations": {
+            "$ref": "#/components/schemas/MediaTranslations"
+          }
+        }
+      },
+      "FaqInput": {
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "translations": {
+            "$ref": "#/components/schemas/FaqTranslations"
+          }
+        }
+      },
+      "FaqTexts": {
+        "type": "object",
+        "properties": {
+          "question": {
+            "type": "string"
+          },
+          "answerMd": {
+            "type": "string"
+          }
+        }
+      },
+      "FaqTranslations": {
+        "type": "object",
+        "properties": {
+          "pl": {
+            "$ref": "#/components/schemas/FaqTexts"
+          },
+          "en": {
+            "$ref": "#/components/schemas/FaqTexts"
+          }
+        }
+      },
+      "AdminFaq": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "version": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "sortOrder": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "enStatus": {
+            "type": "string",
+            "enum": [
+              "COMPLETE",
+              "PARTIAL",
+              "MISSING"
+            ]
+          },
+          "translations": {
+            "$ref": "#/components/schemas/FaqTranslations"
+          }
+        }
+      },
+      "FaqOrderRequest": {
+        "type": "object",
+        "properties": {
+          "ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        }
+      },
+      "AreaInput": {
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "technologyIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "projectIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "translations": {
+            "$ref": "#/components/schemas/AreaTranslations"
+          }
+        }
+      },
+      "AreaTexts": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "string"
+          },
+          "descriptionMd": {
+            "type": "string"
+          }
+        }
+      },
+      "AreaTranslations": {
+        "type": "object",
+        "properties": {
+          "pl": {
+            "$ref": "#/components/schemas/AreaTexts"
+          },
+          "en": {
+            "$ref": "#/components/schemas/AreaTexts"
+          }
+        }
+      },
+      "AdminExpertiseArea": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "version": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "sortOrder": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "technologyIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "projectIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "enStatus": {
+            "type": "string",
+            "enum": [
+              "COMPLETE",
+              "PARTIAL",
+              "MISSING"
+            ]
+          },
+          "translations": {
+            "$ref": "#/components/schemas/AreaTranslations"
+          }
+        }
+      },
+      "AreaOrderRequest": {
+        "type": "object",
+        "properties": {
+          "ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        }
+      },
+      "ContactRequest": {
+        "type": "object",
+        "properties": {
+          "locale": {
+            "type": "string",
+            "enum": [
+              "pl",
+              "en"
+            ]
+          },
+          "topic": {
+            "type": "string",
+            "enum": [
+              "PROJECT",
+              "CONSULTATION",
+              "OTHER"
+            ]
+          },
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "company": {
+            "type": "string"
+          },
+          "serviceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "budgetRange": {
+            "type": "string",
+            "enum": [
+              "UNSURE",
+              "SMALL",
+              "MEDIUM",
+              "LARGE",
+              "XLARGE"
+            ]
+          },
+          "timeline": {
+            "type": "string",
+            "enum": [
+              "UNSURE",
+              "ASAP",
+              "QUARTER",
+              "LATER"
+            ]
+          },
+          "message": {
+            "type": "string"
+          },
+          "consent": {
+            "type": "boolean"
+          },
+          "turnstileToken": {
+            "type": "string"
+          },
+          "website": {
+            "type": "string",
+            "description": "Honeypot: must stay empty"
+          }
+        }
+      },
+      "ContactAccepted": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "TestMailResult": {
+        "type": "object",
+        "properties": {
+          "sent": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ServiceActiveRequest": {
+        "type": "object",
+        "properties": {
+          "active": {
+            "type": "boolean"
+          },
+          "version": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "ProjectFeaturedRequest": {
+        "type": "object",
+        "properties": {
+          "featured": {
+            "type": "boolean"
+          },
+          "version": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "MessageStatusRequest": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "NEW",
+              "READ",
+              "REPLIED",
+              "ARCHIVED",
+              "SPAM"
+            ]
+          }
+        }
+      },
+      "TechnologyOption": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string"
+          },
+          "projectCount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "AreaTechnology": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "EvidenceProject": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string"
+          },
+          "lang": {
+            "type": "string",
+            "enum": [
+              "pl",
+              "en"
+            ]
+          },
+          "title": {
+            "type": "string"
+          }
+        }
+      },
+      "ExpertiseArea": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "lang": {
+            "type": "string",
+            "enum": [
+              "pl",
+              "en"
+            ]
+          },
+          "title": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "string"
+          },
+          "descriptionMd": {
+            "type": "string"
+          },
+          "technologies": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AreaTechnology"
+            }
+          },
+          "projects": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EvidenceProject"
+            }
+          }
+        }
+      },
+      "SkillTechnology": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "descriptionLang": {
+            "type": "string",
+            "enum": [
+              "pl",
+              "en"
+            ]
+          },
+          "sinceYear": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "projectCount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "SkillsResponse": {
+        "type": "object",
+        "properties": {
+          "areas": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ExpertiseArea"
+            }
+          },
+          "categories": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TechnologyGroup"
+            }
+          }
+        }
+      },
+      "TechnologyGroup": {
+        "type": "object",
+        "properties": {
+          "category": {
+            "type": "string",
+            "enum": [
+              "LANGUAGE",
+              "BACKEND",
+              "FRONTEND",
+              "DATA",
+              "INFRASTRUCTURE",
+              "TOOLING"
+            ]
+          },
+          "technologies": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SkillTechnology"
+            }
+          }
+        }
+      },
+      "FaqItem": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "lang": {
+            "type": "string",
+            "enum": [
+              "pl",
+              "en"
+            ]
+          },
+          "question": {
+            "type": "string"
+          },
+          "answerMd": {
+            "type": "string"
+          }
+        }
+      },
+      "ServiceOffering": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "lang": {
+            "type": "string",
+            "enum": [
+              "pl",
+              "en"
+            ]
+          },
+          "title": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "string"
+          },
+          "descriptionMd": {
+            "type": "string"
+          },
+          "deliverablesMd": {
+            "type": "string"
+          },
+          "priceNote": {
+            "type": "string"
+          }
+        }
+      },
+      "ServicesResponse": {
+        "type": "object",
+        "properties": {
+          "services": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ServiceOffering"
+            }
+          },
+          "faq": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FaqItem"
+            }
+          }
+        }
+      },
+      "MediaRef": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string"
+          },
+          "alt": {
+            "type": "string"
+          },
+          "width": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "height": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "ProjectListItem": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "lang": {
+            "type": "string",
+            "enum": [
+              "pl",
+              "en"
+            ]
+          },
+          "slug": {
+            "type": "string"
+          },
+          "translations": {
+            "$ref": "#/components/schemas/SlugTranslations"
+          },
+          "title": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "CLIENT",
+              "PERSONAL",
+              "OPEN_SOURCE"
+            ]
+          },
+          "featured": {
+            "type": "boolean"
+          },
+          "startedOn": {
+            "type": "string",
+            "format": "date"
+          },
+          "finishedOn": {
+            "type": "string",
+            "format": "date"
+          },
+          "cover": {
+            "$ref": "#/components/schemas/MediaRef"
+          },
+          "technologies": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TechnologyTag"
+            }
+          }
+        }
+      },
+      "SlugTranslations": {
+        "type": "object",
+        "properties": {
+          "pl": {
+            "type": "string"
+          },
+          "en": {
+            "type": "string"
+          }
+        }
+      },
+      "TechnologyTag": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "GalleryImage": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string"
+          },
+          "alt": {
+            "type": "string"
+          },
+          "caption": {
+            "type": "string"
+          },
+          "width": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "height": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "ProjectDetail": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "lang": {
+            "type": "string",
+            "enum": [
+              "pl",
+              "en"
+            ]
+          },
+          "slug": {
+            "type": "string"
+          },
+          "translations": {
+            "$ref": "#/components/schemas/SlugTranslations"
+          },
+          "title": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "CLIENT",
+              "PERSONAL",
+              "OPEN_SOURCE"
+            ]
+          },
+          "featured": {
+            "type": "boolean"
+          },
+          "startedOn": {
+            "type": "string",
+            "format": "date"
+          },
+          "finishedOn": {
+            "type": "string",
+            "format": "date"
+          },
+          "cover": {
+            "$ref": "#/components/schemas/MediaRef"
+          },
+          "technologies": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TechnologyTag"
+            }
+          },
+          "problemMd": {
+            "type": "string"
+          },
+          "solutionMd": {
+            "type": "string"
+          },
+          "outcomeMd": {
+            "type": "string"
+          },
+          "lessonsMd": {
+            "type": "string"
+          },
+          "seoDescription": {
+            "type": "string"
+          },
+          "repoUrl": {
+            "type": "string"
+          },
+          "liveUrl": {
+            "type": "string"
+          },
+          "gallery": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GalleryImage"
+            }
+          },
+          "previous": {
+            "$ref": "#/components/schemas/ProjectLink"
+          },
+          "next": {
+            "$ref": "#/components/schemas/ProjectLink"
+          }
+        }
+      },
+      "ProjectLink": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          }
+        }
+      },
+      "Availability": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string"
+          },
+          "from": {
+            "type": "string",
+            "format": "date"
+          },
+          "visible": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ProfileResponse": {
+        "type": "object",
+        "properties": {
+          "lang": {
+            "type": "string",
+            "enum": [
+              "pl",
+              "en"
+            ]
+          },
+          "fullName": {
+            "type": "string"
+          },
+          "headline": {
+            "type": "string"
+          },
+          "introMd": {
+            "type": "string"
+          },
+          "aboutMd": {
+            "type": "string"
+          },
+          "approachMd": {
+            "type": "string"
+          },
+          "locationLabel": {
+            "type": "string"
+          },
+          "availability": {
+            "$ref": "#/components/schemas/Availability"
+          },
+          "socialLinks": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "portrait": {
+            "$ref": "#/components/schemas/MediaRef"
+          },
+          "siteProject": {
+            "$ref": "#/components/schemas/SiteProject"
+          }
+        }
+      },
+      "SiteProject": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string"
+          },
+          "lang": {
+            "type": "string",
+            "enum": [
+              "pl",
+              "en"
+            ]
+          }
+        }
+      },
+      "AdminProjectListItem": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "version": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "titlePl": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "DRAFT",
+              "PUBLISHED",
+              "ARCHIVED"
+            ]
+          },
+          "featured": {
+            "type": "boolean"
+          },
+          "enStatus": {
+            "type": "string",
+            "enum": [
+              "COMPLETE",
+              "PARTIAL",
+              "MISSING"
+            ]
+          },
+          "sortOrder": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "AdminProject": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "version": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "DRAFT",
+              "PUBLISHED",
+              "ARCHIVED"
+            ]
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "CLIENT",
+              "PERSONAL",
+              "OPEN_SOURCE"
+            ]
+          },
+          "featured": {
+            "type": "boolean"
+          },
+          "startedOn": {
+            "type": "string",
+            "format": "date"
+          },
+          "finishedOn": {
+            "type": "string",
+            "format": "date"
+          },
+          "repoUrl": {
+            "type": "string"
+          },
+          "liveUrl": {
+            "type": "string"
+          },
+          "coverMediaId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "galleryMediaIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "technologyIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "expertiseAreaIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "translations": {
+            "$ref": "#/components/schemas/ProjectTranslations"
+          }
+        }
+      },
+      "ProjectSlugAvailability": {
+        "type": "object",
+        "properties": {
+          "available": {
+            "type": "boolean"
+          }
+        }
+      },
+      "MessageListItem": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "company": {
+            "type": "string"
+          },
+          "topic": {
+            "type": "string"
+          },
+          "serviceTitle": {
+            "type": "string"
+          },
+          "locale": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "preview": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "MessagePage": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MessageListItem"
+            }
+          },
+          "total": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "page": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "size": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "counts": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        }
+      },
+      "MessageDetail": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "company": {
+            "type": "string"
+          },
+          "topic": {
+            "type": "string"
+          },
+          "serviceTitle": {
+            "type": "string"
+          },
+          "budgetRange": {
+            "type": "string"
+          },
+          "timeline": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "locale": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "MediaPage": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdminMedia"
+            }
+          },
+          "total": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "page": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "size": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "MediaUsage": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "label": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string"
+          }
+        }
+      },
+      "DashboardResponse": {
+        "type": "object",
+        "properties": {
+          "newMessages": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "draftProjects": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "availability": {
+            "$ref": "#/components/schemas/AvailabilitySettings"
+          },
+          "recentMessages": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MessageListItem"
+            }
+          },
+          "missingTranslations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TranslationGap"
+            }
+          }
+        }
+      },
+      "TranslationGap": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "PROJECT",
+              "SERVICE",
+              "FAQ",
+              "TECHNOLOGY",
+              "EXPERTISE_AREA",
+              "SETTINGS",
+              "MEDIA"
+            ]
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "label": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "COMPLETE",
+              "PARTIAL",
+              "MISSING"
+            ]
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "supabase": {
+        "type": "http",
+        "description": "Supabase access token of the site owner (app_metadata.role = admin).",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}

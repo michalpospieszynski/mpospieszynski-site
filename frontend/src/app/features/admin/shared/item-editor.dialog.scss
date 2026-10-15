@@ -1,0 +1,17 @@
+.fields {
+  display: grid;
+  gap: var(--space-1);
+  padding-top: var(--space-4);
+}
+.fields mat-form-field {
+  width: 100%;
+}
+.texts {
+  padding-bottom: var(--space-2);
+}
+.texts > p {
+  margin: var(--space-3) 0 0;
+}
+.spacer {
+  flex: 1;
+}

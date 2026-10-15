@@ -1,0 +1,120 @@
+// Projects list (docs/screens/public/03-projects.md, DIRECTION.md): the page head, pill filters, then hairline rows.
+.projects {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-7);
+  padding-bottom: var(--section-pad);
+}
+
+.page-head {
+  padding-bottom: 0;
+}
+
+.projects__note {
+  padding: var(--space-4) var(--space-5);
+  color: var(--color-body);
+}
+
+.projects__filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  justify-content: space-between;
+  gap: var(--space-5);
+}
+
+// Kind filter: ghost pills, the current one champagne.
+.kinds {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+
+  a {
+    display: inline-grid;
+    place-items: center;
+    min-height: var(--tap);
+    padding: var(--space-2) 18px;
+    border: 1px solid var(--color-control);
+    border-radius: var(--radius-pill);
+    color: var(--color-ink);
+    font-weight: 600;
+    text-decoration: none;
+    transition:
+      border-color var(--dur-hover) ease,
+      background-color var(--dur-hover) ease,
+      transform var(--dur-press) var(--ease-out);
+
+    &:hover {
+      border-color: var(--color-ink);
+    }
+
+    &:active {
+      transform: scale(var(--press));
+    }
+
+    &[aria-current='true'] {
+      border-color: var(--color-stage);
+      background: var(--color-stage);
+      color: var(--color-stage-ink);
+    }
+  }
+}
+
+.tech {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+  color: var(--color-muted);
+
+  select {
+    width: auto;
+    min-width: 12rem;
+  }
+}
+
+.tech__apply {
+  min-height: var(--tap);
+  padding-inline: var(--space-5);
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--color-stage);
+  color: var(--color-stage-ink);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.projects__results {
+  display: grid;
+  gap: var(--space-5);
+}
+
+.results-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-5);
+  color: var(--color-muted);
+
+  p:empty {
+    display: none;
+  }
+}
+
+.features,
+.items {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.others {
+  display: grid;
+  gap: var(--space-5);
+  margin-top: var(--space-7);
+
+  h2 {
+    font-size: var(--step-head);
+  }
+}

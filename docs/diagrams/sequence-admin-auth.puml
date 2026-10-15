@@ -1,0 +1,36 @@
+@startuml sequence-admin-auth
+title Admin sign-in and authorised request
+
+skinparam shadowing false
+skinparam defaultFontName "Helvetica"
+autonumber
+
+actor "Owner" as p_owner
+participant "Angular admin\n(browser)" as p_ng
+participant "Supabase Auth" as p_auth
+participant "Spring Boot API" as p_api
+database "Supabase PostgreSQL" as p_db
+
+p_owner -> p_ng : open /admin/login
+p_ng -> p_auth : sign in (password + TOTP, or OAuth)
+p_auth --> p_ng : access JWT + refresh token
+p_owner -> p_ng : edit project, press "Zapisz"
+p_ng -> p_api : PUT /api/v1/admin/projects/{id}\nAuthorization: Bearer JWT
+p_api -> p_auth : GET JWKS (only when not cached)
+p_auth --> p_api : signing keys
+p_api -> p_api : verify signature, exp, iss, aud
+p_api -> p_api : app_metadata.role = admin gives ROLE_ADMIN
+alt authorised
+  p_api -> p_db : UPDATE project and translations (optimistic lock)
+  p_db --> p_api : ok
+  p_api -> p_api : evict public cache (pl, en)
+  p_api --> p_ng : 200 OK
+  p_ng --> p_owner : "Zapisano"
+else token invalid or expired
+  p_api --> p_ng : 401 Unauthorized
+  p_ng -> p_auth : refresh session
+else not an admin
+  p_api --> p_ng : 403 Forbidden
+  p_ng --> p_owner : "To konto nie ma dostępu do panelu."
+end
+@enduml

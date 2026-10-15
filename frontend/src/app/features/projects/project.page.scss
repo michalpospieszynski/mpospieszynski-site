@@ -1,0 +1,145 @@
+@use 'breakpoints' as *;
+
+// Case study (docs/screens/public/04-project-detail.md, DIRECTION.md): head, cover, the story in a prose column,
+// the gallery, the champagne call to action and the neighbours as ruled links.
+.case {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-8);
+  padding-top: var(--space-7);
+  padding-bottom: var(--section-pad);
+}
+
+.crumbs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  color: var(--color-muted);
+
+  a {
+    color: var(--color-ink);
+  }
+}
+
+.case__head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-5);
+}
+
+.case__lead {
+  max-width: 52ch;
+  color: var(--color-muted);
+  font-size: var(--step-lead);
+  line-height: 1.5;
+}
+
+.case__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4) var(--space-7);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--color-line);
+
+  dt {
+    color: var(--color-muted);
+    font-size: var(--step-small);
+  }
+
+  dd {
+    color: var(--color-body);
+    font-weight: 600;
+  }
+
+  ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: var(--space-2);
+  }
+}
+
+.case__tech {
+  flex-basis: 100%;
+}
+
+.case__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.case__cover {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-card);
+}
+
+.case__story {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-8);
+  max-width: var(--prose);
+
+  section {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-4);
+  }
+
+  h2 {
+    font-size: 1.625rem;
+    line-height: 1.15;
+  }
+}
+
+.case__gallery {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-5);
+
+  h2 {
+    font-size: 1.625rem;
+    line-height: 1.15;
+  }
+}
+
+.case__neighbours {
+  display: grid;
+  border-top: 1px solid var(--color-line);
+
+  @include bp(sm) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  a {
+    display: grid;
+    gap: var(--space-1);
+    padding-block: var(--space-5);
+    color: var(--color-ink);
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-weight: 600;
+    text-decoration: none;
+
+    &:hover span:last-child {
+      text-decoration: underline;
+      text-underline-offset: 0.2em;
+    }
+
+    .text-small {
+      font-family: var(--font-text);
+      font-weight: 400;
+    }
+  }
+}
+
+.case__next {
+  text-align: right;
+
+  @include bp(sm) {
+    grid-column: 2;
+  }
+}

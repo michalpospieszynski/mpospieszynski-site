@@ -1,0 +1,44 @@
+flowchart TD
+    subgraph PL[Polish - default]
+        home[Strona główna /]
+        projects[Projekty /projekty]
+        project[Case study /projekty/:slug]
+        skills[Umiejętności /umiejetnosci]
+        svc[Usługi /uslugi]
+        about[O mnie /o-mnie]
+        contact[Kontakt /kontakt]
+        privacy[Polityka prywatności]
+    end
+    subgraph EN[English - optional]
+        enhome[Home /en]
+        enprojects[Projects /en/projects]
+        enproject[Case study /en/projects/:slug]
+        enskills[Skills /en/skills]
+        ensvc[Services /en/services]
+        enabout[About /en/about]
+        encontact[Contact /en/contact]
+        enprivacy[Privacy /en/privacy]
+    end
+    subgraph ADM[Admin - Polish UI]
+        login[Logowanie]
+        dash[Pulpit]
+        amsg[Wiadomości]
+        aproj[Projekty]
+        askills[Umiejętności]
+        asvc[Usługi i FAQ]
+        amedia[Pliki]
+        aset[Ustawienia]
+    end
+
+    home --> projects --> project
+    home --> skills --> project
+    home --> svc --> contact
+    home --> about
+    home --> contact
+    enhome --> enprojects --> enproject
+    enhome --> enskills
+    enhome --> ensvc --> encontact
+    enhome --> enabout
+    home <-. language switcher .-> enhome
+    project <-. switcher, if translated .-> enproject
+    login --> dash --> amsg & aproj & askills & asvc & amedia & aset

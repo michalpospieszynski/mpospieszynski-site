@@ -1,0 +1,94 @@
+<div class="adm-page">
+  <h1 class="adm-title">{{ 'admin.dashboard.title' | transloco }}</h1>
+
+  @if (data(); as d) {
+    <ul class="cards">
+      <li>
+        <a class="card" routerLink="/admin/wiadomosci" [queryParams]="{ status: 'NEW' }" data-testid="card-messages">
+          <span class="number">{{ d.newMessages }}</span>
+          <span>{{ 'admin.dashboard.newMessages' | transloco: { count: d.newMessages } }}</span>
+        </a>
+      </li>
+      <li>
+        <a class="card" routerLink="/admin/projekty" [queryParams]="{ status: 'DRAFT' }" data-testid="card-drafts">
+          <span class="number">{{ d.draftProjects }}</span>
+          <span>{{ 'admin.dashboard.drafts' | transloco: { count: d.draftProjects } }}</span>
+        </a>
+      </li>
+      <li>
+        <a class="card" routerLink="/admin" fragment="do-tlumaczenia" data-testid="card-missing">
+          <span class="number">{{ d.missingTranslations?.length ?? 0 }}</span>
+          <span>{{ 'admin.dashboard.missingEn' | transloco }}</span>
+        </a>
+      </li>
+      <li>
+        <a class="card" routerLink="/admin/ustawienia" fragment="dostepnosc" data-testid="card-availability">
+          <span class="label">{{ 'admin.dashboard.availability' | transloco }}</span>
+          <span class="status">{{ 'admin.settings.availabilityStatus.' + d.availability?.status | transloco }}</span>
+          @if (d.availability?.from; as from) {
+            <span>{{ 'admin.dashboard.availabilityFrom' | transloco: { date: monthYear(from) } }}</span>
+          }
+          @if (!d.availability?.visible) {
+            <span class="adm-muted adm-small">{{ 'admin.dashboard.availabilityHidden' | transloco }}</span>
+          }
+          <span class="change">{{ 'admin.dashboard.change' | transloco }}</span>
+        </a>
+      </li>
+    </ul>
+
+    <section aria-labelledby="recent-title">
+      <div class="adm-head">
+        <h2 id="recent-title" class="adm-subtitle adm-grow">{{ 'admin.dashboard.recentMessages' | transloco }}</h2>
+        <a routerLink="/admin/wiadomosci">{{ 'admin.dashboard.all' | transloco }}</a>
+      </div>
+      @if (d.recentMessages?.length) {
+        <ul class="adm-list" data-testid="recent-messages">
+          @for (m of d.recentMessages; track m.id) {
+            <li class="adm-row">
+              <a class="adm-grow" [routerLink]="['/admin/wiadomosci', m.id]">
+                <strong>{{ m.name }}</strong>
+                · {{ 'contact.topic.' + m.topic | transloco }}
+                @if (m.serviceTitle) {
+                  · {{ m.serviceTitle }}
+                }
+                · {{ m.locale?.toUpperCase() }}
+              </a>
+              <span class="adm-muted adm-small">{{ relativeTime(m.createdAt) }}</span>
+            </li>
+          }
+        </ul>
+      } @else {
+        <p class="adm-empty" data-testid="no-messages">{{ 'admin.dashboard.noMessages' | transloco }}</p>
+      }
+    </section>
+
+    <section aria-labelledby="do-tlumaczenia">
+      <h2 id="do-tlumaczenia" class="adm-subtitle" tabindex="-1">{{ 'admin.dashboard.toTranslate' | transloco }}</h2>
+      @if (d.missingTranslations?.length) {
+        <ul class="adm-list" data-testid="missing-translations">
+          @for (gap of d.missingTranslations; track $index) {
+            @let link = editorLink(gap);
+            <li class="adm-row">
+              <span class="adm-grow">
+                {{ 'admin.dashboard.type.' + gap.type | transloco }} „{{ gap.label }}”
+                <span class="adm-chip" [attr.data-state]="gap.status">{{ 'admin.lang.status.' + gap.status | transloco }}</span>
+              </span>
+              <a
+                [routerLink]="link.path"
+                [queryParams]="link.query"
+                [attr.aria-label]="'admin.dashboard.editItem' | transloco: { label: gap.label }"
+                data-testid="translate-edit"
+              >
+                {{ 'admin.dashboard.edit' | transloco }}
+              </a>
+            </li>
+          }
+        </ul>
+      } @else {
+        <p class="adm-empty" data-testid="all-translated">{{ 'admin.dashboard.allDone' | transloco }}</p>
+      }
+    </section>
+  } @else {
+    <p class="adm-muted">{{ 'admin.common.loading' | transloco }}</p>
+  }
+</div>

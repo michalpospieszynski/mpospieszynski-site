@@ -1,0 +1,110 @@
+<div class="adm-page">
+  <h1 class="adm-title">{{ 'admin.messages.title' | transloco }}</h1>
+
+  <div class="adm-filters">
+    <nav class="adm-tabs" [attr.aria-label]="'admin.messages.filter' | transloco">
+      <a
+        class="adm-tab"
+        routerLink="/admin/wiadomosci"
+        [queryParams]="{ q: q() || null }"
+        [class.active]="!status()"
+        [attr.aria-current]="!status() ? 'page' : null"
+        data-testid="tab-ALL"
+      >
+        {{ 'admin.projects.filter.ALL' | transloco }}
+      </a>
+      @for (s of statuses; track s) {
+        <a
+          class="adm-tab"
+          routerLink="/admin/wiadomosci"
+          [queryParams]="{ status: s, q: q() || null }"
+          [class.active]="status() === s"
+          [attr.aria-current]="status() === s ? 'page' : null"
+          [attr.data-testid]="'tab-' + s"
+        >
+          {{ 'admin.messages.status.' + s | transloco }}
+          @if (count(s)) {
+            <span class="count">({{ count(s) }})</span>
+          }
+        </a>
+      }
+    </nav>
+    <mat-form-field class="search" subscriptSizing="dynamic">
+      <mat-label>{{ 'admin.messages.searchLabel' | transloco }}</mat-label>
+      <input
+        #search
+        matInput
+        type="search"
+        [value]="q() ?? ''"
+        [placeholder]="'admin.messages.search' | transloco"
+        (input)="search$.next(search.value)"
+        data-testid="messages-search"
+      />
+    </mat-form-field>
+  </div>
+
+  <div class="layout" [class.detail-open]="detailOpen()">
+    <section class="list" [attr.aria-label]="'admin.messages.title' | transloco">
+      @if (data(); as d) {
+        @if (d.items?.length) {
+          <ul class="adm-list" data-testid="messages-list">
+            @for (m of d.items; track m.id) {
+              <li>
+                <a
+                  class="item"
+                  [routerLink]="['/admin/wiadomosci', m.id]"
+                  queryParamsHandling="preserve"
+                  routerLinkActive="active"
+                  ariaCurrentWhenActive="page"
+                  [class.unread]="m.status === 'NEW'"
+                  data-testid="message-item"
+                >
+                  <span class="line">
+                    @if (m.status === 'NEW') {
+                      <span class="dot" aria-hidden="true"></span>
+                      <span class="visually-hidden">{{ 'admin.messages.unread' | transloco }}</span>
+                    }
+                    <strong class="name">{{ m.name }}</strong>
+                    <span class="adm-muted adm-small">{{ relativeTime(m.createdAt) }}</span>
+                  </span>
+                  <span class="line adm-small">
+                    <span>
+                      {{ 'contact.topic.' + m.topic | transloco }}
+                      @if (m.serviceTitle) {
+                        · {{ m.serviceTitle }}
+                      }
+                    </span>
+                    @if (m.locale === 'en') {
+                      <span class="adm-chip" [title]="'admin.messages.locale.en' | transloco">{{ m.locale.toUpperCase() }}</span>
+                    }
+                  </span>
+                  <span class="preview adm-muted adm-small">{{ m.preview }}</span>
+                </a>
+              </li>
+            }
+          </ul>
+          @if (pages() > 1) {
+            <nav class="pager" [attr.aria-label]="'admin.messages.page' | transloco: { page: pageNumber() + 1, pages: pages() }">
+              <button mat-button type="button" [disabled]="pageNumber() === 0" (click)="setQuery({ page: pageNumber() - 1 || null })">
+                {{ 'admin.messages.prev' | transloco }}
+              </button>
+              <span class="adm-small" data-testid="pager-label">{{ 'admin.messages.page' | transloco: { page: pageNumber() + 1, pages: pages() } }}</span>
+              <button mat-button type="button" [disabled]="pageNumber() + 1 >= pages()" (click)="setQuery({ page: pageNumber() + 1 })">
+                {{ 'admin.messages.next' | transloco }}
+              </button>
+            </nav>
+          }
+        } @else {
+          <p class="adm-empty" data-testid="messages-empty">{{ 'admin.messages.empty' | transloco }}</p>
+        }
+      }
+    </section>
+
+    <section class="detail">
+      <router-outlet (activate)="detailOpen.set(true)" (deactivate)="detailOpen.set(false)" />
+      @if (!detailOpen()) {
+        <p class="adm-empty select">{{ 'admin.messages.select' | transloco }}</p>
+      }
+    </section>
+  </div>
+</div>

@@ -1,0 +1,11 @@
+# Runtime secrets live only on the VPS (docs/ARCHITECTURE.md §13, Secrets).
+.env
+infra/.env
+infra/cloudflared/credentials.json
+infra/cloudflared/*.json
+
+# Local tooling
+.idea/
+.taste-skill/
+.codegraph/
+*.log

@@ -1,0 +1,127 @@
+<div class="adm-page">
+  <div class="adm-head">
+    <h1 class="adm-title adm-grow">{{ 'admin.skills.title' | transloco }}</h1>
+    @if (current() === 'technologie') {
+      <button mat-flat-button type="button" (click)="editTechnology(null)" data-testid="technology-new">
+        {{ 'admin.skills.newTechnology' | transloco }}
+      </button>
+    } @else {
+      <button mat-flat-button type="button" (click)="editArea(null)" data-testid="area-new">
+        {{ 'admin.skills.newArea' | transloco }}
+      </button>
+    }
+  </div>
+
+  <nav class="adm-tabs" [attr.aria-label]="'admin.skills.tabs' | transloco">
+    <a class="adm-tab" routerLink="/admin/umiejetnosci" [queryParams]="{ tab: 'technologie' }"
+      [class.active]="current() === 'technologie'" [attr.aria-current]="current() === 'technologie' ? 'page' : null"
+      data-testid="tab-technologies">{{ 'admin.skills.tab.technologies' | transloco }}</a>
+    <a class="adm-tab" routerLink="/admin/umiejetnosci" [queryParams]="{ tab: 'obszary' }"
+      [class.active]="current() === 'obszary'" [attr.aria-current]="current() === 'obszary' ? 'page' : null"
+      data-testid="tab-areas">{{ 'admin.skills.tab.areas' | transloco }}</a>
+  </nav>
+
+  @if (current() === 'technologie') {
+    <div class="adm-filters">
+      <mat-form-field subscriptSizing="dynamic">
+        <mat-label>{{ 'admin.skills.categoryFilter' | transloco }}</mat-label>
+        <mat-select [value]="category()" (selectionChange)="category.set($event.value)" data-testid="category-filter">
+          <mat-option value="">{{ 'admin.skills.allCategories' | transloco }}</mat-option>
+          @for (c of categories; track c) {
+            <mat-option [value]="c">{{ 'skills.category.' + c | transloco }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <mat-checkbox [checked]="onlyVisible()" (change)="onlyVisible.set($event.checked)">
+        {{ 'admin.skills.onlyVisible' | transloco }}
+      </mat-checkbox>
+    </div>
+    @if (!canReorder()) {
+      <p class="adm-muted adm-small">{{ 'admin.skills.reorderHint' | transloco }}</p>
+    }
+
+    @if (shownTechnologies().length) {
+      <div class="adm-table-wrap">
+        <table class="adm-table" data-testid="technologies-table">
+          <thead>
+            <tr>
+              @if (canReorder()) {
+                <th scope="col"><span class="visually-hidden">{{ 'admin.skills.col.order' | transloco }}</span></th>
+              }
+              <th scope="col">{{ 'admin.skills.col.name' | transloco }}</th>
+              <th scope="col">{{ 'admin.skills.col.category' | transloco }}</th>
+              <th scope="col">{{ 'admin.skills.col.visible' | transloco }}</th>
+              <th scope="col">{{ 'admin.skills.col.since' | transloco }}</th>
+              <th scope="col">{{ 'admin.skills.col.projects' | transloco }}</th>
+              <th scope="col">{{ 'admin.skills.col.en' | transloco }}</th>
+            </tr>
+          </thead>
+          <tbody cdkDropList [cdkDropListDisabled]="!canReorder()" (cdkDropListDropped)="dropTechnology($event)">
+            @for (t of shownTechnologies(); track t.id; let i = $index; let last = $last) {
+              <tr cdkDrag cdkDragLockAxis="y" data-testid="technology-row">
+                @if (canReorder()) {
+                  <td class="adm-nowrap">
+                    <span class="adm-handle" cdkDragHandle aria-hidden="true">⋮⋮</span>
+                    <button type="button" class="adm-mini" [disabled]="i === 0" (click)="moveTechnology(i, -1)"
+                      [attr.aria-label]="'admin.common.moveUp' | transloco: { name: t.name }">↑</button>
+                    <button type="button" class="adm-mini" [disabled]="last" (click)="moveTechnology(i, 1)"
+                      [attr.aria-label]="'admin.common.moveDown' | transloco: { name: t.name }">↓</button>
+                  </td>
+                }
+                <td>
+                  <button type="button" class="adm-link" (click)="editTechnology(t)" data-testid="technology-edit">{{ t.name }}</button>
+                </td>
+                <td>
+                  <mat-select
+                    class="inline-select"
+                    [value]="t.category"
+                    (selectionChange)="setCategory(t, $event.value)"
+                    [aria-label]="('admin.skills.col.category' | transloco) + ': ' + t.name"
+                  >
+                    @for (c of categories; track c) {
+                      <mat-option [value]="c">{{ 'skills.category.' + c | transloco }}</mat-option>
+                    }
+                  </mat-select>
+                </td>
+                <td>
+                  <mat-slide-toggle
+                    [checked]="!!t.showOnSkillsPage"
+                    (change)="saveInline(t, { showOnSkillsPage: $event.checked })"
+                    [aria-label]="'admin.skills.visibleToggle' | transloco: { name: t.name }"
+                    data-testid="technology-visible"
+                  />
+                </td>
+                <td>{{ t.sinceYear }}</td>
+                <td>{{ t.projectCount }}</td>
+                <td><span class="adm-chip" [attr.data-state]="t.enStatus">{{ 'admin.lang.status.' + t.enStatus | transloco }}</span></td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    } @else if (loaded()) {
+      <p class="adm-empty">{{ 'admin.skills.emptyTechnologies' | transloco }}</p>
+    }
+  } @else {
+    @if (areas().length) {
+      <ul class="adm-list" cdkDropList (cdkDropListDropped)="dropArea($event)" data-testid="areas-list">
+        @for (a of areas(); track a.id; let i = $index; let last = $last) {
+          <li class="adm-row" cdkDrag cdkDragLockAxis="y" data-testid="area-row">
+            <span class="adm-handle" cdkDragHandle aria-hidden="true">⋮⋮</span>
+            <button type="button" class="adm-mini" [disabled]="i === 0" (click)="moveArea(i, -1)"
+              [attr.aria-label]="'admin.common.moveUp' | transloco: { name: areaTitle(a) }">↑</button>
+            <button type="button" class="adm-mini" [disabled]="last" (click)="moveArea(i, 1)"
+              [attr.aria-label]="'admin.common.moveDown' | transloco: { name: areaTitle(a) }">↓</button>
+            <button type="button" class="adm-link adm-grow" (click)="editArea(a)" data-testid="area-edit">{{ areaTitle(a) }}</button>
+            <span class="adm-muted adm-small">
+              {{ 'admin.skills.areaCounts' | transloco: { tech: a.technologyIds?.length ?? 0, projects: a.projectIds?.length ?? 0 } }}
+            </span>
+            <span class="adm-chip" [attr.data-state]="a.enStatus">{{ 'admin.lang.status.' + a.enStatus | transloco }}</span>
+          </li>
+        }
+      </ul>
+    } @else if (loaded()) {
+      <p class="adm-empty">{{ 'admin.skills.emptyAreas' | transloco }}</p>
+    }
+  }
+</div>

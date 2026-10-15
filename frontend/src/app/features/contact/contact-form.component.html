@@ -1,0 +1,114 @@
+<div class="card form-card">
+  @if (status() === 'sent') {
+    <div class="sent" role="status" data-testid="success">
+      <h2 id="{{ idPrefix() }}-success" #successHeading tabindex="-1">{{ 'contact.success.title' | transloco }}</h2>
+      <p>{{ 'contact.success.text' | transloco: { email: sentTo() } }}</p>
+      <ui-button variant="ghost" (click)="again()" data-testid="again">{{ 'contact.success.again' | transloco }}</ui-button>
+    </div>
+  } @else {
+    <form class="form" [formGroup]="form" (ngSubmit)="submit()" novalidate data-testid="contact-form">
+      @if (serviceTitle(); as service) {
+        <p class="about" data-testid="about-service">{{ 'contact.aboutService' | transloco: { service } }}</p>
+      }
+
+      <div class="row">
+        <ui-field
+          #name
+          [controlId]="controlId('name')"
+          [label]="'contact.field.name' | transloco"
+          [required]="true"
+          [error]="errorText('name') ?? undefined"
+        >
+          <input
+            [id]="controlId('name')"
+            formControlName="name"
+            autocomplete="name"
+            aria-required="true"
+            [attr.aria-invalid]="errorText('name') ? 'true' : null"
+            [attr.aria-describedby]="name.describedBy()"
+          />
+        </ui-field>
+
+        <ui-field
+          #email
+          [controlId]="controlId('email')"
+          [label]="'contact.field.email' | transloco"
+          [required]="true"
+          [error]="errorText('email') ?? undefined"
+        >
+          <input
+            [id]="controlId('email')"
+            type="email"
+            formControlName="email"
+            autocomplete="email"
+            aria-required="true"
+            [attr.aria-invalid]="errorText('email') ? 'true' : null"
+            [attr.aria-describedby]="email.describedBy()"
+          />
+        </ui-field>
+      </div>
+
+      <ui-field
+        #message
+        [controlId]="controlId('message')"
+        [label]="'contact.field.message' | transloco"
+        [required]="true"
+        [error]="errorText('message') ?? undefined"
+      >
+        <textarea
+          [id]="controlId('message')"
+          formControlName="message"
+          rows="6"
+          aria-required="true"
+          [attr.aria-invalid]="errorText('message') ? 'true' : null"
+          [attr.aria-describedby]="message.describedBy()"
+        ></textarea>
+      </ui-field>
+
+      <div class="consent">
+        <label class="choice">
+          <input
+            [id]="controlId('consent')"
+            type="checkbox"
+            formControlName="consent"
+            aria-required="true"
+            [attr.aria-invalid]="errorText('consent') ? 'true' : null"
+            [attr.aria-describedby]="controlId('consent') + '-error'"
+          />
+          <span
+            >{{ 'contact.field.consent' | transloco }}
+            <a [href]="'privacy' | localizedPath" target="_blank" rel="noopener">{{ 'contact.privacyLink' | transloco }}</a
+            ><span aria-hidden="true"> *</span></span
+          >
+        </label>
+        <p class="error" [id]="controlId('consent') + '-error'" aria-live="polite">{{ errorText('consent') }}</p>
+      </div>
+
+      <!-- Honeypot: invisible to people, tempting for bots. -->
+      <div class="honeypot" aria-hidden="true">
+        <label [for]="controlId('website')">{{ 'contact.field.website' | transloco }}</label>
+        <input [id]="controlId('website')" formControlName="website" tabindex="-1" autocomplete="off" />
+      </div>
+
+      <div #turnstileHost class="turnstile"></div>
+
+      @if (failure(); as kind) {
+        <p class="failure" role="alert" data-testid="failure">
+          {{ 'contact.errors.' + kind | transloco: { email: ownerEmail() } }}
+        </p>
+      }
+
+      <!-- Not <noscript>: the browser parses its content as text, which breaks hydration. Rendered on the server
+           and removed once the app runs, so only visitors without JavaScript keep it. -->
+      @if (!enhanced()) {
+        <p class="failure" data-testid="noscript">{{ 'contact.noscript' | transloco: { email: ownerEmail() } }}</p>
+      }
+
+      <div>
+        <ui-button type="submit" size="lg" [disabled]="status() === 'sending'" data-testid="submit">{{
+          (status() === 'sending' ? 'contact.sending' : 'contact.submit') | transloco
+        }}</ui-button>
+      </div>
+    </form>
+  }
+</div>

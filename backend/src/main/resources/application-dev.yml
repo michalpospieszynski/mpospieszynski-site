@@ -1,0 +1,18 @@
+# Local development: PostgreSQL and Mailpit from infra/docker-compose.dev.yml, sample content from db/dev.
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:${DEV_DB_PORT:5433}/site
+    username: ${DEV_DB_USER:site}
+    password: ${DEV_DB_PASSWORD:site}
+  flyway:
+    locations: classpath:db/migration,classpath:db/dev
+  mail:
+    host: localhost
+    port: 1025
+
+site:
+  supabase:
+    # The local Supabase stack (supabase start); tokens carry this exact issuer, so 127.0.0.1, not localhost.
+    url: ${SUPABASE_URL:http://127.0.0.1:54321}
+  storage:
+    type: local # files in backend/build/dev-media, served at /media/{key}

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="750" viewBox="0 0 1200 750">
+  <rect width="1200" height="750" fill="#bda38b"/>
+  <g font-family="Georgia, serif" fill="#1c150d">
+    <text x="96" y="150" font-size="44">Nocne przetwarzanie · Nightly run</text>
+    <rect x="96" y="250" width="1008" height="96" fill="#2b2216"/>
+    <text x="96" y="230" font-size="32">Przed · Before</text>
+    <text x="1104" y="320" font-size="40" fill="#e4e2da" text-anchor="end" dx="-24">4 h</text>
+    <rect x="96" y="470" width="105" height="96" fill="#e4e2da"/>
+    <text x="96" y="450" font-size="32">Po · After</text>
+    <text x="225" y="535" font-size="40">25 min</text>
+  </g>
+</svg>

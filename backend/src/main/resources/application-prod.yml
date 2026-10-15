@@ -1,0 +1,29 @@
+# Production: Supabase session pooler and the SMTP provider; every value comes from infra/.env.
+spring:
+  datasource:
+    url: ${SUPABASE_DB_URL}
+    username: ${SUPABASE_DB_USER}
+    password: ${SUPABASE_DB_PASSWORD}
+  mail:
+    host: ${MAIL_HOST}
+    port: ${MAIL_PORT}
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+
+springdoc:
+  api-docs:
+    enabled: false # the spec is generated in development and CI only
+
+site:
+  supabase:
+    url: ${SUPABASE_URL} # no default: production must not start without it
+  privacy:
+    ip-hash-salt: ${IP_HASH_SALT}
+  storage:
+    publishable-key: ${SUPABASE_PUBLISHABLE_KEY}
+  contact:
+    owner-to: ${MAIL_OWNER_TO}
+    from: ${MAIL_FROM}
+    admin-base-url: ${SITE_BASE_URL}
+  turnstile:
+    secret-key: ${TURNSTILE_SECRET_KEY} # no test-key fallback in production

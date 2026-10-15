@@ -1,0 +1,16 @@
+flowchart TB
+    user((Browser)) -->|HTTPS| cfedge[Cloudflare edge<br/>TLS, cache, WAF]
+    cfedge -->|Tunnel| cfd
+
+    subgraph host[VPS - Docker Compose, no inbound web ports]
+        cfd[cloudflared<br/>ingress rules]
+        web[web<br/>Angular SSR, Node.js :4000]
+        api[api<br/>Spring Boot :8080]
+        cfd -->|/api/*, /media/*,<br/>/sitemap.xml, /robots.txt| api
+        cfd -->|everything else| web
+        web -->|SSR data fetch<br/>http://api:8080| api
+    end
+
+    api -->|JDBC over TLS<br/>session pooler| db[(Supabase PostgreSQL)]
+    api -->|Storage API| st[Supabase Storage]
+    api -->|JWKS| au[Supabase Auth]

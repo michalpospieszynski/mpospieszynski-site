@@ -1,0 +1,284 @@
+{
+  "nav": {
+    "skipToContent": "Przejdź do treści",
+    "main": "Główna nawigacja",
+    "projects": "Projekty",
+    "skills": "Umiejętności",
+    "services": "Usługi",
+    "about": "O mnie",
+    "contact": "Kontakt",
+    "menu": "Menu",
+    "closeMenu": "Zamknij menu",
+    "footer": "Nawigacja w stopce",
+    "languageShort": {
+      "pl": "PL",
+      "en": "EN"
+    },
+    "switchTo": {
+      "pl": "Przełącz na polski",
+      "en": "Switch to English"
+    },
+    "theme": {
+      "toLight": "Włącz jasny motyw",
+      "toDark": "Włącz ciemny motyw"
+    }
+  },
+  "shell": {
+    "langHint": {
+      "text": "This site is also available in English.",
+      "action": "Switch to English",
+      "dismiss": "Close"
+    },
+    "brand": "M. Pospieszyński"
+  },
+  "footer": {
+    "howBuilt": "Jak zbudowana jest ta strona",
+    "privacy": "Polityka prywatności",
+    "social": {
+      "label": "Profile i kontakt"
+    },
+    "copyright": "© {year} {name}",
+    "domain": "mpospieszynski.pl"
+  },
+  "home": {
+    "hero": {
+      "ctaContact": "Napisz do mnie",
+      "ctaProjects": "Zobacz projekty",
+      "pickLabel": "Wybierz projekt na grafie"
+    },
+    "graph": {
+      "hint": "Przeciągnij, by obrócić. Kliknij projekt, by zobaczyć szczegóły.",
+      "aria": "Trójwymiarowy graf projektów połączonych z technologiami, których używają. Ten sam wybór jest dostępny w przyciskach projektów obok.",
+      "legendProject": "Projekt",
+      "legendTech": "Technologia"
+    },
+    "panel": {
+      "close": "Zamknij szczegóły projektu",
+      "details": "Szczegóły projektu"
+    },
+    "services": {
+      "title": "Czym się zajmuję",
+      "sub": "Biorę projekt od pomysłu do działającej aplikacji na serwerze, albo wchodzę tam, gdzie potrzebujesz konkretnego elementu.",
+      "all": "Wszystkie usługi"
+    },
+    "projects": {
+      "title": "Projekty",
+      "showOnGraph": "Pokaż na grafie",
+      "all": "Wszystkie projekty"
+    }
+  },
+  "common": {
+    "polishOnly": "Tylko po polsku",
+    "readCaseStudy": "Czytaj case study",
+    "availability": {
+      "open": "Przyjmuję nowe projekty",
+      "limited": "Ograniczona dostępność",
+      "closed": "Obecnie nie przyjmuję projektów",
+      "from": "od {date}"
+    },
+    "social": {
+      "github": "GitHub",
+      "linkedin": "LinkedIn",
+      "email": "E-mail"
+    }
+  },
+  "notFound": {
+    "title": "Ta strona nie istnieje",
+    "text": "Mogła zostać przeniesiona podczas aktualizacji serwisu.",
+    "home": "Strona główna",
+    "projects": "Zobacz projekty"
+  },
+  "projects": {
+    "title": "Projekty",
+    "intro": "Projekty komercyjne, własne i open source.",
+    "filter": {
+      "label": "Filtry projektów",
+      "all": "Wszystkie",
+      "kind": {
+        "CLIENT": "Komercyjne",
+        "PERSONAL": "Własne",
+        "OPEN_SOURCE": "Open source"
+      },
+      "tech": "Technologia",
+      "techAny": "Dowolna",
+      "apply": "Pokaż"
+    },
+    "others": "Pozostałe projekty",
+    "count": "{count, plural, one {Znaleziono # projekt} few {Znaleziono # projekty} many {Znaleziono # projektów} other {Znaleziono # projektu}}",
+    "clear": "Wyczyść filtry",
+    "empty": "Żaden projekt nie pasuje do wybranych filtrów.",
+    "notTranslatedNote": "Ten projekt jest opisany tylko po polsku.",
+    "kindLabel": {
+      "CLIENT": "Projekt komercyjny",
+      "PERSONAL": "Projekt własny",
+      "OPEN_SOURCE": "Open source"
+    }
+  },
+  "project": {
+    "breadcrumb": "Projekty",
+    "breadcrumbLabel": "Ścieżka",
+    "meta": {
+      "kind": "Rodzaj",
+      "role": "Rola",
+      "period": "Okres",
+      "tech": "Technologie"
+    },
+    "links": {
+      "repo": "Zobacz kod",
+      "live": "Wersja demo"
+    },
+    "sections": {
+      "problem": "Problem",
+      "solution": "Rozwiązanie",
+      "outcome": "Rezultat",
+      "lessons": "Wnioski"
+    },
+    "gallery": "Galeria",
+    "cta": {
+      "title": "Potrzebujesz czegoś podobnego?",
+      "action": "Porozmawiajmy o projekcie"
+    },
+    "prev": "Poprzedni projekt",
+    "next": "Następny projekt",
+    "neighbours": "Inne projekty",
+    "viewer": {
+      "close": "Zamknij",
+      "prev": "Poprzednie",
+      "next": "Następne",
+      "position": "Obraz {index} z {total}",
+      "open": "Powiększ: {alt}"
+    }
+  },
+  "skills": {
+    "title": "Umiejętności",
+    "lead": "Każda umiejętność na tej stronie prowadzi do projektów, w których została wykorzystana.",
+    "areas": {
+      "title": "Obszary kompetencji",
+      "evidence": "Potwierdzone w projektach"
+    },
+    "tech": {
+      "title": "Technologie",
+      "since": "od {year}",
+      "projects": "{count, plural, one {# projekt} few {# projekty} many {# projektów} other {# projektu}}",
+      "name": "Technologia",
+      "description": "Jak jej używam",
+      "sinceHeader": "Od kiedy",
+      "projectsHeader": "Projekty"
+    },
+    "category": {
+      "LANGUAGE": "Języki programowania",
+      "BACKEND": "Backend",
+      "FRONTEND": "Frontend",
+      "DATA": "Dane",
+      "INFRASTRUCTURE": "Infrastruktura",
+      "TOOLING": "Narzędzia"
+    },
+    "cta": {
+      "title": "Chcesz wykorzystać te umiejętności w swoim projekcie?",
+      "action": "Porozmawiajmy"
+    },
+    "empty": "Opis umiejętności jest w przygotowaniu.",
+    "emptyAction": "Zobacz projekty"
+  },
+  "services": {
+    "title": "Usługi",
+    "lead": "Pomagam firmom budować i rozwijać niezawodne systemy backendowe.",
+    "includes": "Co obejmuje",
+    "more": "Więcej szczegółów",
+    "less": "Mniej szczegółów",
+    "ask": "Zapytaj o tę usługę",
+    "process": {
+      "title": "Jak wygląda współpraca",
+      "steps": {
+        "1": {
+          "title": "Rozmowa wstępna",
+          "text": "Bezpłatna, 30 minut: poznaję problem i cele."
+        },
+        "2": {
+          "title": "Propozycja",
+          "text": "Pisemny zakres, harmonogram i wycena."
+        },
+        "3": {
+          "title": "Realizacja",
+          "text": "Praca w tygodniowych iteracjach z prezentacją postępów."
+        },
+        "4": {
+          "title": "Przekazanie",
+          "text": "Dokumentacja, testy, wdrożenie i okres wsparcia."
+        }
+      }
+    },
+    "faq": {
+      "title": "Najczęstsze pytania"
+    },
+    "cta": {
+      "title": "Chcesz porozmawiać o swoim projekcie?",
+      "action": "Opisz swój projekt"
+    }
+  },
+  "privacy": {
+    "title": "Polityka prywatności",
+    "updated": "Ostatnia aktualizacja: {date}",
+    "toc": "Spis treści"
+  },
+  "about": {
+    "title": "O mnie",
+    "approach": "Jak pracuję",
+    "links": "Gdzie mnie znaleźć",
+    "cta": {
+      "title": "Masz pomysł albo problem do rozwiązania?",
+      "action": "Porozmawiajmy o projekcie"
+    }
+  },
+  "contact": {
+    "title": "Kontakt",
+    "lead": "Opisz krótko, czego potrzebujesz. Odpiszę z pytaniami albo wstępną wyceną.",
+    "topic": {
+      "PROJECT": "Projekt lub współpraca",
+      "CONSULTATION": "Konsultacja lub przegląd kodu",
+      "OTHER": "Coś innego"
+    },
+    "field": {
+      "name": "Imię i nazwisko",
+      "email": "E-mail",
+      "message": "Czego potrzebujesz?",
+      "consent": "Zgadzam się na przetwarzanie moich danych w celu odpowiedzi na wiadomość.",
+      "website": "Strona internetowa"
+    },
+    "budget": {
+      "UNSURE": "Jeszcze nie wiem",
+      "SMALL": "do 10 000 zł",
+      "MEDIUM": "10 000–30 000 zł",
+      "LARGE": "30 000–80 000 zł",
+      "XLARGE": "powyżej 80 000 zł"
+    },
+    "timeline": {
+      "UNSURE": "Jeszcze nie wiem",
+      "ASAP": "Jak najszybciej",
+      "QUARTER": "W ciągu 3 miesięcy",
+      "LATER": "Później"
+    },
+    "privacyLink": "Polityka prywatności",
+    "projectRef": "Nawiązuję do projektu „{title}”.",
+    "submit": "Wyślij wiadomość",
+    "sending": "Wysyłanie…",
+    "success": {
+      "title": "Wiadomość wysłana",
+      "text": "Dziękuję! Odpowiem w ciągu dwóch dni roboczych na adres {email}.",
+      "again": "Wyślij kolejną wiadomość"
+    },
+    "errors": {
+      "required": "To pole jest wymagane.",
+      "email": "Podaj poprawny adres e-mail – na niego wyślę odpowiedź.",
+      "messageLength": "Wiadomość powinna mieć od 20 do 5000 znaków.",
+      "consent": "Zaznacz zgodę, żeby można było odpowiedzieć.",
+      "nameLength": "Imię i nazwisko powinno mieć od 2 do 120 znaków.",
+      "rateLimit": "Wysłano zbyt wiele wiadomości. Spróbuj ponownie za godzinę albo napisz na {email}.",
+      "bot": "Nie udało się potwierdzić, że wiadomość wysyła człowiek. Odśwież stronę i spróbuj ponownie.",
+      "server": "Nie udało się wysłać wiadomości z powodu błędu serwera. Twój tekst jest zachowany – spróbuj ponownie albo napisz na {email}."
+    },
+    "noscript": "Wysłanie formularza wymaga JavaScriptu. Możesz też napisać bezpośrednio na {email}.",
+    "heading": "Masz projekt? Porozmawiajmy.",
+    "aboutService": "Dotyczy usługi: {service}"
+  }
+}

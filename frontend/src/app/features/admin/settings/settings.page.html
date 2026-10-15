@@ -1,0 +1,190 @@
+<div class="adm-page">
+  <div class="bar">
+    <h1 class="adm-title adm-grow">{{ 'admin.settings.title' | transloco }}</h1>
+    <adm-save-status [savedAt]="savedAt()" [saving]="saving()" />
+    <button mat-flat-button type="submit" form="settings-form" [disabled]="saving() || !profile()" data-testid="save">
+      {{ 'admin.common.save' | transloco }}
+    </button>
+  </div>
+
+  @if (profile()) {
+    <form id="settings-form" [formGroup]="form" (ngSubmit)="save()" novalidate>
+      <section class="adm-section" id="podstawowe" aria-labelledby="basic-title">
+        <h2 id="basic-title">{{ 'admin.settings.basic' | transloco }}</h2>
+        <mat-form-field class="full">
+          <mat-label>{{ 'admin.settings.fullName' | transloco }} *</mat-label>
+          <input matInput id="settings-fullName" formControlName="fullName" autocomplete="name" data-testid="fullName" />
+          @if (apiError('fullName'); as e) {
+            <mat-error>{{ e }}</mat-error>
+          }
+        </mat-form-field>
+        <adm-lang-tabs [(value)]="editLang" panelId="settings-basic" [plStatus]="plState()" [enStatus]="enState()" />
+        <div id="settings-basic" role="tabpanel" [attr.aria-labelledby]="'settings-basic-tab-' + editLang()" class="panel">
+          @for (l of langs; track l) {
+            <div [hidden]="editLang() !== l" [formGroupName]="l">
+              <mat-form-field class="full">
+                <mat-label>{{ 'admin.settings.location' | transloco }}</mat-label>
+                <input matInput [id]="'settings-' + l + '-locationLabel'" formControlName="locationLabel" />
+              </mat-form-field>
+            </div>
+          }
+        </div>
+      </section>
+
+      <section class="adm-section" id="tresc" aria-labelledby="content-title">
+        <h2 id="content-title">{{ 'admin.settings.content' | transloco }}</h2>
+        <adm-lang-tabs [(value)]="editLang" panelId="settings-content" [plStatus]="plState()" [enStatus]="enState()" />
+        <div id="settings-content" role="tabpanel" [attr.aria-labelledby]="'settings-content-tab-' + editLang()" class="panel">
+          @if (editLang() === 'en') {
+            <p class="adm-muted adm-small">{{ 'admin.lang.enOptional' | transloco }}</p>
+          }
+          @for (l of langs; track l) {
+            <div [hidden]="editLang() !== l" [formGroupName]="l">
+              @let headline = form.controls[l].controls.headline.value;
+              <mat-form-field class="full">
+                <mat-label>{{ 'admin.settings.headline' | transloco }} *</mat-label>
+                <input matInput [id]="'settings-' + l + '-headline'" formControlName="headline" [attr.data-testid]="'headline-' + l" />
+                @if (headline.length > headlineWarn) {
+                  <mat-hint class="warn">{{ 'admin.settings.headlineLong' | transloco }}</mat-hint>
+                }
+                <mat-hint align="end">{{ 'admin.common.chars' | transloco: { count: headline.length, max: headlineWarn } }}</mat-hint>
+                @if (apiError(l + '.headline'); as e) {
+                  <mat-error>{{ e }}</mat-error>
+                }
+              </mat-form-field>
+              <adm-markdown-editor
+                formControlName="introMd"
+                [label]="'admin.settings.intro' | transloco"
+                [required]="true"
+                [inputId]="'settings-' + l + '-introMd'"
+                [lang]="l"
+                [rows]="4"
+                [error]="error('translations.' + l + '.introMd')"
+              />
+              <adm-markdown-editor
+                formControlName="aboutMd"
+                [label]="'admin.settings.about' | transloco"
+                [inputId]="'settings-' + l + '-aboutMd'"
+                [lang]="l"
+                [error]="error('translations.' + l + '.aboutMd')"
+              />
+              <adm-markdown-editor
+                formControlName="approachMd"
+                [label]="'admin.settings.approach' | transloco"
+                [inputId]="'settings-' + l + '-approachMd'"
+                [lang]="l"
+                [error]="error('translations.' + l + '.approachMd')"
+              />
+            </div>
+          }
+        </div>
+      </section>
+
+      <section class="adm-section" id="dostepnosc" aria-labelledby="availability-title" formGroupName="availability">
+        <h2 id="availability-title">{{ 'admin.settings.availability' | transloco }}</h2>
+        <div role="radiogroup" aria-labelledby="availability-status-label" class="group">
+          <span id="availability-status-label" class="label">{{ 'admin.settings.status' | transloco }}</span>
+          <mat-radio-group formControlName="status" class="radios">
+            @for (s of statuses; track s) {
+              <mat-radio-button [value]="s" [attr.data-testid]="'availability-' + s">
+                {{ 'admin.settings.availabilityStatus.' + s | transloco }}
+              </mat-radio-button>
+            }
+          </mat-radio-group>
+        </div>
+        <div class="row">
+          <mat-form-field>
+            <mat-label>{{ 'admin.settings.from' | transloco }}</mat-label>
+            <input matInput type="month" id="settings-availability-from" formControlName="from" data-testid="availability-from" />
+          </mat-form-field>
+          <mat-checkbox formControlName="visible" data-testid="availability-visible">{{ 'admin.settings.visible' | transloco }}</mat-checkbox>
+        </div>
+      </section>
+
+      <section class="adm-section" id="linki" aria-labelledby="links-title" formGroupName="socialLinks">
+        <h2 id="links-title">{{ 'admin.settings.links' | transloco }}</h2>
+        <div class="adm-fields three">
+          <mat-form-field>
+            <mat-label>{{ 'admin.settings.github' | transloco }}</mat-label>
+            <input matInput type="url" id="settings-socialLinks-github" formControlName="github" placeholder="https://" />
+            @if (apiError('socialLinks.github'); as e) {
+              <mat-error>{{ e }}</mat-error>
+            }
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>{{ 'admin.settings.linkedin' | transloco }}</mat-label>
+            <input matInput type="url" id="settings-socialLinks-linkedin" formControlName="linkedin" placeholder="https://" />
+            @if (apiError('socialLinks.linkedin'); as e) {
+              <mat-error>{{ e }}</mat-error>
+            }
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>{{ 'admin.settings.email' | transloco }}</mat-label>
+            <input matInput type="email" id="settings-socialLinks-email" formControlName="email" data-testid="links-email" />
+            @if (apiError('socialLinks.email'); as e) {
+              <mat-error>{{ e }}</mat-error>
+            }
+          </mat-form-field>
+        </div>
+      </section>
+
+      <section class="adm-section" id="portret" aria-labelledby="portrait-title">
+        <h2 id="portrait-title">{{ 'admin.settings.portrait' | transloco }}</h2>
+        <adm-media-field
+          fieldId="settings-portraitMediaId"
+          [label]="'admin.settings.portrait' | transloco"
+          [pickLabel]="'admin.settings.portraitPick' | transloco"
+          [value]="form.controls.portraitMediaId.value"
+          (valueChange)="form.controls.portraitMediaId.setValue($event)"
+          [error]="error('portraitMediaId')"
+        />
+      </section>
+
+      <section class="adm-section" id="strona" aria-labelledby="site-title">
+        <h2 id="site-title">{{ 'admin.settings.siteProject' | transloco }}</h2>
+        <mat-form-field>
+          <mat-label>{{ 'admin.settings.siteProjectLabel' | transloco }}</mat-label>
+          <mat-select formControlName="siteProjectId" id="settings-siteProjectId">
+            <mat-option value="">{{ 'admin.settings.siteProjectNone' | transloco }}</mat-option>
+            @for (p of projects(); track p.id) {
+              <mat-option [value]="p.id">{{ p.titlePl }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </section>
+
+      <section class="adm-section" id="autoodpowiedz" aria-labelledby="reply-title">
+        <h2 id="reply-title">{{ 'admin.settings.autoreply' | transloco }}</h2>
+        <adm-lang-tabs [(value)]="editLang" panelId="settings-reply" [plStatus]="plState()" [enStatus]="enState()" />
+        <div id="settings-reply" role="tabpanel" [attr.aria-labelledby]="'settings-reply-tab-' + editLang()" class="panel">
+          @for (l of langs; track l) {
+            <div [hidden]="editLang() !== l" [formGroupName]="l">
+              <mat-form-field class="full">
+                <mat-label>{{ 'admin.settings.subject' | transloco }} *</mat-label>
+                <input matInput [id]="'settings-' + l + '-autoreplySubject'" formControlName="autoreplySubject" [attr.data-testid]="'subject-' + l" />
+                @if (apiError(l + '.autoreplySubject'); as e) {
+                  <mat-error>{{ e }}</mat-error>
+                }
+              </mat-form-field>
+              <adm-markdown-editor
+                formControlName="autoreplyBodyMd"
+                [label]="'admin.settings.body' | transloco"
+                [required]="true"
+                [inputId]="'settings-' + l + '-autoreplyBodyMd'"
+                [lang]="l"
+                [rows]="6"
+                [hint]="'admin.settings.placeholderHint' | transloco"
+                [error]="error('translations.' + l + '.autoreplyBodyMd')"
+              />
+            </div>
+          }
+          <button mat-stroked-button type="button" (click)="testMail()" data-testid="test-mail">
+            {{ 'admin.settings.testMail' | transloco: { lang: ('admin.lang.' + editLang() | transloco) } }}
+          </button>
+        </div>
+      </section>
+    </form>
+  } @else {
+    <p class="adm-muted">{{ 'admin.common.loading' | transloco }}</p>
+  }
+</div>

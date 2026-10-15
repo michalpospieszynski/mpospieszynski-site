@@ -1,0 +1,117 @@
+@use 'breakpoints' as *;
+
+// Skills (docs/screens/public/05-skills.md, DIRECTION.md): areas as ruled rows (title | text, tags, evidence),
+// the technology tables per category, then the champagne call to action.
+.skills {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--section-pad);
+  padding-bottom: var(--section-pad);
+}
+
+.page-head {
+  padding-bottom: 0;
+}
+
+.areas,
+.tech {
+  display: grid;
+  gap: var(--space-6);
+}
+
+.area {
+  display: grid;
+  gap: var(--space-4) 40px;
+
+  @include bp(md) {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+  }
+
+  .row__title {
+    font-size: 1.625rem;
+  }
+}
+
+.area__body {
+  display: grid;
+  gap: var(--space-4);
+  color: var(--color-body);
+}
+
+.area__summary {
+  color: var(--color-ink);
+  font-size: 1.0625rem;
+  font-weight: 600;
+}
+
+.area__evidence {
+  display: grid;
+  gap: var(--space-2);
+
+  ul {
+    display: grid;
+    gap: var(--space-1);
+  }
+}
+
+.label {
+  margin-left: var(--space-2);
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-tag);
+  background: var(--color-stage);
+  color: var(--color-stage-ink);
+  font-weight: 600;
+}
+
+.tech__group {
+  display: grid;
+  gap: var(--space-3);
+
+  h3 {
+    color: var(--color-muted);
+    font-family: var(--font-text);
+    font-size: var(--step-small);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+}
+
+.tech__table {
+  width: 100%;
+  border-collapse: collapse;
+
+  tr {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: var(--space-1) var(--space-5);
+    padding: var(--space-4) 0;
+    border-top: 1px solid var(--color-line);
+
+    @include bp(md) {
+      grid-template-columns: minmax(10rem, 1fr) minmax(0, 3fr) 6rem 7rem;
+      align-items: baseline;
+    }
+  }
+
+  th {
+    font-weight: 600;
+    text-align: left;
+  }
+
+  td {
+    padding: 0;
+    color: var(--color-body);
+  }
+
+  // On phones the description wraps under the name, full width.
+  .tech__description {
+    grid-column: 1 / -1;
+    grid-row: 2;
+
+    @include bp(md) {
+      grid-column: auto;
+      grid-row: auto;
+    }
+  }
+}

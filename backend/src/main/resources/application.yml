@@ -1,0 +1,81 @@
+spring:
+  application:
+    name: site-api
+  threads:
+    virtual:
+      enabled: true
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate.default_schema: site
+  flyway:
+    schemas: site
+    default-schema: site
+  servlet:
+    multipart:
+      # Uploads above 5 MB are refused by the media service with a clear message; this is the hard ceiling.
+      max-file-size: 10MB
+      max-request-size: 11MB
+  messages:
+    # messages.properties is Polish (the default language); messages_en.properties English.
+    basename: messages
+    fallback-to-system-locale: false
+  datasource:
+    hikari:
+      # Every connection works in the `site` schema (JdbcClient, native queries), like Hibernate and Flyway.
+      schema: site
+      maximum-pool-size: 5
+      minimum-idle: 1
+
+server:
+  port: 8080
+
+springdoc:
+  # Responses are JSON; without this the spec says */* and the generated client reads them as blobs.
+  default-produces-media-type: application/json
+  api-docs:
+    path: /api/v3/api-docs
+  swagger-ui:
+    enabled: false
+  paths-to-match: /api/**
+
+site:
+  supabase:
+    # Local default (Supabase CLI) for dev and tests; production sets SUPABASE_URL (required there, see application-prod.yml).
+    url: ${SUPABASE_URL:http://localhost:54321}
+  security:
+    jwk-set-uri: ${site.supabase.url}/auth/v1/.well-known/jwks.json
+    jwt-issuer: ${site.supabase.url}/auth/v1
+    jwt-audience: authenticated
+  storage:
+    type: supabase
+    supabase-url: ${site.supabase.url}
+    bucket: ${SUPABASE_STORAGE_BUCKET:media}
+    publishable-key: ${SUPABASE_PUBLISHABLE_KEY:}
+    local-dir: build/dev-media
+  privacy:
+    # Dev/test default only; production requires IP_HASH_SALT (application-prod.yml).
+    ip-hash-salt: ${IP_HASH_SALT:dev-only-ip-hash-salt}
+  contact:
+    owner-to: ${MAIL_OWNER_TO:owner@localhost}
+    from: ${MAIL_FROM:no-reply@localhost}
+    admin-base-url: ${SITE_BASE_URL:http://localhost:4200}
+    retention: P12M
+    per-hour: 5
+  turnstile:
+    # Cloudflare's test secret accepts every token (dev and tests); production requires TURNSTILE_SECRET_KEY.
+    secret-key: ${TURNSTILE_SECRET_KEY:1x0000000000000000000000000000000AA}
+    verify-url: https://challenges.cloudflare.com/turnstile/v0/siteverify
+
+management:
+  endpoints:
+    web:
+      base-path: /api/actuator
+      exposure:
+        include: health
+  endpoint:
+    health:
+      probes:
+        enabled: true

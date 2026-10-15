@@ -1,0 +1,190 @@
+@startuml domain
+title Domain model with translations (UML class diagram)
+
+skinparam shadowing false
+skinparam defaultFontName "Helvetica"
+skinparam class {
+  BackgroundColor #FFFFFF
+  BorderColor #172330
+}
+hide methods
+hide empty members
+
+enum SiteLocale {
+  PL
+  EN
+}
+enum Availability {
+  OPEN
+  LIMITED
+  CLOSED
+}
+enum ProjectStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+enum ProjectKind {
+  CLIENT
+  PERSONAL
+  OPEN_SOURCE
+}
+enum TechCategory {
+  LANGUAGE
+  BACKEND
+  FRONTEND
+  DATA
+  INFRASTRUCTURE
+  TOOLING
+}
+enum MessageTopic {
+  PROJECT
+  CONSULTATION
+  OTHER
+}
+enum MessageStatus {
+  NEW
+  READ
+  REPLIED
+  ARCHIVED
+  SPAM
+}
+
+class SiteSettings {
+  fullName : String
+  availability : Availability
+  availableFrom : LocalDate
+  showAvailability : boolean
+  socialLinks : Map<String,String>
+}
+class SiteSettingsTranslation {
+  locale : SiteLocale
+  headline : String
+  introMd : String
+  aboutMd : String
+  approachMd : String
+  locationLabel : String
+  autoreplySubject : String
+  autoreplyBodyMd : String
+}
+class Project {
+  id : UUID
+  status : ProjectStatus
+  kind : ProjectKind
+  featured : boolean
+  sortOrder : int
+  startedOn : LocalDate
+  finishedOn : LocalDate
+  repoUrl : URI
+  liveUrl : URI
+  version : long
+}
+class ProjectTranslation {
+  locale : SiteLocale
+  slug : String
+  title : String
+  summary : String
+  role : String
+  problemMd : String
+  solutionMd : String
+  outcomeMd : String
+  lessonsMd : String
+  seoDescription : String
+}
+class Technology {
+  id : UUID
+  slug : String
+  name : String
+  category : TechCategory
+  showOnSkillsPage : boolean
+  sinceYear : Integer
+  sortOrder : int
+}
+class TechnologyTranslation {
+  locale : SiteLocale
+  description : String
+}
+class ExpertiseArea {
+  id : UUID
+  icon : String
+  sortOrder : int
+}
+class ExpertiseAreaTranslation {
+  locale : SiteLocale
+  title : String
+  summary : String
+  descriptionMd : String
+}
+class Media {
+  id : UUID
+  storageKey : String
+  mimeType : String
+  width : int
+  height : int
+}
+class MediaTranslation {
+  locale : SiteLocale
+  altText : String
+  caption : String
+}
+class ProjectMedia {
+  sortOrder : int
+}
+class ServiceOffering {
+  id : UUID
+  active : boolean
+  sortOrder : int
+}
+class ServiceTranslation {
+  locale : SiteLocale
+  title : String
+  summary : String
+  descriptionMd : String
+  deliverablesMd : String
+  priceNote : String
+}
+class Faq {
+  sortOrder : int
+}
+class FaqTranslation {
+  locale : SiteLocale
+  question : String
+  answerMd : String
+}
+class ContactMessage {
+  id : UUID
+  locale : SiteLocale
+  name : String
+  email : String
+  company : String
+  topic : MessageTopic
+  budgetRange : String
+  timeline : String
+  message : String
+  status : MessageStatus
+  ipHash : String
+  createdAt : Instant
+}
+
+SiteSettings "1" *-- "1..2" SiteSettingsTranslation
+SiteSettings "*" --> "0..1" Media : portrait
+SiteSettings "*" --> "0..1" Project : siteProject
+Project "1" *-- "1..2" ProjectTranslation
+Project "*" -- "*" Technology : uses
+Project "*" --> "0..1" Media : cover
+Project "1" *-- "*" ProjectMedia : gallery
+ProjectMedia "*" --> "1" Media
+Media "1" *-- "0..2" MediaTranslation
+Technology "1" *-- "0..2" TechnologyTranslation
+ExpertiseArea "1" *-- "1..2" ExpertiseAreaTranslation
+ExpertiseArea "*" -- "*" Technology : groups
+ExpertiseArea "*" -- "*" Project : provenBy
+ServiceOffering "1" *-- "1..2" ServiceTranslation
+Faq "1" *-- "1..2" FaqTranslation
+ContactMessage "*" --> "0..1" ServiceOffering : about
+
+note bottom of ProjectTranslation
+  PL row required, EN optional.
+  Unique (locale, slug).
+end note
+@enduml

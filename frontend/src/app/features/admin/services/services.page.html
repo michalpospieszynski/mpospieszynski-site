@@ -1,0 +1,63 @@
+<div class="adm-page">
+  <div class="adm-head">
+    <h1 class="adm-title adm-grow">{{ 'admin.services.title' | transloco }}</h1>
+    <button mat-flat-button type="button" (click)="add()" data-testid="item-new">{{ 'admin.services.add' | transloco }}</button>
+  </div>
+
+  <nav class="adm-tabs" [attr.aria-label]="'admin.services.tabs' | transloco">
+    <a class="adm-tab" routerLink="/admin/uslugi" [queryParams]="{ tab: 'uslugi' }"
+      [class.active]="current() === 'uslugi'" [attr.aria-current]="current() === 'uslugi' ? 'page' : null"
+      data-testid="tab-services">{{ 'admin.services.tab.services' | transloco }}</a>
+    <a class="adm-tab" routerLink="/admin/uslugi" [queryParams]="{ tab: 'faq' }"
+      [class.active]="current() === 'faq'" [attr.aria-current]="current() === 'faq' ? 'page' : null"
+      data-testid="tab-faq">{{ 'admin.services.tab.faq' | transloco }}</a>
+  </nav>
+
+  @if (current() === 'uslugi') {
+    @if (services().length) {
+      <ul class="adm-list" cdkDropList (cdkDropListDropped)="dropService($event)" data-testid="services-list">
+        @for (s of services(); track s.id; let i = $index; let last = $last) {
+          <li class="adm-row" cdkDrag cdkDragLockAxis="y" data-testid="service-row">
+            <span class="adm-handle" cdkDragHandle aria-hidden="true">⋮⋮</span>
+            <button type="button" class="adm-mini" [disabled]="i === 0" (click)="moveService(i, -1)"
+              [attr.aria-label]="'admin.common.moveUp' | transloco: { name: title(s) }">↑</button>
+            <button type="button" class="adm-mini" [disabled]="last" (click)="moveService(i, 1)"
+              [attr.aria-label]="'admin.common.moveDown' | transloco: { name: title(s) }">↓</button>
+            <span class="adm-grow">{{ title(s) }}</span>
+            <mat-slide-toggle
+              [checked]="!!s.active"
+              (change)="setActive(s, $event.checked)"
+              [aria-label]="'admin.services.activeToggle' | transloco: { name: title(s) }"
+              data-testid="service-active"
+            >
+              <span class="adm-small">{{ (s.active ? 'admin.services.active' : 'admin.services.inactive') | transloco }}</span>
+            </mat-slide-toggle>
+            <span class="adm-chip" [attr.data-state]="s.enStatus">{{ 'admin.lang.status.' + s.enStatus | transloco }}</span>
+            <button mat-button type="button" (click)="editService(s)" data-testid="service-edit">{{ 'admin.common.edit' | transloco }}</button>
+          </li>
+        }
+      </ul>
+    } @else if (loaded()) {
+      <p class="adm-empty">{{ 'admin.services.emptyServices' | transloco }}</p>
+    }
+  } @else {
+    @if (faq().length) {
+      <ul class="adm-list" cdkDropList (cdkDropListDropped)="dropFaq($event)" data-testid="faq-list">
+        @for (f of faq(); track f.id; let i = $index; let last = $last) {
+          <li class="adm-row" cdkDrag cdkDragLockAxis="y" data-testid="faq-row">
+            <span class="adm-handle" cdkDragHandle aria-hidden="true">⋮⋮</span>
+            <button type="button" class="adm-mini" [disabled]="i === 0" (click)="moveFaq(i, -1)"
+              [attr.aria-label]="'admin.common.moveUp' | transloco: { name: question(f) }">↑</button>
+            <button type="button" class="adm-mini" [disabled]="last" (click)="moveFaq(i, 1)"
+              [attr.aria-label]="'admin.common.moveDown' | transloco: { name: question(f) }">↓</button>
+            <span class="adm-grow">{{ question(f) }}</span>
+            <span class="adm-chip" [attr.data-state]="f.enStatus">{{ 'admin.lang.status.' + f.enStatus | transloco }}</span>
+            <button mat-button type="button" (click)="editFaq(f)" data-testid="faq-edit">{{ 'admin.common.edit' | transloco }}</button>
+          </li>
+        }
+      </ul>
+    } @else if (loaded()) {
+      <p class="adm-empty">{{ 'admin.services.emptyFaq' | transloco }}</p>
+    }
+  }
+</div>

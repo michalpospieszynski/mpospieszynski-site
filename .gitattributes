@@ -1,0 +1,9 @@
+# Text is stored with LF; scripts that run inside Linux containers must stay LF on Windows checkouts too.
+* text=auto eol=lf
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.jar binary
+*.png binary
+*.jpg binary
+*.webp binary
+*.woff2 binary

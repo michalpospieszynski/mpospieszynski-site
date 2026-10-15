@@ -1,0 +1,136 @@
+<div class="container projects">
+  <header class="page-head">
+    <h1>{{ 'projects.title' | transloco }}</h1>
+    <p>{{ 'projects.intro' | transloco }}</p>
+  </header>
+
+  @if (data().notTranslated) {
+    <p class="projects__note card" role="note" data-testid="not-translated-note">
+      {{ 'projects.notTranslatedNote' | transloco }}
+    </p>
+  }
+
+  <div class="projects__filters">
+    <nav [attr.aria-label]="'projects.filter.label' | transloco">
+      <ul role="list" class="kinds" data-testid="kind-filter">
+        <li>
+          <a
+            [routerLink]="listPath()"
+            [queryParams]="{ tech: data().tech }"
+            [attr.aria-current]="data().kind === null ? 'true' : null"
+            >{{ 'projects.filter.all' | transloco }}</a
+          >
+        </li>
+        @for (kind of kinds; track kind) {
+          <li>
+            <a
+              [routerLink]="listPath()"
+              [queryParams]="{ kind: kind, tech: data().tech }"
+              [attr.aria-current]="data().kind === kind ? 'true' : null"
+              [attr.data-testid]="'kind-' + kind"
+              >{{ 'projects.filter.kind.' + kind | transloco }}</a
+            >
+          </li>
+        }
+      </ul>
+    </nav>
+
+    <form class="tech" method="get" [attr.action]="listPath()" (submit)="onSubmit($event)">
+      @if (data().kind; as kind) {
+        <input type="hidden" name="kind" [value]="kind" />
+      }
+      <label for="tech-filter">{{ 'projects.filter.tech' | transloco }}</label>
+      <select id="tech-filter" name="tech" (change)="onTechChange($event)" data-testid="tech-filter">
+        <option value="" [selected]="data().tech === null">{{ 'projects.filter.techAny' | transloco }}</option>
+        @for (tech of data().technologies; track tech.slug) {
+          <option [value]="tech.slug" [selected]="tech.slug === data().tech">{{ tech.name }}</option>
+        }
+      </select>
+      <button type="submit" class="tech__apply" [hidden]="enhanced()" data-testid="tech-apply">
+        {{ 'projects.filter.apply' | transloco }}
+      </button>
+    </form>
+  </div>
+
+  <div class="projects__results">
+    <div class="results-head">
+      <!-- Always present, so screen readers announce the count when filters change. -->
+      <p aria-live="polite" data-testid="result-count">
+        @if (filtered()) {
+          {{ 'projects.count' | transloco: { count: data().projects.length } }}
+        }
+      </p>
+      @if (filtered()) {
+        <ui-button variant="text" [link]="listPath()" data-testid="clear-filters">{{
+          'projects.clear' | transloco
+        }}</ui-button>
+      }
+    </div>
+
+    @if (filtered()) {
+      @if (data().projects.length) {
+        <ul role="list" class="items" data-testid="project-items">
+          @for (project of data().projects; track project.id) {
+            <li>
+              <ui-project-item
+                [title]="project.title"
+                [link]="project.link"
+                [kind]="'projects.kindLabel.' + project.kind | transloco"
+                [tech]="project.technologies.map((t) => t.name)"
+                [year]="project.years"
+                [polishOnly]="project.polishOnly"
+              />
+            </li>
+          }
+        </ul>
+      } @else {
+        <ui-empty [message]="'projects.empty' | transloco">
+          <ui-button variant="text" [link]="listPath()">{{ 'projects.clear' | transloco }}</ui-button>
+        </ui-empty>
+      }
+    } @else {
+      <ul role="list" class="features" data-testid="project-features">
+        @for (project of featured(); track project.id) {
+          <li>
+            <ui-project-feature
+              [title]="project.title"
+              [outcome]="project.summary"
+              [link]="project.link"
+              [meta]="
+                ('projects.kindLabel.' + project.kind | transloco) +
+                (project.role ? ' · ' + project.role : '') +
+                ' · ' +
+                project.years
+              "
+              [imageUrl]="project.coverUrl ?? undefined"
+              [imageAlt]="project.coverAlt"
+              [tags]="project.technologies"
+              [polishOnly]="project.polishOnly"
+              [headingLevel]="2"
+            />
+          </li>
+        }
+      </ul>
+
+      @if (others().length) {
+        <section class="others" aria-labelledby="others-heading">
+          <h2 id="others-heading">{{ 'projects.others' | transloco }}</h2>
+          <ul role="list" class="items" data-testid="project-items">
+            @for (project of others(); track project.id) {
+              <li>
+                <ui-project-item
+                  [title]="project.title"
+                  [link]="project.link"
+                  [kind]="'projects.kindLabel.' + project.kind | transloco"
+                  [tech]="project.technologies.map((t) => t.name)"
+                  [year]="project.years"
+                  [polishOnly]="project.polishOnly"
+                />
+              </li>
+            }
+          </ul>
+        </section>
+      }
+    }
+  </div>
+</div>

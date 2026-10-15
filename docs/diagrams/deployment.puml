@@ -1,0 +1,87 @@
+@startuml deployment
+title Personal website - UML deployment diagram
+
+skinparam shadowing false
+skinparam defaultFontName "Helvetica"
+skinparam node {
+  BackgroundColor #FFFFFF
+  BorderColor #172330
+}
+skinparam artifact {
+  BackgroundColor #EEF1F3
+  BorderColor #55626F
+}
+skinparam cloud {
+  BackgroundColor #FFF4E2
+  BorderColor #8F5500
+}
+
+actor "Visitor" as act_visitor
+actor "Owner (admin)" as act_owner
+
+node "Client device" <<device>> as n_device {
+  node "Web browser" <<executionEnvironment>> as n_browser {
+    artifact "Angular public app\n(hydrated SSR pages, PL and EN)" as a_ng_public
+    artifact "Angular admin bundle\n(lazy, supabase-js)" as a_ng_admin
+  }
+}
+
+cloud "Cloudflare (free plan)" as cl_cloudflare {
+  node "Edge network" as n_cf_edge {
+    artifact "DNS, TLS, CDN cache,\nWAF, redirect rules" as a_cf_edge
+  }
+  artifact "Turnstile" as a_cf_turnstile
+  artifact "Web Analytics" as a_cf_analytics
+  artifact "Zero Trust Access" as a_cf_access
+}
+
+node "VPS (2 vCPU, 8 GB RAM)" <<device>> as n_vps {
+  node "Docker Engine" <<executionEnvironment>> as n_docker {
+    node "container cloudflared" as n_ctr_tunnel {
+      artifact "cloudflared\n(tunnel ingress rules)" as a_tunnel
+    }
+    node "container web" as n_ctr_web {
+      artifact "Angular SSR server\n(Node.js, port 4000)" as a_ssr
+    }
+    node "container api" as n_ctr_api {
+      artifact "site-api.jar\n(Spring Boot, port 8080)" as a_api
+    }
+  }
+}
+
+cloud "Supabase (free plan)" as cl_supabase {
+  artifact "Auth\n(JWT, JWKS)" as a_sb_auth
+  artifact "Supavisor\nsession pooler" as a_sb_pooler
+  database "PostgreSQL\nschema site" as db_sb_postgres
+  artifact "Storage\nbucket media" as a_sb_storage
+}
+
+cloud "SMTP provider" as cl_smtp
+cloud "GitHub" as cl_github {
+  artifact "Actions (CI/CD)" as a_gh_actions
+  artifact "Container registry (GHCR)" as a_gh_registry
+}
+cloud "External uptime monitor" as cl_monitor
+
+act_visitor --> n_browser
+act_owner --> n_browser
+n_browser --> a_cf_edge : HTTPS
+a_ng_public ..> a_cf_turnstile : challenge (contact page)
+a_ng_public ..> a_cf_analytics : beacon
+a_cf_edge --> a_tunnel : Cloudflare Tunnel\n(outbound from VPS)
+a_tunnel --> a_ssr : HTTP, all other paths
+a_tunnel --> a_api : HTTP, /api, /media,\nsitemap, robots
+a_ssr --> a_api : HTTP, internal network
+a_api --> a_sb_pooler : JDBC over TLS
+a_sb_pooler --> db_sb_postgres
+a_api --> a_sb_storage : Storage API
+a_api --> a_sb_auth : JWKS (cached)
+a_ng_admin --> a_sb_auth : sign in, refresh
+a_api --> a_cf_turnstile : siteverify
+a_api --> cl_smtp : SMTP
+a_gh_actions --> a_gh_registry : push images
+a_gh_actions --> a_cf_access : SSH via Access (optional)
+a_cf_access --> n_vps : deploy
+n_vps --> a_gh_registry : docker pull
+cl_monitor --> a_cf_edge : probe / and /en
+@enduml

@@ -1,0 +1,32 @@
+<section class="container section contact" aria-labelledby="contact-heading">
+  <div class="columns columns--5-7">
+    <div class="columns__intro intro">
+      <h1 id="contact-heading">{{ 'contact.heading' | transloco }}</h1>
+      <p class="section__sub">{{ 'contact.lead' | transloco }}</p>
+      @if (ownerEmail()) {
+        <a class="email" [href]="'mailto:' + ownerEmail()" data-testid="contact-email">{{ ownerEmail() }}</a>
+      }
+      @if (socials().length) {
+        <p class="text-muted" data-testid="alt-contact">
+          @for (social of socials(); track social.kind; let first = $first) {
+            @if (!first) {
+              ·
+            }
+            <a [href]="social.href" rel="me noopener">{{ 'common.social.' + social.kind | transloco }}</a>
+          }
+        </p>
+      }
+      @if (availability(); as a) {
+        <ui-availability [status]="a.status" [from]="a.from ?? undefined" data-testid="availability" />
+      }
+    </div>
+
+    <app-contact-form
+      idPrefix="contact"
+      [topic]="data().topic"
+      [serviceId]="data().serviceId"
+      [serviceTitle]="serviceTitle()"
+      [projectTitle]="data().projectTitle"
+    />
+  </div>
+</section>

@@ -1,0 +1,135 @@
+<h2 mat-dialog-title>{{ config.title | transloco }}</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form" (ngSubmit)="save()" [id]="config.idPrefix + '-form'" novalidate>
+    <ng-template #sharedFields>
+      <div formGroupName="shared" class="fields">
+        @for (f of config.shared; track f.name) {
+          @let label = (f.label | transloco) + (f.required ? ' *' : '');
+          @switch (f.kind) {
+            @case ('checkbox') {
+              <mat-checkbox [formControlName]="f.name" [id]="id(f.name)" [attr.data-testid]="id(f.name)">{{ f.label | transloco }}</mat-checkbox>
+            }
+            @case ('select') {
+              <mat-form-field>
+                <mat-label>{{ label }}</mat-label>
+                <mat-select [formControlName]="f.name" [id]="id(f.name)" [attr.data-testid]="id(f.name)">
+                  @for (o of f.options; track o.value) {
+                    <mat-option [value]="o.value">{{ o.label }}</mat-option>
+                  }
+                </mat-select>
+                @if (sharedError(f.name); as e) {
+                  <mat-error>{{ e }}</mat-error>
+                }
+              </mat-form-field>
+            }
+            @case ('multi') {
+              <mat-form-field>
+                <mat-label>{{ label }}</mat-label>
+                <mat-select [formControlName]="f.name" multiple [id]="id(f.name)" [attr.data-testid]="id(f.name)">
+                  @for (o of f.options; track o.value) {
+                    <mat-option [value]="o.value">
+                      {{ o.label }}
+                      @if (o.note) {
+                        <span class="adm-chip">{{ o.note }}</span>
+                      }
+                    </mat-option>
+                  }
+                </mat-select>
+                @if (sharedError(f.name); as e) {
+                  <mat-error>{{ e }}</mat-error>
+                }
+              </mat-form-field>
+            }
+            @default {
+              <mat-form-field>
+                <mat-label>{{ label }}</mat-label>
+                <input
+                  matInput
+                  [type]="f.kind === 'number' ? 'number' : 'text'"
+                  [formControlName]="f.name"
+                  [id]="id(f.name)"
+                  [attr.data-testid]="id(f.name)"
+                />
+                @if (sharedError(f.name); as e) {
+                  <mat-error>{{ e }}</mat-error>
+                }
+              </mat-form-field>
+            }
+          }
+        }
+      </div>
+    </ng-template>
+
+    @if (config.sharedFirst) {
+      <ng-container *ngTemplateOutlet="sharedFields" />
+    }
+
+    <adm-lang-tabs [(value)]="lang" [panelId]="config.idPrefix + '-texts'" [plStatus]="plState()" [enStatus]="enState()" />
+    <div [id]="config.idPrefix + '-texts'" role="tabpanel" [attr.aria-labelledby]="config.idPrefix + '-texts-tab-' + lang()" class="texts">
+      @if (lang() === 'en') {
+        <p class="adm-muted adm-small">{{ 'admin.lang.enOptional' | transloco }}</p>
+      }
+      @for (l of langs; track l) {
+        <div [hidden]="lang() !== l" [formGroupName]="l" class="fields">
+          @for (f of config.texts; track f.name) {
+            @if (f.kind === 'md') {
+              <adm-markdown-editor
+                [formControlName]="f.name"
+                [label]="f.label | transloco"
+                [required]="required(f, l)"
+                [inputId]="id(f.name, l)"
+                [lang]="l"
+                [rows]="6"
+                [hint]="f.hint ? (f.hint | transloco) : null"
+                [error]="textError(l, f.name)"
+              />
+            } @else {
+              <mat-form-field>
+                <mat-label>{{ (f.label | transloco) + (required(f, l) ? ' *' : '') }}</mat-label>
+                @if (f.kind === 'area') {
+                  <textarea
+                    matInput
+                    rows="3"
+                    [formControlName]="f.name"
+                    [id]="id(f.name, l)"
+                    [attr.maxlength]="f.max ?? null"
+                    [attr.data-testid]="id(f.name, l)"
+                  ></textarea>
+                } @else {
+                  <input matInput [formControlName]="f.name" [id]="id(f.name, l)" [attr.data-testid]="id(f.name, l)" />
+                }
+                @if (f.hint) {
+                  <mat-hint>{{ f.hint | transloco }}</mat-hint>
+                }
+                @if (f.max) {
+                  <mat-hint align="end">{{ 'admin.common.chars' | transloco: { count: length(l, f.name), max: f.max } }}</mat-hint>
+                }
+                @if (textError(l, f.name); as e) {
+                  <mat-error>{{ e }}</mat-error>
+                }
+              </mat-form-field>
+            }
+          }
+        </div>
+      }
+    </div>
+
+    @if (!config.sharedFirst) {
+      <ng-container *ngTemplateOutlet="sharedFields" />
+    }
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  @if (config.remove) {
+    <button mat-button type="button" class="adm-danger" (click)="remove()" data-testid="item-delete">
+      {{ 'admin.common.delete' | transloco }}
+    </button>
+  }
+  <span class="spacer"></span>
+  <button mat-button type="button" (click)="close()">{{ 'admin.common.cancel' | transloco }}</button>
+  <button mat-flat-button type="submit" [attr.form]="config.idPrefix + '-form'" [disabled]="saving()" data-testid="item-save">
+    {{ 'admin.common.save' | transloco }}
+  </button>
+</mat-dialog-actions>

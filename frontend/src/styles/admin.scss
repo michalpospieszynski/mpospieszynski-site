@@ -1,0 +1,321 @@
+// Angular Material theme for the admin only (docs/screens/admin/01-admin-shell.md, Technical hints).
+// Built as a separate, non-injected bundle (angular.json, bundleName "admin"): the admin root links it at
+// runtime, so public pages never download it. Every colour, corner and face comes from the site tokens
+// (DIRECTION.md: Emerald Ink, champagne accent, pills and soft corners, Syne titles).
+@use '@angular/material' as mat;
+
+:root {
+  @include mat.theme(
+    (
+      color: (
+        // Follows the color-scheme each site theme sets (tokens.scss), for the few Material colours not overridden below.
+        theme-type: color-scheme,
+        primary: mat.$orange-palette,
+      ),
+      typography: (
+        plain-family: var(--font-text),
+        brand-family: var(--font-display),
+      ),
+      density: -1,
+    )
+  );
+
+  @include mat.theme-overrides(
+    (
+      primary: var(--color-stage),
+      on-primary: var(--color-stage-ink),
+      primary-container: var(--color-raised-2),
+      on-primary-container: var(--color-ink),
+      secondary-container: var(--color-raised-2),
+      on-secondary-container: var(--color-ink),
+      background: var(--color-ground),
+      on-background: var(--color-ink),
+      surface: var(--color-ground),
+      on-surface: var(--color-ink),
+      on-surface-variant: var(--color-muted),
+      surface-container-lowest: var(--color-ground),
+      surface-container-low: var(--color-band),
+      surface-container: var(--color-raised),
+      surface-container-high: var(--color-raised-2),
+      surface-container-highest: var(--color-raised-2),
+      surface-variant: var(--color-raised-2),
+      inverse-surface: var(--color-ink),
+      inverse-on-surface: var(--color-ground),
+      inverse-primary: var(--color-stage),
+      outline: var(--color-field),
+      outline-variant: var(--color-line),
+      error: var(--color-busy),
+      on-error: var(--color-stage-ink),
+      corner-extra-small: 8px,
+      corner-small: var(--radius-input),
+      corner-medium: var(--radius-input),
+      corner-large: var(--radius-panel),
+      corner-extra-large: var(--radius-card),
+      corner-full: var(--radius-pill),
+    )
+  );
+}
+
+// Page scaffolding shared by every admin screen (global, because this bundle only loads in the admin).
+.adm-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3) var(--space-4);
+  margin-bottom: var(--space-5);
+}
+.adm-head .adm-title {
+  margin: 0;
+}
+.adm-head .adm-grow {
+  flex: 1;
+}
+.adm-title {
+  margin: 0 0 var(--space-5);
+  font-family: var(--font-display);
+  font-size: var(--step-lead);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.015em;
+}
+.adm-subtitle {
+  margin: var(--space-6) 0 var(--space-3);
+  font-family: var(--font-display);
+  font-size: var(--step-body);
+  font-weight: 600;
+}
+.adm-muted {
+  color: var(--color-muted);
+}
+.adm-small {
+  font-size: var(--step-small);
+}
+.adm-empty {
+  padding: var(--space-6) 0;
+  color: var(--color-muted);
+}
+.adm-card {
+  padding: var(--space-5);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-panel);
+  background: var(--color-raised);
+}
+.adm-chip {
+  display: inline-block;
+  padding: 0 var(--space-2);
+  border: 1px solid var(--color-control);
+  border-radius: var(--radius-pill);
+  font-size: var(--step-small);
+  font-weight: 600;
+  white-space: nowrap;
+}
+.adm-chip[data-state='COMPLETE'],
+.adm-chip[data-state='PUBLISHED'] {
+  color: var(--color-ok);
+}
+.adm-chip[data-state='MISSING'] {
+  color: var(--color-busy);
+}
+.adm-section {
+  margin-bottom: var(--space-6);
+  padding: var(--space-5);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-panel);
+  background: var(--color-band);
+}
+.adm-section > h2 {
+  margin: 0 0 var(--space-4);
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+.adm-fields {
+  display: grid;
+  gap: var(--space-1) var(--space-4);
+}
+.adm-fields mat-form-field {
+  width: 100%;
+}
+@media (min-width: 900px) {
+  .adm-fields.two {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+.adm-error {
+  color: var(--color-busy);
+}
+.adm-danger {
+  color: var(--color-busy) !important;
+}
+.adm-handle {
+  cursor: grab;
+  color: var(--color-muted);
+  user-select: none;
+}
+.adm-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.adm-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-2);
+  border-bottom: 1px solid var(--color-line);
+  background: var(--color-ground);
+}
+.adm-row .adm-grow {
+  flex: 1;
+  min-width: 0;
+}
+.cdk-drag-preview {
+  box-shadow: 0 8px 24px var(--color-shadow);
+  border-radius: var(--radius-input);
+}
+.cdk-drag-placeholder {
+  opacity: 0.3;
+}
+.cdk-drag-animating,
+.cdk-drop-list-dragging .cdk-drag:not(.cdk-drag-placeholder) {
+  transition: transform var(--dur-sheet) var(--ease-in-out);
+}
+
+// Entrance of each admin page: a short rise, transform and opacity only.
+.adm-page {
+  animation: adm-enter var(--dur-sheet) var(--ease-out) both;
+}
+@keyframes adm-enter {
+  from {
+    opacity: 0;
+    transform: translateY(calc(var(--rise) / 3));
+  }
+}
+
+// Filter tabs (links with aria-current), tables, small icon buttons and text buttons.
+.adm-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  margin-bottom: var(--space-4);
+}
+.adm-tab {
+  padding: var(--space-2) 14px;
+  border: 1px solid var(--color-control);
+  border-radius: var(--radius-pill);
+  color: var(--color-ink);
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color var(--dur-hover) var(--ease-out), transform var(--dur-press) var(--ease-out);
+}
+.adm-tab:hover {
+  border-color: var(--color-ink);
+}
+.adm-tab:active {
+  transform: scale(var(--press));
+}
+.adm-tab.active {
+  border-color: var(--color-stage);
+  background: var(--color-stage);
+  color: var(--color-stage-ink);
+}
+.adm-table-wrap {
+  overflow-x: auto;
+}
+.adm-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.adm-table th {
+  padding: var(--space-2) var(--space-3);
+  color: var(--color-muted);
+  font-size: var(--step-small);
+  font-weight: 600;
+  text-align: left;
+}
+.adm-table td {
+  padding: var(--space-2) var(--space-3);
+  border-top: 1px solid var(--color-line);
+  vertical-align: middle;
+}
+.adm-table tr.cdk-drag {
+  background: var(--color-ground);
+}
+.adm-nowrap {
+  white-space: nowrap;
+}
+.adm-mini {
+  min-width: 28px;
+  min-height: 28px;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  color: var(--color-muted);
+  font: inherit;
+  cursor: pointer;
+  transition: background-color var(--dur-hover) var(--ease-out), transform var(--dur-press) var(--ease-out);
+}
+.adm-mini:hover:not(:disabled) {
+  background: var(--color-raised-2);
+  color: var(--color-ink);
+}
+.adm-mini:active:not(:disabled) {
+  transform: scale(var(--press-small));
+}
+.adm-mini:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+.adm-link {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-ink);
+  font: inherit;
+  text-align: left;
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--color-ink) 35%, transparent);
+  text-underline-offset: 3px;
+  cursor: pointer;
+  transition: text-decoration-color var(--dur-hover) var(--ease-out);
+}
+.adm-link:hover {
+  text-decoration-color: var(--color-stage);
+}
+.adm-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3) var(--space-5);
+  margin-bottom: var(--space-4);
+}
+
+// Snackbars use the stage pair (checked by npm run check:contrast) instead of Material's inverse surface.
+.mat-mdc-snack-bar-container {
+  --mat-snack-bar-container-color: var(--color-stage);
+  --mat-snack-bar-supporting-text-color: var(--color-stage-ink);
+  --mat-snack-bar-button-color: var(--color-stage-ink);
+}
+
+// Item editors open as a full-height panel on the right and slide in from that edge (the dialog's own
+// centred scale-in is turned off in openItemEditor). Reduced motion zeroes --rise: only the fade stays.
+.adm-side-panel .mat-mdc-dialog-surface {
+  border-radius: 0;
+  animation: adm-panel-in var(--dur-sheet) var(--ease-out) both;
+}
+@keyframes adm-panel-in {
+  from {
+    opacity: 0;
+    transform: translateX(var(--rise));
+  }
+}
+.adm-side-panel .mat-mdc-dialog-content {
+  max-height: none;
+  flex: 1;
+}
+
+// Dialog titles use the display face, like page titles.
+.mat-mdc-dialog-container .mat-mdc-dialog-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+}

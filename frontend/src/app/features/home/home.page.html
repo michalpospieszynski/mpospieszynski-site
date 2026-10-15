@@ -1,0 +1,158 @@
+<section id="start" class="container hero" aria-labelledby="hero-heading" data-testid="hero">
+  <div class="hero__grid">
+    <div class="hero__copy">
+      <h1 id="hero-heading" class="hero__title">{{ profile().headline }}</h1>
+      @if (profile().introMd) {
+        <ui-markdown class="hero__sub" [markdown]="profile().introMd!" />
+      }
+      <div class="hero__ctas">
+        <ui-button size="lg" [link]="'home' | localizedPath" fragment="kontakt" data-testid="hero-contact">{{
+          'home.hero.ctaContact' | transloco
+        }}</ui-button>
+        <ui-button size="lg" variant="ghost" [link]="'home' | localizedPath" fragment="projekty" data-testid="hero-projects">{{
+          'home.hero.ctaProjects' | transloco
+        }}</ui-button>
+      </div>
+      @if (projects().length) {
+        <div class="hero__picker" role="group" aria-labelledby="pick-label">
+          <span id="pick-label" class="hero__picker-label">{{ 'home.hero.pickLabel' | transloco }}</span>
+          <ul role="list" class="chips" data-testid="chips">
+            @for (p of projects(); track p.id) {
+              <li [attr.data-chip]="p.id">
+                <ui-button variant="ghost" [pressed]="selectedId() === p.id" (click)="toggle(p.id)">
+                  <span [attr.lang]="p.polishOnly ? 'pl' : null">{{ p.title }}</span>
+                </ui-button>
+              </li>
+            }
+          </ul>
+        </div>
+      }
+    </div>
+
+    <div class="graph" data-testid="graph">
+      @if (projects().length) {
+        <app-project-graph
+          [projects]="graphProjects()"
+          [tech]="graphTech()"
+          [techLinks]="techLinks"
+          [selected]="selectedId()"
+          [label]="'home.graph.aria' | transloco"
+          (selectedChange)="selectedId.set($event)"
+        />
+      }
+      <div class="graph__overlay">
+        <span>{{ 'home.graph.hint' | transloco }}</span>
+        <span class="legend">
+          <span class="legend__item"><span class="legend__dot legend__dot--project" aria-hidden="true"></span>{{ 'home.graph.legendProject' | transloco }}</span>
+          <span class="legend__item"><span class="legend__dot legend__dot--tech" aria-hidden="true"></span>{{ 'home.graph.legendTech' | transloco }}</span>
+        </span>
+      </div>
+      <div class="panel-region" aria-live="polite">
+        @if (selected(); as p) {
+          <article class="panel" aria-labelledby="panel-title" data-testid="panel">
+            <div class="panel__head">
+              <div class="panel__meta">
+                <span class="panel__year tnum">{{ p.years }}</span>
+                <h2 id="panel-title" class="panel__title" [attr.lang]="p.polishOnly ? 'pl' : null">{{ p.title }}</h2>
+              </div>
+              <button type="button" class="panel__close" [attr.aria-label]="'home.panel.close' | transloco" (click)="close()" data-testid="panel-close">
+                <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+                  <path d="M3 3l10 10M13 3L3 13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                </svg>
+              </button>
+            </div>
+            <p class="panel__desc" [attr.lang]="p.polishOnly ? 'pl' : null">{{ p.summary }}</p>
+            @if (p.technologies.length) {
+              <ul role="list" class="tags">
+                @for (t of p.technologies; track t.slug) {
+                  <li class="tag tag--solid">{{ t.name }}</li>
+                }
+              </ul>
+            }
+            <a class="panel__link" [routerLink]="p.link" [attr.hreflang]="p.polishOnly ? 'pl' : null" data-testid="panel-link">{{
+              'home.panel.details' | transloco
+            }}</a>
+          </article>
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+@if (services().length) {
+  <section id="uslugi" class="container section" aria-labelledby="services-heading" data-testid="services">
+    <div class="columns">
+      <div class="columns__intro">
+        <h2 id="services-heading" class="section__title">{{ 'home.services.title' | transloco }}</h2>
+        <p class="section__sub">{{ 'home.services.sub' | transloco }}</p>
+        <ui-button variant="text" [link]="'services' | localizedPath">{{ 'home.services.all' | transloco }}</ui-button>
+      </div>
+      <ul role="list" class="rows">
+        @for (s of services(); track s.id) {
+          <li class="row service" [attr.lang]="s.fallback ? 'pl' : null">
+            <h3 class="row__title">{{ s.title }}</h3>
+            <p class="text-body">{{ s.summary }}</p>
+          </li>
+        }
+      </ul>
+    </div>
+  </section>
+}
+
+@if (projects().length) {
+  <section id="projekty" class="section section--band" aria-labelledby="projects-heading" data-testid="projects">
+    <div class="container projects">
+      <div class="projects__head">
+        <h2 id="projects-heading" class="section__title">{{ 'home.projects.title' | transloco }}</h2>
+        <ui-button variant="text" [link]="'projects' | localizedPath">{{ 'home.projects.all' | transloco }}</ui-button>
+      </div>
+      <ul role="list" class="rows">
+        @for (p of projects(); track p.id) {
+          <li class="row project" data-testid="project-row">
+            <div class="project__head">
+              <h3 class="project__name">
+                <a [routerLink]="p.link" [attr.hreflang]="p.polishOnly ? 'pl' : null" [attr.lang]="p.polishOnly ? 'pl' : null">{{ p.title }}</a>
+              </h3>
+              <span class="project__year tnum">{{ p.years }}</span>
+              @if (p.polishOnly) {
+                <span class="text-small text-muted">{{ 'common.polishOnly' | transloco }}</span>
+              }
+            </div>
+            <div class="project__body">
+              <p class="text-body measure" [attr.lang]="p.polishOnly ? 'pl' : null">{{ p.summary }}</p>
+              @if (p.technologies.length) {
+                <ul role="list" class="tags">
+                  @for (t of p.technologies; track t.slug) {
+                    <li class="tag">{{ t.name }}</li>
+                  }
+                </ul>
+              }
+            </div>
+            <ui-button variant="ghost" (click)="showOnGraph(p.id)" data-testid="show-on-graph">
+              <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+                <circle cx="4" cy="11" r="2.2" fill="none" stroke="currentColor" stroke-width="1.5" />
+                <circle cx="12" cy="5" r="2.2" fill="none" stroke="currentColor" stroke-width="1.5" />
+                <line x1="5.6" y1="9.6" x2="10.4" y2="6.4" stroke="currentColor" stroke-width="1.5" />
+              </svg>
+              {{ 'home.projects.showOnGraph' | transloco }}
+              <span class="visually-hidden">: {{ p.title }}</span>
+            </ui-button>
+          </li>
+        }
+      </ul>
+    </div>
+  </section>
+}
+
+<section id="kontakt" class="container section" aria-labelledby="home-contact-heading" data-testid="home-contact">
+  <div class="columns columns--5-7">
+    <div class="columns__intro contact-intro">
+      <h2 id="home-contact-heading" class="contact-intro__title">{{ 'contact.heading' | transloco }}</h2>
+      <p class="section__sub">{{ 'contact.lead' | transloco }}</p>
+      @if (ownerEmail()) {
+        <a class="contact-intro__email" [href]="'mailto:' + ownerEmail()">{{ ownerEmail() }}</a>
+      }
+    </div>
+    <app-contact-form idPrefix="home-contact" topic="OTHER" />
+  </div>
+</section>

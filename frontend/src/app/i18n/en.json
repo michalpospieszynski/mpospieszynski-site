@@ -1,0 +1,284 @@
+{
+  "nav": {
+    "skipToContent": "Skip to content",
+    "main": "Main navigation",
+    "projects": "Projects",
+    "skills": "Skills",
+    "services": "Services",
+    "about": "About",
+    "contact": "Contact",
+    "menu": "Menu",
+    "closeMenu": "Close menu",
+    "footer": "Footer navigation",
+    "languageShort": {
+      "pl": "PL",
+      "en": "EN"
+    },
+    "switchTo": {
+      "pl": "Przełącz na polski",
+      "en": "Switch to English"
+    },
+    "theme": {
+      "toLight": "Switch to the light theme",
+      "toDark": "Switch to the dark theme"
+    }
+  },
+  "shell": {
+    "langHint": {
+      "text": "This site is also available in English.",
+      "action": "Switch to English",
+      "dismiss": "Close"
+    },
+    "brand": "M. Pospieszyński"
+  },
+  "footer": {
+    "howBuilt": "How this site is built",
+    "privacy": "Privacy policy",
+    "social": {
+      "label": "Profiles and contact"
+    },
+    "copyright": "© {year} {name}",
+    "domain": "mpospieszynski.pl"
+  },
+  "home": {
+    "hero": {
+      "ctaContact": "Get in touch",
+      "ctaProjects": "See projects",
+      "pickLabel": "Pick a project on the graph"
+    },
+    "graph": {
+      "hint": "Drag to rotate. Click a project to see details.",
+      "aria": "A 3D graph of projects connected to the technologies they use. The same choices are available in the project buttons beside it.",
+      "legendProject": "Project",
+      "legendTech": "Technology"
+    },
+    "panel": {
+      "close": "Close project details",
+      "details": "Project details"
+    },
+    "services": {
+      "title": "What I do",
+      "sub": "I take a project from idea to a running application on a server, or step in where you need one specific piece.",
+      "all": "All services"
+    },
+    "projects": {
+      "title": "Projects",
+      "showOnGraph": "Show on graph",
+      "all": "All projects"
+    }
+  },
+  "common": {
+    "polishOnly": "Polish only",
+    "readCaseStudy": "Read case study",
+    "availability": {
+      "open": "Open for new projects",
+      "limited": "Limited availability",
+      "closed": "Not taking new projects",
+      "from": "from {date}"
+    },
+    "social": {
+      "github": "GitHub",
+      "linkedin": "LinkedIn",
+      "email": "Email"
+    }
+  },
+  "notFound": {
+    "title": "This page doesn't exist",
+    "text": "It may have moved when the site was updated.",
+    "home": "Home",
+    "projects": "See projects"
+  },
+  "projects": {
+    "title": "Projects",
+    "intro": "Client work, personal projects and open source.",
+    "filter": {
+      "label": "Project filters",
+      "all": "All",
+      "kind": {
+        "CLIENT": "Client",
+        "PERSONAL": "Personal",
+        "OPEN_SOURCE": "Open source"
+      },
+      "tech": "Technology",
+      "techAny": "Any",
+      "apply": "Show"
+    },
+    "others": "More projects",
+    "count": "{count, plural, one {# project found} other {# projects found}}",
+    "clear": "Clear filters",
+    "empty": "No projects match these filters.",
+    "notTranslatedNote": "This project is described in Polish only. You can read it in Polish or browse other projects below.",
+    "kindLabel": {
+      "CLIENT": "Client project",
+      "PERSONAL": "Personal project",
+      "OPEN_SOURCE": "Open source"
+    }
+  },
+  "project": {
+    "breadcrumb": "Projects",
+    "breadcrumbLabel": "Breadcrumb",
+    "meta": {
+      "kind": "Type",
+      "role": "Role",
+      "period": "Period",
+      "tech": "Technologies"
+    },
+    "links": {
+      "repo": "View code",
+      "live": "Live demo"
+    },
+    "sections": {
+      "problem": "The problem",
+      "solution": "The solution",
+      "outcome": "The outcome",
+      "lessons": "Lessons learned"
+    },
+    "gallery": "Gallery",
+    "cta": {
+      "title": "Need something similar?",
+      "action": "Let's talk about your project"
+    },
+    "prev": "Previous project",
+    "next": "Next project",
+    "neighbours": "More projects",
+    "viewer": {
+      "close": "Close",
+      "prev": "Previous",
+      "next": "Next",
+      "position": "Image {index} of {total}",
+      "open": "Enlarge: {alt}"
+    }
+  },
+  "skills": {
+    "title": "Skills",
+    "lead": "Every skill on this page links to the projects where it was used.",
+    "areas": {
+      "title": "Areas of expertise",
+      "evidence": "Proven in projects"
+    },
+    "tech": {
+      "title": "Technologies",
+      "since": "since {year}",
+      "projects": "{count, plural, one {# project} other {# projects}}",
+      "name": "Technology",
+      "description": "How I use it",
+      "sinceHeader": "Since",
+      "projectsHeader": "Projects"
+    },
+    "category": {
+      "LANGUAGE": "Languages",
+      "BACKEND": "Backend",
+      "FRONTEND": "Frontend",
+      "DATA": "Data",
+      "INFRASTRUCTURE": "Infrastructure",
+      "TOOLING": "Tooling"
+    },
+    "cta": {
+      "title": "Want these skills on your project?",
+      "action": "Let's talk"
+    },
+    "empty": "The skills overview is being prepared.",
+    "emptyAction": "See projects"
+  },
+  "services": {
+    "title": "Services",
+    "lead": "I help companies build and grow reliable backend systems.",
+    "includes": "What's included",
+    "more": "More details",
+    "less": "Fewer details",
+    "ask": "Ask about this service",
+    "process": {
+      "title": "How working together goes",
+      "steps": {
+        "1": {
+          "title": "Intro call",
+          "text": "Free, 30 minutes: I learn about the problem and goals."
+        },
+        "2": {
+          "title": "Proposal",
+          "text": "Written scope, timeline and quote."
+        },
+        "3": {
+          "title": "Delivery",
+          "text": "Weekly iterations with progress demos."
+        },
+        "4": {
+          "title": "Handover",
+          "text": "Documentation, tests, deployment and a support period."
+        }
+      }
+    },
+    "faq": {
+      "title": "Common questions"
+    },
+    "cta": {
+      "title": "Want to talk about your project?",
+      "action": "Describe your project"
+    }
+  },
+  "privacy": {
+    "title": "Privacy policy",
+    "updated": "Last updated: {date}",
+    "toc": "Contents"
+  },
+  "about": {
+    "title": "About",
+    "approach": "How I work",
+    "links": "Find me online",
+    "cta": {
+      "title": "Have an idea or a problem to solve?",
+      "action": "Let's talk about your project"
+    }
+  },
+  "contact": {
+    "title": "Contact",
+    "lead": "Briefly describe what you need. I’ll reply with questions or a first estimate.",
+    "topic": {
+      "PROJECT": "A project or collaboration",
+      "CONSULTATION": "A consultation or code review",
+      "OTHER": "Something else"
+    },
+    "field": {
+      "name": "Name",
+      "email": "Email",
+      "message": "What do you need?",
+      "consent": "I agree to my data being processed to reply to this message.",
+      "website": "Website"
+    },
+    "budget": {
+      "UNSURE": "Not sure yet",
+      "SMALL": "up to €2,500",
+      "MEDIUM": "€2,500–7,500",
+      "LARGE": "€7,500–20,000",
+      "XLARGE": "over €20,000"
+    },
+    "timeline": {
+      "UNSURE": "Not sure yet",
+      "ASAP": "As soon as possible",
+      "QUARTER": "Within 3 months",
+      "LATER": "Later"
+    },
+    "privacyLink": "Privacy policy",
+    "projectRef": "Regarding the project \"{title}\".",
+    "submit": "Send message",
+    "sending": "Sending…",
+    "success": {
+      "title": "Message sent",
+      "text": "Thank you! I'll reply to {email} within two working days.",
+      "again": "Send another message"
+    },
+    "errors": {
+      "required": "This field is required.",
+      "email": "Enter a valid email address – I'll reply to it.",
+      "messageLength": "The message should be 20 to 5,000 characters long.",
+      "consent": "Tick the consent box so I can reply.",
+      "nameLength": "Your name should be 2 to 120 characters long.",
+      "rateLimit": "Too many messages sent. Try again in an hour or email {email}.",
+      "bot": "We couldn't confirm the message was sent by a person. Reload the page and try again.",
+      "server": "The message couldn't be sent because of a server error. Your text is still here – try again or email {email}."
+    },
+    "noscript": "Sending the form needs JavaScript. You can also write directly to {email}.",
+    "heading": "Have a project? Let’s talk.",
+    "aboutService": "About the service: {service}"
+  }
+}

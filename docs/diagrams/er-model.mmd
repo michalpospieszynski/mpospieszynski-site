@@ -1,0 +1,148 @@
+erDiagram
+    SITE_SETTINGS ||--|{ SITE_SETTINGS_TRANSLATION : "has"
+    SITE_SETTINGS }o--o| MEDIA : "portrait"
+    SITE_SETTINGS }o--o| PROJECT : "site project"
+    PROJECT ||--|{ PROJECT_TRANSLATION : "has"
+    PROJECT }o--o{ TECHNOLOGY : "uses (project_technology)"
+    PROJECT ||--o{ PROJECT_MEDIA : "gallery"
+    MEDIA ||--o{ PROJECT_MEDIA : "appears in"
+    MEDIA ||--|{ MEDIA_TRANSLATION : "alt text, caption"
+    TECHNOLOGY ||--o{ TECHNOLOGY_TRANSLATION : "how I use it"
+    EXPERTISE_AREA ||--|{ EXPERTISE_AREA_TRANSLATION : "has"
+    EXPERTISE_AREA }o--o{ TECHNOLOGY : "expertise_area_technology"
+    EXPERTISE_AREA }o--o{ PROJECT : "proven by (expertise_area_project)"
+    SERVICE_OFFERING ||--|{ SERVICE_TRANSLATION : "has"
+    FAQ ||--|{ FAQ_TRANSLATION : "has"
+    SERVICE_OFFERING ||--o{ CONTACT_MESSAGE : "asked about"
+
+    SITE_SETTINGS {
+        smallint id PK "always 1"
+        text full_name
+        text availability "OPEN, LIMITED, CLOSED"
+        date available_from
+        boolean show_availability
+        jsonb social_links
+        uuid portrait_media_id FK
+        uuid site_project_id FK "How this site is built"
+    }
+    SITE_SETTINGS_TRANSLATION {
+        smallint settings_id FK
+        text locale "pl, en"
+        text headline
+        text intro_md
+        text about_md
+        text approach_md
+        text location_label
+        text autoreply_subject
+        text autoreply_body_md
+    }
+    PROJECT {
+        uuid id PK
+        text status "DRAFT, PUBLISHED, ARCHIVED"
+        text kind "CLIENT, PERSONAL, OPEN_SOURCE"
+        boolean featured
+        int sort_order
+        date started_on
+        date finished_on
+        uuid cover_media_id FK
+        text repo_url
+        text live_url
+        bigint version
+    }
+    PROJECT_TRANSLATION {
+        uuid project_id FK
+        text locale "pl, en"
+        text slug "unique per locale"
+        text title
+        text summary
+        text role
+        text problem_md
+        text solution_md
+        text outcome_md
+        text lessons_md
+        text seo_description
+    }
+    TECHNOLOGY {
+        uuid id PK
+        text slug UK
+        text name UK
+        text category "LANGUAGE, BACKEND, FRONTEND, DATA, INFRASTRUCTURE, TOOLING"
+        boolean show_on_skills_page
+        smallint since_year
+        int sort_order
+    }
+    TECHNOLOGY_TRANSLATION {
+        uuid technology_id FK
+        text locale
+        text description
+    }
+    EXPERTISE_AREA {
+        uuid id PK
+        text icon
+        int sort_order
+    }
+    EXPERTISE_AREA_TRANSLATION {
+        uuid area_id FK
+        text locale
+        text title
+        text summary
+        text description_md
+    }
+    MEDIA {
+        uuid id PK
+        text storage_key UK
+        text mime_type
+        int width
+        int height
+        bigint size_bytes
+    }
+    MEDIA_TRANSLATION {
+        uuid media_id FK
+        text locale
+        text alt_text
+        text caption
+    }
+    PROJECT_MEDIA {
+        uuid project_id FK
+        uuid media_id FK
+        int sort_order
+    }
+    SERVICE_OFFERING {
+        uuid id PK
+        boolean active
+        int sort_order
+    }
+    SERVICE_TRANSLATION {
+        uuid service_id FK
+        text locale
+        text title
+        text summary
+        text description_md
+        text deliverables_md
+        text price_note
+    }
+    FAQ {
+        uuid id PK
+        int sort_order
+    }
+    FAQ_TRANSLATION {
+        uuid faq_id FK
+        text locale
+        text question
+        text answer_md
+    }
+    CONTACT_MESSAGE {
+        uuid id PK
+        text locale "language the visitor used"
+        text name
+        text email
+        text company
+        text topic "PROJECT, CONSULTATION, OTHER"
+        uuid service_id FK
+        text budget_range
+        text timeline
+        text message
+        text status "NEW, READ, REPLIED, ARCHIVED, SPAM"
+        text ip_hash
+        timestamptz created_at
+    }

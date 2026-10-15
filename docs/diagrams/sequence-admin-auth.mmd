@@ -1,0 +1,21 @@
+sequenceDiagram
+    autonumber
+    actor O as Owner
+    participant A as Angular admin (browser)
+    participant S as Supabase Auth
+    participant B as Spring Boot API
+    participant D as Supabase PostgreSQL
+
+    O->>A: Open /admin/login
+    A->>S: Sign in (password + TOTP, or OAuth)
+    S-->>A: Access JWT + refresh token
+    O->>A: Edit a project, press "Zapisz"
+    A->>B: PUT /api/v1/admin/projects/{id} with Bearer JWT
+    B->>S: Fetch JWKS (only when not cached)
+    S-->>B: Signing keys
+    B->>B: Verify signature, exp, iss, aud
+    B->>B: app_metadata.role = admin gives ROLE_ADMIN
+    B->>D: UPDATE (optimistic lock)
+    D-->>B: OK
+    B-->>A: 200 OK
+    A-->>O: "Zapisano"

@@ -1,0 +1,6 @@
+// Global styles. Tokens and rules: docs/UI-UX-DESIGN.md §6 and DIRECTION.md.
+// Component styles use the tokens only and may `@use 'breakpoints' as *;`.
+@use 'styles/tokens';
+@use 'styles/reset';
+@use 'styles/typography';
+@use 'styles/layout';

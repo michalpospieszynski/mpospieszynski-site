@@ -1,0 +1,52 @@
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-4);
+  margin: 0 0 var(--space-6);
+  padding: 0;
+  list-style: none;
+}
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  height: 100%;
+  box-sizing: border-box;
+  padding: var(--space-5);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-panel);
+  background: var(--color-raised);
+  color: var(--color-ink);
+  text-decoration: none;
+  transition:
+    transform var(--dur-hover) var(--ease-out),
+    border-color var(--dur-hover) ease;
+}
+// Touch screens keep no sticky lift; the lift is --rise based, so reduced motion keeps only the ring.
+@media (hover: hover) and (pointer: fine) {
+  .card:hover {
+    transform: translateY(calc(var(--rise) / -12));
+    border-color: var(--color-stage);
+  }
+}
+.card:active {
+  transform: scale(var(--press));
+}
+.number {
+  font-family: var(--font-display);
+  font-size: var(--step-head);
+  line-height: 1;
+}
+.label {
+  color: var(--color-muted);
+}
+.status {
+  font-size: var(--step-lead);
+}
+.change {
+  margin-top: auto;
+  color: var(--color-stage);
+}
+a:not(.card) {
+  color: var(--color-ink);
+}

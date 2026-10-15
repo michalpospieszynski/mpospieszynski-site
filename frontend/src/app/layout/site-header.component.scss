@@ -1,0 +1,207 @@
+@use 'breakpoints' as *;
+
+:host {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: block;
+}
+
+.skip-link {
+  position: absolute;
+  top: var(--space-2);
+  left: var(--space-2);
+  z-index: 11;
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-pill);
+  background: var(--color-stage);
+  color: var(--color-stage-ink);
+  font-weight: 700;
+  transform: translateY(-200%);
+}
+
+.skip-link:focus-visible {
+  transform: none;
+}
+
+.header {
+  border-bottom: 1px solid var(--color-line);
+  background: color-mix(in srgb, var(--color-ground) 86%, transparent);
+  backdrop-filter: blur(10px);
+}
+
+.bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  height: var(--header-height);
+
+  @include bp(md) {
+    gap: var(--space-5);
+  }
+}
+
+// On narrow phones the name gives way before the pills do.
+.brand {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: var(--space-3);
+  color: var(--color-ink);
+  text-decoration: none;
+}
+
+.brand__mark {
+  flex: none;
+}
+
+.brand__name {
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bar__right {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.links {
+  display: none;
+  gap: var(--space-1);
+  margin: 0;
+
+  @include bp(nav) {
+    display: flex;
+  }
+}
+
+.link {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap);
+  padding: 0 14px;
+  color: var(--color-muted);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.link:hover,
+.link.is-active {
+  color: var(--color-ink);
+}
+
+.link.is-active {
+  text-decoration: underline;
+  text-underline-offset: 0.45em;
+}
+
+// Ghost pill, as the prototype's .btn--ghost.
+.pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 48px;
+  min-height: var(--tap);
+  padding: 0 14px;
+  border: 1px solid var(--color-control);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--color-ink);
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition:
+    background-color var(--dur-hover) ease,
+    transform var(--dur-press) ease;
+
+  @include bp(md) {
+    padding: 0 18px;
+  }
+}
+
+.pill:hover {
+  background: var(--color-raised-2);
+  color: var(--color-ink);
+}
+
+.pill:active {
+  transform: scale(var(--press));
+}
+
+.menu-button {
+  @include bp(nav) {
+    display: none;
+  }
+}
+
+// Menu sheet (below 900px).
+.sheet {
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-ink);
+}
+
+.sheet::backdrop {
+  background: color-mix(in srgb, var(--color-ground) 70%, transparent);
+}
+
+.sheet[open] .sheet__panel {
+  animation: sheet-in var(--dur-sheet) var(--ease-out);
+}
+
+.sheet__panel {
+  display: grid;
+  align-content: start;
+  justify-items: end;
+  gap: var(--space-5);
+  min-height: 100%;
+  margin-left: auto;
+  width: min(100%, 360px);
+  padding: var(--space-4) var(--page-gutter);
+  border-left: 1px solid var(--color-line);
+  background: var(--color-ground);
+}
+
+.sheet__links {
+  display: grid;
+  width: 100%;
+  margin: 0;
+
+  a {
+    display: block;
+    padding: var(--space-4) 0;
+    border-top: 1px solid var(--color-line);
+    color: var(--color-ink);
+    font-family: var(--font-display);
+    font-size: var(--step-lead);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  a.is-active {
+    text-decoration: underline;
+    text-underline-offset: 0.3em;
+  }
+}
+
+@keyframes sheet-in {
+  from {
+    opacity: 0;
+    transform: translateX(var(--rise));
+  }
+}

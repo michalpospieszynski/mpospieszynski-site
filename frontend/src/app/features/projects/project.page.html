@@ -1,0 +1,104 @@
+<article class="container case" data-testid="case-study">
+  <nav class="crumbs text-small" [attr.aria-label]="'project.breadcrumbLabel' | transloco">
+    <a [routerLink]="'projects' | localizedPath">{{ 'project.breadcrumb' | transloco }}</a>
+    <span aria-hidden="true">/</span>
+    <span aria-current="page">{{ project().title }}</span>
+  </nav>
+
+  <header class="case__head">
+    <h1>{{ project().title }}</h1>
+    <p class="case__lead">{{ project().summary }}</p>
+
+    <dl class="case__meta">
+      <div>
+        <dt>{{ 'project.meta.kind' | transloco }}</dt>
+        <dd>{{ 'projects.kindLabel.' + project().kind | transloco }}</dd>
+      </div>
+      @if (project().role) {
+        <div>
+          <dt>{{ 'project.meta.role' | transloco }}</dt>
+          <dd>{{ project().role }}</dd>
+        </div>
+      }
+      <div>
+        <dt>{{ 'project.meta.period' | transloco }}</dt>
+        <dd class="tnum">{{ years() }}</dd>
+      </div>
+      @if (technologies().length) {
+        <div class="case__tech">
+          <dt>{{ 'project.meta.tech' | transloco }}</dt>
+          <dd>
+            <ul role="list">
+              @for (tech of technologies(); track tech.slug) {
+                <li><ui-tech-tag [slug]="tech.slug" [name]="tech.name" /></li>
+              }
+            </ul>
+          </dd>
+        </div>
+      }
+    </dl>
+
+    @if (project().repoUrl || project().liveUrl) {
+      <div class="case__links">
+        @if (project().repoUrl; as repo) {
+          <ui-button variant="ghost" [href]="repo">{{ 'project.links.repo' | transloco }}</ui-button>
+        }
+        @if (project().liveUrl; as live) {
+          <ui-button variant="ghost" [href]="live">{{ 'project.links.live' | transloco }}</ui-button>
+        }
+      </div>
+    }
+  </header>
+
+  @if (project().cover; as cover) {
+    <img
+      class="case__cover"
+      [src]="cover.url"
+      [alt]="cover.alt ?? ''"
+      [attr.width]="cover.width"
+      [attr.height]="cover.height"
+      fetchpriority="high"
+      data-testid="cover"
+    />
+  }
+
+  <div class="case__story">
+    @for (section of sections(); track section.key) {
+      <section [attr.aria-labelledby]="'section-' + section.key" [attr.data-testid]="'section-' + section.key">
+        <h2 [id]="'section-' + section.key">{{ 'project.sections.' + section.key | transloco }}</h2>
+        <ui-markdown [markdown]="section.markdown" />
+      </section>
+    }
+  </div>
+
+  @if (gallery().length) {
+    <section class="case__gallery" aria-labelledby="gallery-heading">
+      <h2 id="gallery-heading">{{ 'project.gallery' | transloco }}</h2>
+      <app-project-gallery [images]="gallery()" />
+    </section>
+  }
+
+  <aside class="cta" aria-labelledby="cta-heading">
+    <h2 id="cta-heading">{{ 'project.cta.title' | transloco }}</h2>
+    <ui-button variant="ink" [link]="'contact' | localizedPath" [queryParams]="contactQuery()" data-testid="cta">{{
+      'project.cta.action' | transloco
+    }}</ui-button>
+  </aside>
+
+  @if (previous() || next()) {
+    <nav class="case__neighbours" [attr.aria-label]="'project.neighbours' | transloco" data-testid="neighbours">
+      @if (previous(); as prev) {
+        <a class="case__prev" [routerLink]="prev.path" rel="prev" data-testid="prev">
+          <span class="text-small text-muted">{{ 'project.prev' | transloco }}</span>
+          <span>{{ prev.title }}</span>
+        </a>
+      }
+      @if (next(); as nxt) {
+        <a class="case__next" [routerLink]="nxt.path" rel="next" data-testid="next">
+          <span class="text-small text-muted">{{ 'project.next' | transloco }}</span>
+          <span>{{ nxt.title }}</span>
+        </a>
+      }
+    </nav>
+  }
+</article>

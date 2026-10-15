@@ -1,0 +1,57 @@
+<mat-sidenav-container class="adm-frame">
+  <mat-sidenav
+    class="sidebar"
+    [mode]="narrow() ? 'over' : 'side'"
+    [opened]="!narrow()"
+    [fixedInViewport]="narrow()"
+  >
+    <nav class="side" [attr.aria-label]="'admin.nav.label' | transloco">
+      <p class="brand">{{ 'admin.brand' | transloco }}</p>
+      <ul class="nav">
+        @for (item of nav; track item.path) {
+          <li>
+            <a
+              class="link"
+              [routerLink]="item.path"
+              routerLinkActive="active"
+              [routerLinkActiveOptions]="{ exact: !!item.exact }"
+              ariaCurrentWhenActive="page"
+              [attr.data-testid]="'nav-' + item.key"
+            >
+              <span>{{ 'admin.nav.' + item.key | transloco }}</span>
+              @if (item.badge && badge.newMessages() > 0) {
+                <span class="badge" data-testid="nav-badge">
+                  <span aria-hidden="true">{{ badge.newMessages() }}</span>
+                  <span class="visually-hidden">{{ 'admin.nav.badge' | transloco: { count: badge.newMessages() } }}</span>
+                </span>
+              }
+            </a>
+          </li>
+        }
+      </ul>
+      <a class="link site" [href]="siteUrl" target="_blank" rel="noopener">
+        {{ 'admin.nav.viewSite' | transloco }} <span aria-hidden="true">↗</span>
+        <span class="visually-hidden">{{ 'admin.nav.newTab' | transloco }}</span>
+      </a>
+    </nav>
+  </mat-sidenav>
+
+  <mat-sidenav-content class="content">
+    <header class="topbar">
+      @if (narrow()) {
+        <button mat-button type="button" (click)="toggleMenu()" data-testid="menu">
+          {{ 'admin.menu' | transloco }}
+        </button>
+      }
+      <span class="spacer"></span>
+      <span class="email" data-testid="admin-email">{{ auth.email() }}</span>
+      <adm-preferences />
+      <button mat-stroked-button type="button" (click)="logout()" data-testid="logout">
+        {{ 'admin.nav.logout' | transloco }}
+      </button>
+    </header>
+    <main class="main" id="main">
+      <router-outlet />
+    </main>
+  </mat-sidenav-content>
+</mat-sidenav-container>

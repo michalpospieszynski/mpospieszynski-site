@@ -1,0 +1,88 @@
+:host {
+  display: block;
+}
+
+.form-card {
+  padding: var(--space-6);
+}
+
+.form {
+  display: grid;
+  gap: 18px;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 18px;
+}
+
+.about {
+  color: var(--color-soft);
+  font-weight: 600;
+}
+
+.choice {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  color: var(--color-soft);
+  font-size: var(--step-small);
+  line-height: 1.5;
+
+  input {
+    flex: none;
+    margin-top: 2px;
+  }
+}
+
+.error {
+  min-height: 1.45em;
+  color: var(--color-busy);
+  font-size: var(--step-small);
+}
+
+.failure {
+  color: var(--color-busy);
+}
+
+.honeypot {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.turnstile:empty {
+  display: none;
+}
+
+.sent {
+  display: grid;
+  justify-items: start;
+  gap: 10px;
+  padding-block: var(--space-5);
+  animation: sent-in var(--dur-panel) var(--ease-out);
+
+  h2 {
+    font-size: 1.625rem;
+    font-weight: 700;
+  }
+
+  h2:focus {
+    outline: none;
+  }
+
+  p {
+    color: var(--color-body);
+    line-height: 1.6;
+  }
+}
+
+@keyframes sent-in {
+  from {
+    opacity: 0;
+    transform: translateY(var(--rise));
+  }
+}

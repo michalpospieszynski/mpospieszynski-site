@@ -1,0 +1,19 @@
+@use 'sass:map';
+
+// Mobile-first breakpoints (DIRECTION.md, Layout): @include bp(md) { ... }
+// Below md (900px) every two-column grid is one column and the header hides its links.
+$breakpoints: (
+  sm: 640px,
+  md: 900px,
+  nav: 900px,
+  lg: 1280px,
+);
+
+@mixin bp($name) {
+  @if not map.has-key($breakpoints, $name) {
+    @error 'Unknown breakpoint "#{$name}". Use one of: #{map.keys($breakpoints)}.';
+  }
+  @media (min-width: map.get($breakpoints, $name)) {
+    @content;
+  }
+}

@@ -1,0 +1,71 @@
+@if (message(); as m) {
+  <article class="adm-card" data-testid="message-detail" aria-labelledby="message-name">
+    <a class="back" routerLink="/admin/wiadomosci" queryParamsHandling="preserve">
+      <span aria-hidden="true">←</span> {{ 'admin.messages.back' | transloco }}
+    </a>
+    <h2 id="message-name" class="name">
+      {{ m.name }} ·
+      <a [href]="'mailto:' + m.email">{{ m.email }}</a>
+    </h2>
+    <dl class="facts">
+      @if (m.company) {
+        <dt>{{ 'admin.messages.field.company' | transloco }}</dt>
+        <dd>{{ m.company }}</dd>
+      }
+      <dt>{{ 'admin.messages.field.topic' | transloco }}</dt>
+      <dd data-testid="message-topic">{{ 'contact.topic.' + m.topic | transloco }}</dd>
+      @if (m.serviceTitle) {
+        <dt>{{ 'admin.messages.field.service' | transloco }}</dt>
+        <dd>{{ m.serviceTitle }}</dd>
+      }
+      @if (m.budgetRange) {
+        <dt>{{ 'admin.messages.field.budget' | transloco }}</dt>
+        <dd data-testid="message-budget">{{ 'contact.budget.' + m.budgetRange | transloco }}</dd>
+      }
+      @if (m.timeline) {
+        <dt>{{ 'admin.messages.field.timeline' | transloco }}</dt>
+        <dd>{{ 'contact.timeline.' + m.timeline | transloco }}</dd>
+      }
+      <dt>{{ 'admin.messages.field.language' | transloco }}</dt>
+      <dd data-testid="message-locale">{{ 'admin.messages.locale.' + m.locale | transloco }}</dd>
+      <dt>{{ 'admin.messages.field.received' | transloco }}</dt>
+      <dd>{{ dateTime(m.createdAt) }}</dd>
+    </dl>
+    <p class="text" data-testid="message-text">{{ m.message }}</p>
+
+    @if (replied() && m.status !== 'REPLIED') {
+      <p class="hint" role="status">{{ 'admin.messages.markRepliedHint' | transloco }}</p>
+    }
+    <div class="actions">
+      <a mat-flat-button [href]="reply()" (click)="replied.set(true)" data-testid="reply">
+        {{ 'admin.messages.reply' | transloco }}
+      </a>
+      @if (m.status !== 'REPLIED') {
+        <button
+          mat-stroked-button
+          type="button"
+          [class.suggested]="replied()"
+          (click)="setStatus('REPLIED')"
+          data-testid="mark-replied"
+        >
+          {{ 'admin.messages.markReplied' | transloco }}
+        </button>
+      }
+      @if (m.status === 'ARCHIVED' || m.status === 'SPAM') {
+        <button mat-stroked-button type="button" (click)="setStatus('READ')" data-testid="restore">
+          {{ 'admin.messages.restore' | transloco }}
+        </button>
+      } @else {
+        <button mat-stroked-button type="button" (click)="setStatus('ARCHIVED')" data-testid="archive">
+          {{ 'admin.messages.archive' | transloco }}
+        </button>
+        <button mat-stroked-button type="button" (click)="setStatus('SPAM')" data-testid="spam">
+          {{ 'admin.messages.spam' | transloco }}
+        </button>
+      }
+      <button mat-button type="button" class="adm-danger" (click)="remove()" data-testid="delete">
+        {{ 'admin.messages.delete' | transloco }}
+      </button>
+    </div>
+  </article>
+}

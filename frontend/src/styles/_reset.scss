@@ -1,0 +1,67 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  min-height: 100svh;
+  -webkit-font-smoothing: antialiased;
+}
+
+img,
+picture,
+video,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+input,
+button,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+:where(ul, ol)[role='list'] {
+  list-style: none;
+  padding: 0;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: calc(var(--header-height) + var(--space-2));
+}
+
+// Reduced motion: no travel and no press scale (feedback keeps its colour changes), no smooth scrolling. The graph
+// checks the media query itself and drops its unfold and auto-rotation (DIRECTION.md, Motion).
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --rise: 0px;
+    --press: 1;
+    --press-small: 1;
+  }
+
+  html {
+    scroll-behavior: auto;
+  }
+}

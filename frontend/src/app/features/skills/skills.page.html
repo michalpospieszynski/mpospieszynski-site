@@ -1,0 +1,118 @@
+<div class="container skills">
+  <header class="page-head">
+    <h1>{{ 'skills.title' | transloco }}</h1>
+    <p>{{ 'skills.lead' | transloco }}</p>
+  </header>
+
+  @if (empty()) {
+    <ui-empty [message]="'skills.empty' | transloco">
+      <ui-button variant="text" [link]="'projects' | localizedPath">{{ 'skills.emptyAction' | transloco }}</ui-button>
+    </ui-empty>
+  }
+
+  @if (areas().length) {
+    <section class="areas" aria-labelledby="areas-heading">
+      <h2 id="areas-heading" class="section__title">{{ 'skills.areas.title' | transloco }}</h2>
+      <div class="rows">
+        @for (area of areas(); track area.id) {
+          <article class="row area" data-testid="area">
+            <h3 class="row__title" [attr.lang]="area.fallback ? 'pl' : null">{{ area.title }}</h3>
+            <div class="area__body">
+              <p class="area__summary" [attr.lang]="area.fallback ? 'pl' : null">{{ area.summary }}</p>
+              @if (area.descriptionMd) {
+                <ui-markdown [markdown]="area.descriptionMd" [lang]="area.fallback ? 'pl' : undefined" />
+              }
+              @if (area.technologies.length) {
+                <ul role="list" class="tags">
+                  @for (tech of area.technologies; track tech.slug) {
+                    <li><ui-tech-tag [slug]="tech.slug" [name]="tech.name" /></li>
+                  }
+                </ul>
+              }
+              @if (area.projects.length) {
+                <div class="area__evidence">
+                  <p class="text-small text-muted">{{ 'skills.areas.evidence' | transloco }}</p>
+                  <ul role="list">
+                    @for (project of area.projects; track project.path) {
+                      <li>
+                        <a [routerLink]="project.path" [attr.hreflang]="project.polishOnly ? 'pl' : null"
+                          ><span [attr.lang]="project.polishOnly ? 'pl' : null">{{ project.title }}</span></a
+                        >
+                        @if (project.polishOnly) {
+                          <span class="label text-small">{{ 'common.polishOnly' | transloco }}</span>
+                        }
+                      </li>
+                    }
+                  </ul>
+                </div>
+              }
+            </div>
+          </article>
+        }
+      </div>
+    </section>
+  }
+
+  @if (categories().length) {
+    <section class="tech" aria-labelledby="tech-heading">
+      <h2 id="tech-heading" class="section__title">{{ 'skills.tech.title' | transloco }}</h2>
+      @for (group of categories(); track group.category) {
+        <section class="tech__group" [attr.aria-labelledby]="'cat-' + group.category" [attr.data-testid]="'category-' + group.category">
+          <h3 [id]="'cat-' + group.category">{{ 'skills.category.' + group.category | transloco }}</h3>
+          <table class="tech__table">
+            <thead class="visually-hidden">
+              <tr>
+                <th scope="col">{{ 'skills.tech.name' | transloco }}</th>
+                <th scope="col">{{ 'skills.tech.description' | transloco }}</th>
+                <th scope="col">{{ 'skills.tech.sinceHeader' | transloco }}</th>
+                <th scope="col">{{ 'skills.tech.projectsHeader' | transloco }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (tech of group.technologies; track tech.slug) {
+                <tr [attr.data-testid]="'tech-' + tech.slug">
+                  <th scope="row">
+                    @if (tech.projectCount) {
+                      <a
+                        [routerLink]="'projects' | localizedPath"
+                        [queryParams]="{ tech: tech.slug }"
+                        [attr.aria-label]="tech.name + ' – ' + ('skills.tech.projects' | transloco: { count: tech.projectCount })"
+                        >{{ tech.name }}</a
+                      >
+                    } @else {
+                      {{ tech.name }}
+                    }
+                  </th>
+                  <td class="tech__description">
+                    @if (tech.description) {
+                      @if (isFallback(tech.descriptionLang)) {
+                        <ui-lang-fallback>{{ tech.description }}</ui-lang-fallback>
+                      } @else {
+                        {{ tech.description }}
+                      }
+                    }
+                  </td>
+                  <td class="tnum text-muted">
+                    @if (tech.sinceYear) {
+                      {{ 'skills.tech.since' | transloco: { year: tech.sinceYear } }}
+                    }
+                  </td>
+                  <td class="tnum text-muted">
+                    @if (tech.projectCount) {
+                      {{ 'skills.tech.projects' | transloco: { count: tech.projectCount } }}
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </section>
+      }
+    </section>
+  }
+
+  <aside class="cta" aria-labelledby="skills-cta">
+    <h2 id="skills-cta">{{ 'skills.cta.title' | transloco }}</h2>
+    <ui-button variant="ink" [link]="'contact' | localizedPath">{{ 'skills.cta.action' | transloco }}</ui-button>
+  </aside>
+</div>

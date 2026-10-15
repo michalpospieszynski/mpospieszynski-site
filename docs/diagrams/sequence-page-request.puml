@@ -1,0 +1,32 @@
+@startuml sequence-page-request
+title Public page request in the chosen language (SSR)
+
+skinparam shadowing false
+skinparam defaultFontName "Helvetica"
+autonumber
+
+actor "Visitor" as p_visitor
+participant "Cloudflare edge" as p_edge
+participant "cloudflared" as p_tunnel
+participant "Angular SSR" as p_ssr
+participant "Spring Boot API" as p_api
+database "Supabase PostgreSQL" as p_db
+
+p_visitor -> p_edge : GET /en/projects/order-processing-api
+p_edge -> p_tunnel : forward (HTML is not edge-cached)
+p_tunnel -> p_ssr : GET /en/projects/order-processing-api
+p_ssr -> p_ssr : LanguageService: lang = en
+p_ssr -> p_api : GET /api/v1/public/projects/order-processing-api?lang=en
+alt cached in Caffeine
+  p_api --> p_ssr : 200 (Server-Timing: db from cache)
+else not cached
+  p_api -> p_db : SELECT project + translation (en)
+  p_db --> p_api : row
+  p_api --> p_ssr : 200 {lang, translations, ...}
+end
+p_ssr -> p_ssr : render, set html lang, hreflang links,\ntrace timings into transfer state
+p_ssr --> p_tunnel : HTML
+p_tunnel --> p_edge : HTML
+p_edge --> p_visitor : HTML (then hydration)
+p_visitor -> p_visitor : switcher "PL" links to /projekty/system-zamowien
+@enduml

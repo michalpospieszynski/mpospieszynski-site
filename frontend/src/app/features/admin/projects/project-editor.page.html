@@ -1,0 +1,269 @@
+<div class="adm-page">
+  <header class="head">
+    <p class="crumbs adm-small">
+      <a routerLink="/admin/projekty">{{ 'admin.project.breadcrumb' | transloco }}</a>
+      <span aria-hidden="true"> / </span>
+    </p>
+    <div class="adm-head">
+      <h1 class="adm-title adm-grow" data-testid="project-heading">{{ heading() }}</h1>
+      @if (!isNew()) {
+        <span class="adm-chip" [attr.data-state]="status()" data-testid="project-status">
+          {{ 'admin.projects.status.' + status() | transloco }}
+        </span>
+      }
+      <adm-save-status [savedAt]="savedAt()" [saving]="saving()" />
+    </div>
+    <div class="actions">
+      @if (!isNew()) {
+        <button mat-stroked-button type="button" [matMenuTriggerFor]="previewMenu" data-testid="preview-menu">
+          {{ 'admin.project.preview' | transloco }} <span aria-hidden="true">▾</span>
+        </button>
+        <mat-menu #previewMenu="matMenu">
+          <a mat-menu-item [routerLink]="['/admin/projekty', id(), 'podglad']" [queryParams]="{ lang: 'pl' }" target="_blank">
+            {{ 'admin.projects.previewPl' | transloco }}
+          </a>
+          <a mat-menu-item [routerLink]="['/admin/projekty', id(), 'podglad']" [queryParams]="{ lang: 'en' }" target="_blank">
+            {{ 'admin.projects.previewEn' | transloco }}
+          </a>
+        </mat-menu>
+      }
+      <button mat-stroked-button type="button" (click)="save()" [disabled]="saving()" data-testid="save">
+        {{ 'admin.common.save' | transloco }}
+      </button>
+      @if (status() === 'PUBLISHED') {
+        <button mat-stroked-button type="button" (click)="unpublish()" data-testid="unpublish">
+          {{ 'admin.common.unpublish' | transloco }}
+        </button>
+      } @else if (status() === 'ARCHIVED') {
+        <button mat-stroked-button type="button" (click)="unpublish()" data-testid="unarchive">
+          {{ 'admin.project.unarchive' | transloco }}
+        </button>
+      }
+      @if (status() !== 'PUBLISHED' || dirty()) {
+        <button mat-flat-button type="button" (click)="publish()" [disabled]="saving()" data-testid="publish">
+          {{ 'admin.common.publish' | transloco }}
+        </button>
+      }
+    </div>
+  </header>
+
+  <form [formGroup]="form" (ngSubmit)="save()" novalidate>
+    <section class="adm-section">
+      <div class="lang-bar">
+        <adm-lang-tabs [(value)]="editLang" panelId="project-texts" [plStatus]="plState()" [enStatus]="enState()" />
+        @if (editLang() === 'en') {
+          <mat-checkbox [checked]="showPl()" (change)="showPl.set($event.checked)" data-testid="show-pl">
+            {{ 'admin.project.showPlBeside' | transloco }}
+          </mat-checkbox>
+        }
+      </div>
+
+      <div id="project-texts" role="tabpanel" [attr.aria-labelledby]="'project-texts-tab-' + editLang()" class="texts">
+        <p class="adm-muted adm-small">
+          {{ (editLang() === 'en' ? 'admin.lang.enOptional' : 'admin.common.requiredNote') | transloco }}
+        </p>
+        @if (editLang() === 'en' && error('translations.en')) {
+          <p class="adm-error" role="alert" data-testid="en-incomplete">{{ error('translations.en') }}</p>
+        }
+        @if (slugChanged()) {
+          <p class="warning" role="status">{{ 'admin.project.slugWarning' | transloco }}</p>
+        }
+        @for (lang of langs; track lang) {
+          <div [hidden]="editLang() !== lang" [formGroupName]="lang">
+            @for (f of textFields; track f.name) {
+              @let fid = 'project-' + lang + '-' + f.name;
+              @let label = ('admin.project.' + f.label | transloco) + (required(f, lang) ? ' *' : '');
+              <div class="pair" [class.with-pl]="lang === 'en' && showPl()">
+                <div>
+                  @switch (f.kind) {
+                    @case ('md') {
+                      <adm-markdown-editor
+                        [formControlName]="f.name"
+                        [label]="'admin.project.' + f.label | transloco"
+                        [required]="required(f, lang)"
+                        [inputId]="fid"
+                        [lang]="lang"
+                        [error]="error('translations.' + lang + '.' + f.name)"
+                      />
+                    }
+                    @case ('slug') {
+                      <div class="slug-row">
+                        <mat-form-field class="grow">
+                          <mat-label>{{ label }}</mat-label>
+                          <input matInput [id]="fid" [formControlName]="f.name" (input)="onSlugInput(lang)" [attr.data-testid]="fid" />
+                          @if (controlError(lang, f.name); as e) {
+                            <mat-error>{{ e }}</mat-error>
+                          }
+                        </mat-form-field>
+                        <button mat-button type="button" (click)="slugFromTitle(lang)">
+                          <span aria-hidden="true">↻</span> {{ 'admin.project.slugFromTitle' | transloco }}
+                        </button>
+                      </div>
+                    }
+                    @default {
+                      <mat-form-field class="full">
+                        <mat-label>{{ label }}</mat-label>
+                        @if (f.kind === 'area') {
+                          <textarea
+                            matInput
+                            [id]="fid"
+                            [formControlName]="f.name"
+                            rows="2"
+                            [attr.maxlength]="f.max ?? null"
+                            [attr.data-testid]="fid"
+                          ></textarea>
+                        } @else {
+                          <input matInput [id]="fid" [formControlName]="f.name" [attr.data-testid]="fid" />
+                        }
+                        @if (f.max) {
+                          <mat-hint align="end">
+                            {{ 'admin.common.chars' | transloco: { count: form.controls[lang].controls[f.name].value.length, max: f.max } }}
+                          </mat-hint>
+                        }
+                        @if (controlError(lang, f.name); as e) {
+                          <mat-error>{{ e }}</mat-error>
+                        }
+                      </mat-form-field>
+                    }
+                  }
+                </div>
+                @if (lang === 'en' && showPl()) {
+                  <aside class="pl-ref" lang="pl" [attr.aria-label]="'admin.project.plVersion' | transloco">
+                    <span class="adm-muted adm-small">{{ 'admin.project.' + f.label | transloco }} · {{ 'admin.lang.pl' | transloco }}</span>
+                    <p>{{ form.controls.pl.controls[f.name].value || ('admin.common.none' | transloco) }}</p>
+                  </aside>
+                }
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </section>
+
+    <section class="adm-section" formGroupName="shared" aria-labelledby="shared-title">
+      <h2 id="shared-title">{{ 'admin.project.shared' | transloco }}</h2>
+
+      <div class="group" role="radiogroup" aria-labelledby="kind-label">
+        <span id="kind-label" class="label">{{ 'admin.project.kind' | transloco }} *</span>
+        <mat-radio-group formControlName="kind" class="radios">
+          @for (k of kinds; track k) {
+            <mat-radio-button [value]="k" [attr.data-testid]="'kind-' + k">{{ 'admin.project.kinds.' + k | transloco }}</mat-radio-button>
+          }
+        </mat-radio-group>
+      </div>
+
+      <div class="group" role="group" aria-labelledby="period-label">
+        <span id="period-label" class="label">{{ 'admin.project.period' | transloco }} *</span>
+        <div class="period">
+          <mat-form-field>
+            <mat-label>{{ 'admin.project.startedOn' | transloco }}</mat-label>
+            <input matInput type="month" id="project-startedOn" formControlName="startedOn" data-testid="startedOn" />
+            @if (form.controls.shared.controls.startedOn.errors?.['api']; as e) {
+              <mat-error>{{ e }}</mat-error>
+            }
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>{{ 'admin.project.finishedOn' | transloco }}</mat-label>
+            <input matInput type="month" id="project-finishedOn" formControlName="finishedOn" data-testid="finishedOn" />
+            @if (form.controls.shared.controls.finishedOn.errors?.['api']; as e) {
+              <mat-error>{{ e }}</mat-error>
+            }
+          </mat-form-field>
+          <mat-checkbox formControlName="ongoing" data-testid="ongoing">{{ 'admin.project.ongoing' | transloco }}</mat-checkbox>
+        </div>
+      </div>
+
+      <mat-form-field class="full" subscriptSizing="dynamic">
+        <mat-label>{{ 'admin.project.technologies' | transloco }}</mat-label>
+        <input
+          #techInput
+          matInput
+          id="project-technologyIds"
+          [placeholder]="'admin.project.technologySearch' | transloco"
+          [matAutocomplete]="techAuto"
+          (input)="techQuery.set(techInput.value)"
+          data-testid="tech-input"
+        />
+        <mat-autocomplete #techAuto="matAutocomplete" (optionSelected)="addTechnology($event, techInput)">
+          @for (t of techOptions(); track t.id) {
+            <mat-option [value]="t.id">{{ t.name }}</mat-option>
+          }
+          @if (canCreateTech()) {
+            <mat-option [value]="'new:' + techQuery().trim()" data-testid="tech-create">
+              {{ 'admin.project.addTechnology' | transloco: { name: techQuery().trim() } }}
+            </mat-option>
+          }
+        </mat-autocomplete>
+      </mat-form-field>
+      <mat-chip-set class="chips" [attr.aria-label]="'admin.project.technologies' | transloco" data-testid="tech-chips">
+        @for (tid of form.controls.shared.controls.technologyIds.value; track tid) {
+          <mat-chip (removed)="removeFrom('technologyIds', tid)">
+            {{ techName(tid) }}
+            <button matChipRemove type="button" [attr.aria-label]="('admin.common.remove' | transloco) + ' ' + techName(tid)">×</button>
+          </mat-chip>
+        }
+      </mat-chip-set>
+
+      <mat-form-field class="full" subscriptSizing="dynamic">
+        <mat-label>{{ 'admin.project.areas' | transloco }}</mat-label>
+        <input
+          #areaInput
+          matInput
+          id="project-expertiseAreaIds"
+          [placeholder]="'admin.project.areaSearch' | transloco"
+          [matAutocomplete]="areaAuto"
+          (input)="areaQuery.set(areaInput.value)"
+          data-testid="area-input"
+        />
+        <mat-autocomplete #areaAuto="matAutocomplete" (optionSelected)="addArea($event, areaInput)">
+          @for (a of areaOptions(); track a.id) {
+            <mat-option [value]="a.id">{{ areaTitle(a) }}</mat-option>
+          }
+        </mat-autocomplete>
+      </mat-form-field>
+      <mat-chip-set class="chips" [attr.aria-label]="'admin.project.areas' | transloco">
+        @for (aid of form.controls.shared.controls.expertiseAreaIds.value; track aid) {
+          <mat-chip (removed)="removeFrom('expertiseAreaIds', aid)">
+            {{ areaName(aid) }}
+            <button matChipRemove type="button" [attr.aria-label]="('admin.common.remove' | transloco) + ' ' + areaName(aid)">×</button>
+          </mat-chip>
+        }
+      </mat-chip-set>
+
+      <adm-media-field
+        fieldId="project-coverMediaId"
+        [label]="'admin.project.cover' | transloco"
+        [pickLabel]="'admin.project.coverPick' | transloco"
+        [required]="true"
+        [value]="form.controls.shared.controls.coverMediaId.value"
+        (valueChange)="form.controls.shared.controls.coverMediaId.setValue($event)"
+        [error]="error('coverMediaId') || error('coverMediaId.en')"
+        [altWarning]="'admin.project.coverNoAlt' | transloco"
+      />
+
+      <adm-gallery-field
+        [value]="form.controls.shared.controls.galleryMediaIds.value"
+        (valueChange)="form.controls.shared.controls.galleryMediaIds.setValue($event)"
+      />
+
+      <div class="adm-fields two">
+        <mat-form-field>
+          <mat-label>{{ 'admin.project.repo' | transloco }}</mat-label>
+          <input matInput type="url" id="project-repoUrl" formControlName="repoUrl" placeholder="https://" data-testid="repoUrl" />
+          @if (form.controls.shared.controls.repoUrl.errors?.['api']; as e) {
+            <mat-error>{{ e }}</mat-error>
+          }
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>{{ 'admin.project.live' | transloco }}</mat-label>
+          <input matInput type="url" id="project-liveUrl" formControlName="liveUrl" placeholder="https://" data-testid="liveUrl" />
+          @if (form.controls.shared.controls.liveUrl.errors?.['api']; as e) {
+            <mat-error>{{ e }}</mat-error>
+          }
+        </mat-form-field>
+      </div>
+
+      <mat-checkbox formControlName="featured" data-testid="featured">{{ 'admin.project.featured' | transloco }}</mat-checkbox>
+    </section>
+  </form>
+</div>

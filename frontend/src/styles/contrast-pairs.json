@@ -1,0 +1,30 @@
+{
+  "comment": "Colour pairs that must meet WCAG contrast (DIRECTION.md, Tokens; both themes). Text needs 4.5, focus rings and control borders 3.",
+  "pairs": [
+    { "label": "Ink on ground", "fg": "--color-ink", "bg": "--color-ground", "min": 4.5 },
+    { "label": "Body on ground", "fg": "--color-body", "bg": "--color-ground", "min": 4.5 },
+    { "label": "Muted on ground", "fg": "--color-muted", "bg": "--color-ground", "min": 4.5 },
+    { "label": "Ink on band / raised", "fg": "--color-ink", "bg": "--color-raised", "min": 4.5 },
+    { "label": "Body on band / raised", "fg": "--color-body", "bg": "--color-raised", "min": 4.5 },
+    { "label": "Muted on band / raised", "fg": "--color-muted", "bg": "--color-raised", "min": 4.5 },
+    { "label": "Ink on raised-2 (form card, hover)", "fg": "--color-ink", "bg": "--color-raised-2", "min": 4.5 },
+    { "label": "Soft on raised-2 (form labels)", "fg": "--color-soft", "bg": "--color-raised-2", "min": 4.5 },
+    { "label": "Muted on raised-2", "fg": "--color-muted", "bg": "--color-raised-2", "min": 4.5 },
+    { "label": "Soft on ground (outline tags)", "fg": "--color-soft", "bg": "--color-ground", "min": 4.5 },
+    { "label": "Stage ink on stage (panel, buttons, CTA)", "fg": "--color-stage-ink", "bg": "--color-stage", "min": 4.5 },
+    { "label": "Stage soft on stage (panel text)", "fg": "--color-stage-soft", "bg": "--color-stage", "min": 4.5 },
+    { "label": "Stage muted on stage (panel year)", "fg": "--color-stage-muted", "bg": "--color-stage", "min": 4.5 },
+    { "label": "Stage ink on stage hover (primary button hover)", "fg": "--color-stage-ink", "bg": "--color-stage-hover", "min": 4.5 },
+    { "label": "Tech node on band (graph legend)", "fg": "--color-tech-node", "bg": "--color-band", "min": 3 },
+    { "label": "Ink button on stage (ink fill)", "fg": "--color-ink", "bg": "--color-ground", "min": 4.5 },
+    { "label": "Ok on ground", "fg": "--color-ok", "bg": "--color-ground", "min": 4.5 },
+    { "label": "Ok on raised", "fg": "--color-ok", "bg": "--color-raised", "min": 4.5 },
+    { "label": "Code keyword on raised", "fg": "--color-code-accent", "bg": "--color-raised", "min": 4.5 },
+    { "label": "Error on ground", "fg": "--color-busy", "bg": "--color-ground", "min": 4.5 },
+    { "label": "Error on raised-2 (form card)", "fg": "--color-busy", "bg": "--color-raised-2", "min": 4.5 },
+    { "label": "Focus ring on ground", "fg": "--color-focus", "bg": "--color-ground", "min": 3 },
+    { "label": "Focus ring on stage (stage ink)", "fg": "--color-stage-ink", "bg": "--color-stage", "min": 3 },
+    { "label": "Field border on ground (inputs, selects)", "fg": "--color-field", "bg": "--color-ground", "min": 3 },
+    { "label": "Field border on raised-2 (form card)", "fg": "--color-field", "bg": "--color-raised-2", "min": 3 }
+  ]
+}

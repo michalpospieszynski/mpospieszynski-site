@@ -1,0 +1,87 @@
+<div class="container services">
+  <header class="page-head">
+    <h1>{{ 'services.title' | transloco }}</h1>
+    <p>{{ 'services.lead' | transloco }}</p>
+    @if (availability(); as a) {
+      <ui-availability [status]="a.status" [from]="a.from ?? undefined" data-testid="availability" />
+    }
+  </header>
+
+  @if (offerings().length) {
+    <ul role="list" class="rows offerings" data-testid="offerings">
+      @for (offering of offerings(); track offering.id) {
+        <li class="row offering" [attr.lang]="offering.fallback ? 'pl' : null" data-testid="offering">
+          <h2 class="row__title offering__title">{{ offering.title }}</h2>
+          <div class="offering__body">
+            <p class="offering__summary">{{ offering.summary }}</p>
+            @if (offering.deliverablesMd) {
+              <div class="offering__includes">
+                <p class="text-small text-muted" [attr.lang]="offering.fallback ? language.lang() : null">
+                  {{ 'services.includes' | transloco }}
+                </p>
+                <ui-markdown [markdown]="offering.deliverablesMd" />
+              </div>
+            }
+            @if (offering.priceNote) {
+              <p class="text-small tnum" data-testid="price-note">{{ offering.priceNote }}</p>
+            }
+            @if (offering.descriptionMd) {
+              <button
+                type="button"
+                class="offering__toggle"
+                [attr.aria-expanded]="expanded().has(offering.id)"
+                [attr.aria-controls]="'details-' + offering.id"
+                [attr.lang]="offering.fallback ? language.lang() : null"
+                (click)="toggle(offering.id)"
+                data-testid="details-toggle"
+              >
+                {{ (expanded().has(offering.id) ? 'services.less' : 'services.more') | transloco }}
+              </button>
+              <div [id]="'details-' + offering.id" [hidden]="!expanded().has(offering.id)" data-testid="details">
+                <ui-markdown [markdown]="offering.descriptionMd" />
+              </div>
+            }
+            <ui-button
+              variant="ghost"
+              class="offering__ask"
+              [link]="'contact' | localizedPath"
+              [queryParams]="{ topic: 'PROJECT', service: offering.id }"
+              [attr.lang]="offering.fallback ? language.lang() : null"
+              data-testid="ask"
+              >{{ 'services.ask' | transloco }}</ui-button
+            >
+          </div>
+        </li>
+      }
+    </ul>
+
+    <section class="process" aria-labelledby="process-heading">
+      <h2 id="process-heading" class="section__title">{{ 'services.process.title' | transloco }}</h2>
+      <ol class="process__steps">
+        @for (step of steps; track step) {
+          <li>
+            <h3>{{ 'services.process.steps.' + step + '.title' | transloco }}</h3>
+            <p class="text-muted">{{ 'services.process.steps.' + step + '.text' | transloco }}</p>
+          </li>
+        }
+      </ol>
+    </section>
+  }
+
+  @if (faq().length) {
+    <section class="faq" aria-labelledby="faq-heading" data-testid="faq">
+      <h2 id="faq-heading" class="section__title">{{ 'services.faq.title' | transloco }}</h2>
+      @for (item of faq(); track item.id) {
+        <details class="faq__item" [attr.lang]="item.fallback ? 'pl' : null">
+          <summary>{{ item.question }}</summary>
+          <ui-markdown [markdown]="item.answerMd" />
+        </details>
+      }
+    </section>
+  }
+
+  <aside class="cta" aria-labelledby="services-cta">
+    <h2 id="services-cta">{{ 'services.cta.title' | transloco }}</h2>
+    <ui-button variant="ink" [link]="'contact' | localizedPath">{{ 'services.cta.action' | transloco }}</ui-button>
+  </aside>
+</div>

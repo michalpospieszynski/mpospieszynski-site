@@ -1,0 +1,5 @@
+# Local Supabase (CLI): per-machine and generated files, never committed.
+.branches
+.temp
+signing_keys.json
+.env

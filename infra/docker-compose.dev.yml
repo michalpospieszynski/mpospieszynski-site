@@ -1,0 +1,31 @@
+# Local development services for the backend's `dev` profile (docs/IMPLEMENTATION-PLAN.md, task I1).
+#   docker compose -f infra/docker-compose.dev.yml up -d
+# Ports bind to localhost only. PostgreSQL uses host port 5433 by default because 5432 is often taken
+# by a locally installed PostgreSQL; override with DEV_DB_PORT (the backend reads the same variable).
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: site
+      POSTGRES_USER: ${DEV_DB_USER:-site}
+      POSTGRES_PASSWORD: ${DEV_DB_PASSWORD:-site}
+    ports:
+      - "127.0.0.1:${DEV_DB_PORT:-5433}:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+
+  mailpit:
+    image: axllent/mailpit:v1.31.5
+    ports:
+      - "127.0.0.1:1025:1025"   # SMTP, used by spring.mail in the dev profile
+      - "127.0.0.1:8025:8025"   # web inbox: http://localhost:8025
+    restart: unless-stopped
+
+volumes:
+  postgres-data:

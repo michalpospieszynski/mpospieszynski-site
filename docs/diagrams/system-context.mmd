@@ -1,0 +1,37 @@
+flowchart LR
+    visitor([Visitor / potential client / developer])
+    owner([Site owner - admin])
+
+    subgraph cf[Cloudflare - free plan]
+        edge[DNS, CDN, WAF, TLS]
+        turnstile[Turnstile]
+        cfa[Web Analytics]
+        access[Zero Trust Access]
+    end
+
+    subgraph vps[VPS]
+        site[Personal website<br/>cloudflared + Angular SSR + Spring Boot]
+    end
+
+    subgraph supa[Supabase - free plan]
+        sauth[Auth]
+        sdb[(PostgreSQL)]
+        sstore[Storage]
+    end
+
+    smtp[SMTP provider]
+    gh[GitHub<br/>Actions + GHCR]
+    mon[External uptime monitor]
+
+    visitor -- HTTPS --> edge
+    owner -- HTTPS --> edge
+    edge -- Cloudflare Tunnel --> site
+    owner -- sign in --> sauth
+    site -- verify JWT via JWKS --> sauth
+    site -- SQL via session pooler --> sdb
+    site -- read/write files --> sstore
+    site -- verify token --> turnstile
+    site -- notifications --> smtp
+    visitor -. beacon .-> cfa
+    gh -- deploy --> site
+    mon -- probes health --> edge

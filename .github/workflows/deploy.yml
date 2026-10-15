@@ -1,0 +1,134 @@
+# Deployment (docs/IMPLEMENTATION-PLAN.md I4). On every push to main: CI, then both images to GHCR tagged with the
+# commit SHA, then the VPS switches to them (infra/deploy.sh). Run it by hand with a `tag` to roll back to (or
+# redeploy) an earlier commit without rebuilding.
+#
+# Secrets live only in the GitHub environment `production` (DEPLOY_SSH_KEY, DEPLOY_HOST, DEPLOY_USER,
+# DEPLOY_KNOWN_HOSTS), plus the variables SITE_URL and, optionally, DEPLOY_PORT. GHCR uses the workflow's own
+# GITHUB_TOKEN. The runtime .env stays on the VPS: this workflow never reads or writes it.
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Full commit SHA whose images to deploy (empty: build and deploy the selected branch)'
+        required: false
+        default: ''
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false # never stop a deploy halfway; the next one waits
+
+jobs:
+  ci:
+    if: inputs.tag == ''
+    uses: ./.github/workflows/ci.yml
+
+  images:
+    name: Build and push images
+    needs: ci
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      matrix:
+        include:
+          - image: site-api
+            context: backend
+          - image: site-web
+            context: frontend
+    steps:
+      - uses: actions/checkout@v5
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Image name
+        id: name
+        # GHCR names must be lowercase; the owner may not be.
+        run: echo "ref=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/${{ matrix.image }}" >> "$GITHUB_OUTPUT"
+      - uses: docker/build-push-action@v6
+        with:
+          context: ${{ matrix.context }}
+          push: true
+          tags: ${{ steps.name.outputs.ref }}:${{ github.sha }}
+          labels: |
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+            org.opencontainers.image.revision=${{ github.sha }}
+          cache-from: type=gha,scope=${{ matrix.image }}
+          cache-to: type=gha,scope=${{ matrix.image }},mode=max
+
+  deploy:
+    name: Deploy to the VPS
+    needs: images
+    # Runs after a successful build, or straight away for a manual rollback (ci and images are skipped then).
+    if: >-
+      always() &&
+      (needs.images.result == 'success' || (inputs.tag != '' && needs.images.result == 'skipped'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment:
+      name: production
+      url: ${{ vars.SITE_URL }}
+    env:
+      TAG: ${{ inputs.tag || github.sha }}
+      SITE_URL: ${{ vars.SITE_URL }}
+    steps:
+      - name: Check the tag and settings
+        run: |
+          case "$TAG" in *[!0-9a-f]* | '') echo "Not a commit SHA: $TAG" >&2; exit 1 ;; esac
+          # Images are tagged with the full SHA.
+          [ "${#TAG}" -eq 40 ] || { echo "Use the full 40-character commit SHA: $TAG" >&2; exit 1; }
+          [ -n "$SITE_URL" ] || { echo "Set the SITE_URL variable in the production environment." >&2; exit 1; }
+
+      # The compose file, cloudflared config and deploy script of the commit being deployed, so they match its images.
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ env.TAG }}
+          sparse-checkout: infra
+
+      - name: SSH key and known host
+        env:
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DEPLOY_KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+        run: |
+          install -d -m 700 ~/.ssh
+          (umask 077 && printf '%s\n' "$DEPLOY_SSH_KEY" > ~/.ssh/deploy_key)
+          printf '%s\n' "$DEPLOY_KNOWN_HOSTS" > ~/.ssh/known_hosts
+
+      - name: Copy the stack definition and deploy
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+          DEPLOY_PORT: ${{ vars.DEPLOY_PORT || '22' }}
+        run: |
+          opts=(-i "$HOME/.ssh/deploy_key" -o StrictHostKeyChecking=yes -o BatchMode=yes)
+          target="$DEPLOY_USER@$DEPLOY_HOST"
+          scp "${opts[@]}" -P "$DEPLOY_PORT" infra/docker-compose.yml infra/deploy.sh "$target:/opt/site/"
+          scp "${opts[@]}" -P "$DEPLOY_PORT" infra/cloudflared/config.yml "$target:/opt/site/cloudflared/config.yml"
+          ssh "${opts[@]}" -p "$DEPLOY_PORT" "$target" "chmod 755 /opt/site/deploy.sh && /opt/site/deploy.sh $TAG"
+
+      - name: Health check through the tunnel
+        run: |
+          for path in / /en /api/actuator/health; do
+            ok=''
+            for _ in $(seq 1 10); do
+              if curl -fsS -o /dev/null --max-time 10 "$SITE_URL$path"; then ok=yes; break; fi
+              sleep 6
+            done
+            [ -n "$ok" ] || { echo "$SITE_URL$path is not answering." >&2; exit 1; }
+            echo "OK $SITE_URL$path"
+          done
+
+      - name: Remove the key
+        if: always()
+        run: rm -f ~/.ssh/deploy_key

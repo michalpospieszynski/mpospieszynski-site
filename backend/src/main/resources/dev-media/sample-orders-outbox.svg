@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="750" viewBox="0 0 1200 750">
+  <rect width="1200" height="750" fill="#e4e2da"/>
+  <g font-family="Georgia, serif" font-size="30" fill="#e4e2da">
+    <rect x="120" y="180" width="420" height="390" rx="16" fill="#2b2216"/>
+    <text x="330" y="250" text-anchor="middle">PostgreSQL</text>
+    <rect x="170" y="300" width="320" height="90" fill="#4a3f31"/>
+    <text x="330" y="355" text-anchor="middle">orders</text>
+    <rect x="170" y="420" width="320" height="90" fill="#4a3f31"/>
+    <text x="330" y="475" text-anchor="middle">outbox</text>
+    <rect x="760" y="405" width="320" height="120" rx="16" fill="#bda38b"/>
+    <text x="920" y="475" text-anchor="middle" fill="#1c150d">Kafka</text>
+  </g>
+  <path d="M490 465 H760" stroke="#2b2216" stroke-width="6" fill="none"/>
+</svg>

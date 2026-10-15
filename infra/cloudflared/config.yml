@@ -1,0 +1,15 @@
+# Cloudflare Tunnel ingress (docs/ARCHITECTURE.md §3): the rules are the reverse proxy, matched top to bottom,
+# on one hostname, by path. No nginx, no published ports, no api. subdomain.
+# The tunnel id is passed on the command line (TUNNEL_ID in .env); the credentials file is mounted from the VPS.
+# Rules match any hostname routed to this tunnel (mpospieszynski.pl, www, or a test hostname); www is redirected
+# to the apex by a Cloudflare redirect rule before it reaches the tunnel.
+#
+# Keep /media for the API: the web build serves its own fonts from /fonts (angular.json outputPath.media).
+credentials-file: /etc/cloudflared/credentials.json
+
+ingress:
+  - path: ^/(api|media)/
+    service: http://api:8080
+  - path: ^/(sitemap\.xml|robots\.txt)$
+    service: http://api:8080
+  - service: http://web:4000

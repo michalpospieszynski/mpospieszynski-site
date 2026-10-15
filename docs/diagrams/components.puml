@@ -1,0 +1,86 @@
+@startuml components
+title Personal website - UML component diagram
+
+skinparam shadowing false
+skinparam defaultFontName "Helvetica"
+skinparam component {
+  BackgroundColor #FFFFFF
+  BorderColor #172330
+}
+skinparam package {
+  BackgroundColor #EEF1F3
+  BorderColor #55626F
+}
+
+package "Frontend (Angular)" as pkg_frontend {
+  component "Public features\nhome, projects, skills, services,\nabout, contact, legal, not-found" as c_fe_public
+  component "Admin features\n(lazy, adminGuard, Polish UI)" as c_fe_admin
+  component "Core\nAPI base URL, interceptors,\nSeoService (hreflang)" as c_fe_core
+  component "LanguageService\nroute map PL/EN,\nlanguage switcher" as c_fe_lang
+  component "Transloco\npl.json, en.json,\nMessageFormat plurals" as c_fe_transloco
+  component "Generated API client\n(OpenAPI)" as c_fe_client
+  component "Auth service\n(supabase-js wrapper)" as c_fe_auth
+}
+
+package "Backend (Spring Boot, modular monolith)" as pkg_backend {
+  package "shared" as pkg_shared {
+    component "Security\nSecurityConfig,\nSupabaseJwtConverter" as c_be_security
+    component "Web\nProblemDetail, ServerTiming,\nClientIpResolver" as c_be_web
+    component "i18n\nSiteLocale, fallback" as c_be_i18n
+    component "Storage\nMediaStorage,\nMediaController" as c_be_storage
+  }
+  component "profile" as c_be_profile
+  component "projects" as c_be_projects
+  component "skills\ntechnologies, expertise areas" as c_be_skills
+  component "services" as c_be_services
+  component "contact" as c_be_contact
+  component "seo\nsitemap with alternates" as c_be_seo
+
+  interface "Public REST API\n/api/v1/public" as i_public_api
+  interface "Admin REST API\n/api/v1/admin" as i_admin_api
+}
+
+database "Supabase PostgreSQL\n(schema site, Flyway)" as db_postgres
+component "Supabase Storage" <<external>> as c_ext_storage
+component "Supabase Auth" <<external>> as c_ext_auth
+component "Cloudflare Turnstile" <<external>> as c_ext_turnstile
+component "SMTP provider" <<external>> as c_ext_smtp
+
+c_fe_public --> c_fe_core
+c_fe_public --> c_fe_lang
+c_fe_lang --> c_fe_transloco
+c_fe_admin --> c_fe_core
+c_fe_admin --> c_fe_auth
+c_fe_core --> c_fe_client
+c_fe_client --> i_public_api
+c_fe_client --> i_admin_api
+c_fe_auth --> c_ext_auth : sign in, refresh
+
+i_public_api -- c_be_profile
+i_public_api -- c_be_projects
+i_public_api -- c_be_skills
+i_public_api -- c_be_services
+i_public_api -- c_be_contact
+i_admin_api -- c_be_profile
+i_admin_api -- c_be_projects
+i_admin_api -- c_be_skills
+i_admin_api -- c_be_services
+i_admin_api -- c_be_contact
+
+i_admin_api ..> c_be_security : requires ROLE_ADMIN
+c_be_security ..> c_ext_auth : JWKS
+
+c_be_profile --> db_postgres
+c_be_projects --> db_postgres
+c_be_skills --> db_postgres
+c_be_services --> db_postgres
+c_be_contact --> db_postgres
+c_be_projects ..> c_be_i18n
+c_be_profile ..> c_be_i18n
+c_be_seo --> c_be_projects
+c_be_projects --> c_be_storage
+c_be_profile --> c_be_storage
+c_be_storage --> c_ext_storage
+c_be_contact --> c_ext_turnstile : siteverify
+c_be_contact --> c_ext_smtp : async, after commit
+@enduml

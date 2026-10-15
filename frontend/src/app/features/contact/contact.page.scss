@@ -1,0 +1,12 @@
+.intro {
+  gap: 20px;
+
+  h1 {
+    font-size: clamp(2.2rem, 4vw, 3.6rem);
+  }
+}
+
+.email {
+  font-size: 1.125rem;
+  font-weight: 600;
+}
