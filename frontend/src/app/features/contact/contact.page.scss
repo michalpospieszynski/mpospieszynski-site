@@ -1,8 +1,10 @@
 .intro {
   gap: 20px;
+  container-type: inline-size;
 
+  // Sized to the column, not the viewport, so the longest word ("Porozmawiajmy.", ~9.3em) always fits on its line.
   h1 {
-    font-size: clamp(2.2rem, 4vw, 3.6rem);
+    font-size: clamp(1.75rem, 10cqi, 3.6rem);
   }
 }
 
