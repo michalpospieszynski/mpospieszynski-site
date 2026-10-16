@@ -7,7 +7,13 @@ import {
 import express from 'express';
 import { join } from 'node:path';
 
-import { STATIC_HEADERS, addNonce, contentSecurityPolicy, createNonce } from './server-security';
+import {
+  STATIC_HEADERS,
+  addNonce,
+  contentSecurityPolicy,
+  createNonce,
+  staticCacheControl,
+} from './server-security';
 
 declare const ngDevMode: unknown;
 
@@ -34,14 +40,12 @@ app.get('/healthz', (_req, res) => {
   res.set('Cache-Control', 'no-store').type('text/plain').send('ok');
 });
 
-/**
- * Serve static files from /browser
- */
+/** Static files of the browser build: hashed ones for a year, fixed names (favicons) hourly. */
 app.use(
   express.static(browserDistFolder, {
-    maxAge: '1y',
     index: false,
     redirect: false,
+    setHeaders: (res, filePath) => res.setHeader('Cache-Control', staticCacheControl(filePath)),
   }),
 );
 
@@ -76,9 +80,15 @@ app.use((req, res, next) => {
       if (ENFORCE_CSP) {
         const nonce = createNonce();
         html = addNonce(html, nonce);
-        headers.set('Content-Security-Policy', contentSecurityPolicy(req.path, nonce, SUPABASE_URL));
+        headers.set(
+          'Content-Security-Policy',
+          contentSecurityPolicy(req.path, nonce, SUPABASE_URL),
+        );
       }
-      return writeResponseToNodeResponse(new Response(html, { status: response.status, headers }), res);
+      return writeResponseToNodeResponse(
+        new Response(html, { status: response.status, headers }),
+        res,
+      );
     })
     .catch(next);
 });

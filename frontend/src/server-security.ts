@@ -10,7 +10,10 @@ const CF_ANALYTICS_SCRIPT = 'https://static.cloudflareinsights.com';
 const CF_ANALYTICS_BEACON = 'https://cloudflareinsights.com';
 /** Pages with the contact form (and so Turnstile): the contact pages and the home pages. */
 const FORM_PATHS = new Set(
-  (['contact', 'home'] as const).flatMap((key) => [localizedUrl(key, 'pl'), localizedUrl(key, 'en')]),
+  (['contact', 'home'] as const).flatMap((key) => [
+    localizedUrl(key, 'pl'),
+    localizedUrl(key, 'en'),
+  ]),
 );
 
 /** Same list as the API (SecurityConfig.PERMISSIONS_POLICY). */
@@ -23,6 +26,20 @@ export const STATIC_HEADERS: Readonly<Record<string, string>> = {
   'Permissions-Policy': PERMISSIONS_POLICY,
   'X-Frame-Options': 'DENY',
 };
+
+/** Angular's output hashing (`outputHashing: all`): `chunk-3PTdXO7p.js`, `manrope-…-73PUZEUA.woff2`. */
+const CONTENT_HASH = /-[A-Za-z0-9_-]{8}\.[a-z0-9]+$/;
+
+/**
+ * Cache-Control for a static file of the browser build. Hashed files never change under their name, so browsers
+ * and Cloudflare keep them for a year; files with fixed names (favicons from public/) would otherwise stay stale
+ * for a year after a release, so they are revalidated hourly.
+ */
+export function staticCacheControl(filePath: string): string {
+  return CONTENT_HASH.test(filePath)
+    ? 'public, max-age=31536000, immutable'
+    : 'public, max-age=3600';
+}
 
 /** 128 random bits, base64 (Web Crypto: global in Node and the browser). */
 export function createNonce(): string {

@@ -1,4 +1,4 @@
-import { addNonce, contentSecurityPolicy } from './server-security';
+import { addNonce, contentSecurityPolicy, staticCacheControl } from './server-security';
 
 const SUPABASE = 'https://abc.supabase.co';
 
@@ -43,5 +43,28 @@ describe('addNonce', () => {
     expect(addNonce(html, 'n1')).toBe(
       '<script nonce="n1">a()</script><script nonce="n1" src="/main.js" type="module"></script><script nonce="x">b()</script>',
     );
+  });
+});
+
+describe('staticCacheControl', () => {
+  it('caches content-hashed build files for a year', () => {
+    for (const file of [
+      '/srv/browser/chunk-3PTdXO7p.js',
+      '/srv/browser/main-BJv7fkGo.js',
+      '/srv/browser/styles-Cz85zeY_.css',
+      '/srv/browser/fonts/manrope-latin-wght-normal-73PUZEUA.woff2',
+    ]) {
+      expect(staticCacheControl(file)).toBe('public, max-age=31536000, immutable');
+    }
+  });
+
+  it('revalidates files with fixed names hourly, so a new favicon reaches visitors', () => {
+    for (const file of [
+      '/srv/browser/favicon.ico',
+      '/srv/browser/favicon.svg',
+      '/srv/browser/apple-touch-icon.png',
+    ]) {
+      expect(staticCacheControl(file)).toBe('public, max-age=3600');
+    }
   });
 });
