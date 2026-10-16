@@ -5,7 +5,10 @@
   <title>mpospieszynski.pl</title>
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <!-- The header's graph mark (public/favicon.svg); the .ico (16/32/48) and the touch icon are rendered from it. -->
+  <link rel="icon" href="favicon.ico" sizes="32x32">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <!-- Theme before the first paint (core/theme/theme.service.ts): the stored choice, else the system preference.
        The SSR server puts its CSP nonce on this script (server-security.ts, addNonce). -->
   <script>

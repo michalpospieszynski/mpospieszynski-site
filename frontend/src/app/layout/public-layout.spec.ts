@@ -121,6 +121,18 @@ describe('Public layout (app shell)', () => {
     expect(q(el, 'how-built')?.getAttribute('href')).toBe('/projekty/ta-strona');
   });
 
+  it('names the brand after the profile: first initial and the rest of the name', async () => {
+    profile = { ...PROFILE, fullName: 'Michał Pośpieszyński' };
+    const { el } = await open('/');
+    expect(q(el, 'brand')?.textContent?.trim()).toBe('M. Pośpieszyński');
+  });
+
+  it('keeps a one-word name whole', async () => {
+    profile = { ...PROFILE, fullName: 'Studio' };
+    const { el } = await open('/');
+    expect(q(el, 'brand')?.textContent?.trim()).toBe('Studio');
+  });
+
   it('hides "How this site is built" without a site project', async () => {
     profile = { ...PROFILE };
     const { el } = await open('/');

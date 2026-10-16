@@ -12,6 +12,7 @@ import { TranslocoPipe } from '@jsverse/transloco';
 
 import { LanguageService } from '../core/i18n/language.service';
 import { LocalizedPathPipe } from '../core/i18n/localized-path.pipe';
+import { ProfileStore } from '../core/profile/profile.store';
 import { RouteKey } from '../core/i18n/route-table';
 import { SeoService } from '../core/seo/seo.service';
 import { ThemeToggleComponent } from '../shared/ui/theme-toggle.component';
@@ -33,6 +34,12 @@ const SECTION_MATCH = {
   fragment: 'ignored',
 } as const;
 
+/** "Michał Pośpieszyński" → "M. Pośpieszyński": the first name shortened to its initial; one word stays whole. */
+function brandName(fullName: string | null | undefined): string {
+  const [first, ...rest] = (fullName ?? '').trim().split(/\s+/);
+  return rest.length ? `${first.charAt(0)}. ${rest.join(' ')}` : (first ?? '');
+}
+
 /**
  * Header of every public page (docs/screens/public/01-app-shell.md, DIRECTION.md): sticky 72px bar with the
  * graph mark and name, the section links, the light/dark switch and a pill that switches to the other language
@@ -53,6 +60,10 @@ export class SiteHeaderComponent {
 
   protected readonly navItems = NAV_ITEMS;
   protected readonly sectionMatch = SECTION_MATCH;
+
+  /** From the profile's full name (admin → Profile); `shell.brand` only until a profile is loaded. */
+  private readonly profile = inject(ProfileStore).profile;
+  protected readonly brand = computed(() => brandName(this.profile()?.fullName));
 
   protected readonly otherLang = computed(() => (this.language.lang() === 'pl' ? 'en' : 'pl'));
 

@@ -6,7 +6,7 @@ This site only collects the data needed to reply to your message. It uses no coo
 
 ## Data controller
 
-The data controller is Michał Pospieszyński. For anything about your personal data, write to [pospieszynski.michal@gmail.com](mailto:pospieszynski.michal@gmail.com).
+The data controller is Michał Pośpieszyński. For anything about your personal data, write to [pospieszynski.michal@gmail.com](mailto:pospieszynski.michal@gmail.com).
 
 ## What data is collected
 

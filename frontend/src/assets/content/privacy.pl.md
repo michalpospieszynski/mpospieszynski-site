@@ -6,7 +6,7 @@ Ta strona zbiera tylko dane potrzebne, żeby odpowiedzieć na Twoją wiadomość
 
 ## Administrator danych
 
-Administratorem danych jest Michał Pospieszyński. W sprawach dotyczących danych osobowych napisz na adres [pospieszynski.michal@gmail.com](mailto:pospieszynski.michal@gmail.com).
+Administratorem danych jest Michał Pośpieszyński. W sprawach dotyczących danych osobowych napisz na adres [pospieszynski.michal@gmail.com](mailto:pospieszynski.michal@gmail.com).
 
 ## Jakie dane zbieram
 

@@ -15,7 +15,7 @@ Desktop (≥ 900 px), the redesign in [docs/redesign/HANDOFF.md](../../redesign/
 ```
 ┌────────────────────────────────────────────────────────────────────────────┐
 │ [Przejdź do treści]  (visible only on focus)                               │
-│ (◎) M. Pospieszyński   Projekty Umiejętności Usługi O mnie Kontakt  (☀)(EN)│  sticky, 72px, blurred ink
+│ (◎) M. Pośpieszyński   Projekty Umiejętności Usługi O mnie Kontakt  (☀)(EN)│  sticky, 72px, blurred ink
 ├────────────────────────────────────────────────────────────────────────────┤
 │ This site is also available in English.  [Switch to English]  [×]          │  ← conditional
 ├────────────────────────────────────────────────────────────────────────────┤
@@ -23,11 +23,13 @@ Desktop (≥ 900 px), the redesign in [docs/redesign/HANDOFF.md](../../redesign/
 ├────────────────────────────────────────────────────────────────────────────┤
 │ Projekty · Umiejętności · Usługi · O mnie · Kontakt ·      GitHub LinkedIn │
 │ Jak zbudowana jest ta strona · Polityka prywatności        E-mail          │
-│ © 2026 Michał Pospieszyński                          mpospieszynski.pl     │
+│ © 2026 Michał Pośpieszyński                          mpospieszynski.pl     │
 └────────────────────────────────────────────────────────────────────────────┘
 ```
 
-The home link is the graph mark (two joined nodes in a ring) with `shell.brand`. The language control is one pill
+The home link is the graph mark (two joined nodes in a ring) with the owner's name from the profile (admin → Profile),
+shortened to the first initial and the rest ("Michał Pośpieszyński" → "M. Pośpieszyński"); `shell.brand` is shown only
+until a profile is loaded. The language control is one pill
 showing the other language's code; it links to the same page in that language. Before it, a round toggle switches
 between the dark and light themes.
 
@@ -47,7 +49,7 @@ sheet with the five links.
 | `nav.menu` / `nav.closeMenu` | Menu / Zamknij menu | Menu / Close menu |
 | `nav.languageShort.pl` / `.en` | PL / EN | PL / EN |
 | `nav.switchTo.pl` / `.en` | Przełącz na polski / Switch to English | Przełącz na polski / Switch to English |
-| `shell.brand` | M. Pospieszyński | M. Pospieszyński |
+| `shell.brand` (fallback) | M. Pośpieszyński | M. Pośpieszyński |
 | `nav.theme.toLight` / `.toDark` | Włącz jasny motyw / Włącz ciemny motyw | Switch to the light theme / Switch to the dark theme |
 | `shell.langHint.text` | This site is also available in English. | – (only shown on PL pages) |
 | `shell.langHint.action` | Switch to English | – |
