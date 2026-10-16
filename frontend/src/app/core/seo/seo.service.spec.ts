@@ -19,6 +19,8 @@ describe('SeoService', () => {
   const meta = (attr: string) => doc.head.querySelector(`meta[${attr}]`)?.getAttribute('content');
   const link = (selector: string) =>
     doc.head.querySelector(`link${selector}`)?.getAttribute('href');
+  /** The per-page JSON-LD that update() owns; the app shell's site-wide WebSite script (data-site) is separate. */
+  const pageJsonLd = () => doc.head.querySelectorAll('script[type="application/ld+json"][data-seo]');
   const hreflangs = () =>
     Array.from(doc.head.querySelectorAll('link[rel="alternate"][hreflang]')).map(
       (l) => `${l.getAttribute('hreflang')} ${l.getAttribute('href')}`,
@@ -41,6 +43,8 @@ describe('SeoService', () => {
     router = TestBed.inject(Router);
     doc = TestBed.inject(DOCUMENT);
     seo.setSiteName('Michał Pospieszyński');
+    // As in the app: the shell's site-wide JSON-LD is already in <head> and must not be touched or mistaken for the page's.
+    seo.setSiteJsonLd({ '@type': 'WebSite' });
   });
 
   it('sets tags for a page with an English alternate', async () => {
@@ -98,9 +102,7 @@ describe('SeoService', () => {
       'en https://mpospieszynski.pl/en',
       'x-default https://mpospieszynski.pl/',
     ]);
-    const jsonLd = JSON.parse(
-      doc.head.querySelector('script[type="application/ld+json"]')?.textContent ?? '{}',
-    );
+    const jsonLd = JSON.parse(pageJsonLd()[0]?.textContent ?? '{}');
     expect(jsonLd['@type']).toBe('Person');
   });
 
@@ -112,6 +114,8 @@ describe('SeoService', () => {
     seo.update({ title: 'B' });
     expect(meta('name="description"')).toBe('');
     expect(doc.head.querySelectorAll('link[rel="canonical"]').length).toBe(1);
-    expect(doc.head.querySelectorAll('script[type="application/ld+json"]').length).toBe(0);
+    expect(pageJsonLd().length).toBe(0);
+    // The site-wide script stays.
+    expect(doc.head.querySelectorAll('script[type="application/ld+json"][data-site]').length).toBe(1);
   });
 });
