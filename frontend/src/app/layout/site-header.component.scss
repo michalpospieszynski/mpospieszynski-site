@@ -167,14 +167,24 @@
 .sheet__panel {
   display: grid;
   align-content: start;
-  justify-items: end;
   gap: var(--space-5);
   min-height: 100%;
   margin-left: auto;
-  width: min(100%, 360px);
+  width: min(100%, 400px);
   padding: var(--space-4) var(--page-gutter);
   border-left: 1px solid var(--color-line);
   background: var(--color-ground);
+
+  // On a phone a side sheet would leave a sliver of the page beside it: take the whole screen instead.
+  @media (max-width: 479.98px) {
+    width: 100%;
+    border-left: 0;
+  }
+}
+
+// The close pill sits where the Menu pill was; the links span the panel, one full-width row each.
+.sheet__close {
+  justify-self: end;
 }
 
 .sheet__links {
@@ -191,6 +201,10 @@
     font-size: var(--step-lead);
     font-weight: 600;
     text-decoration: none;
+  }
+
+  li:last-child a {
+    border-bottom: 1px solid var(--color-line);
   }
 
   a.is-active {
