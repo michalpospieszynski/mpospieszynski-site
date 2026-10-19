@@ -38,7 +38,8 @@
       "label": "Profiles and contact"
     },
     "copyright": "© {year} {name}",
-    "domain": "mpospieszynski.pl"
+    "domain": "mpospieszynski.pl",
+    "cookieSettings": "Cookie settings"
   },
   "home": {
     "hero": {
@@ -280,5 +281,16 @@
     "noscript": "Sending the form needs JavaScript. You can also write directly to {email}.",
     "heading": "Have a project? Let’s talk.",
     "aboutService": "About the service: {service}"
+  },
+  "consent": {
+    "label": "Cookie consent",
+    "text": "With your consent I use cookies to see how the site is used: click heatmaps and visit recordings, never what you type. Without consent I only count anonymous page views, with no cookies.",
+    "policy": "Privacy policy",
+    "accept": "Accept",
+    "reject": "Reject",
+    "current": {
+      "accepted": "Currently: consent given.",
+      "rejected": "Currently: no consent."
+    }
   }
 }

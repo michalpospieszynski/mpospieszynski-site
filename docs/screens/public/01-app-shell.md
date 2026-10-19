@@ -6,7 +6,7 @@
 
 ## Purpose
 
-The frame around every public page: header with navigation, the light/dark toggle and the language pill; language hint bar; skip link; footer. It also owns the behaviour of switching languages.
+The frame around every public page: header with navigation, the light/dark toggle and the language pill; language hint bar; skip link; footer; the cookie banner. It also owns the behaviour of switching languages and starts analytics (docs/ANALYTICS.md).
 
 ## Layout
 
@@ -56,10 +56,16 @@ sheet with the five links.
 | `shell.langHint.dismiss` | Close | – |
 | `footer.howBuilt` | Jak zbudowana jest ta strona | How this site is built |
 | `footer.privacy` | Polityka prywatności | Privacy policy |
+| `footer.cookieSettings` | Ustawienia cookies | Cookie settings |
+| `consent.label` | Zgoda na pliki cookies | Cookie consent |
+| `consent.text` | Za Twoją zgodą używam plików cookies, żeby zobaczyć, jak korzystasz ze strony: mapy kliknięć i nagrania wizyt, bez tego, co wpisujesz. Bez zgody liczę tylko anonimowe odsłony, bez cookies. | With your consent I use cookies to see how the site is used: click heatmaps and visit recordings, never what you type. Without consent I only count anonymous page views, with no cookies. |
+| `consent.policy` | Polityka prywatności | Privacy policy |
+| `consent.accept` / `consent.reject` | Akceptuję / Odrzucam | Accept / Reject |
+| `consent.current.accepted` / `.rejected` | Obecnie: zgoda wyrażona. / Obecnie: bez zgody. | Currently: consent given. / Currently: no consent. |
 | `footer.copyright` | © {year} {name} | © {year} {name} |
 | `footer.domain` | mpospieszynski.pl | mpospieszynski.pl |
 
-The language hint is deliberately written in English on Polish pages: it addresses people who prefer English.
+The language hint is deliberately written in English on Polish pages: it addresses visitors whose browser does not prefer Polish, for whom English is the better choice.
 
 ## Data
 
@@ -90,7 +96,9 @@ interface MediaRef { url: string; alt: string; width: number; height: number }
   - Pages with content slugs (case study): the page publishes its alternates through `SeoService`; the switcher reads them from the same signal. Missing alternate → link to the other language's projects list with `?notTranslated=1`, which the list page turns into a note.
   - Rendered as one pill linking to the other language, labelled with its code (`nav.languageShort`), with `aria-label` `nav.switchTo.<lang>`, `lang` and `hreflang`.
 - **Theme:** dark or light (DIRECTION.md, Tokens). The toggle (`ui-theme-toggle`, `ThemeService`) stores `theme` in `localStorage` and sets `data-theme` on `<html>`; without a stored choice the system preference (`prefers-color-scheme`) decides. The inline script in `index.html` applies it before the first paint, so there is no flash; the server renders the dark default and both icons, CSS shows the right one (no hydration mismatch). The button's name says what it does ("Włącz jasny motyw"); it has no `aria-pressed`.
-- **Language hint:** shown only on Polish pages, only in the browser (`afterNextRender`), when `navigator.languages[0]` starts with `en` and `localStorage.langHintDismissed` is not set. "Switch to English" goes to the equivalent English page; both actions set the dismissal flag.
+- **Language hint:** shown only on Polish pages, only in the browser (`afterNextRender`), when `navigator.languages[0]` does not start with `pl` and `localStorage.langHintDismissed` is not set. "Switch to English" goes to the equivalent English page; both actions set the dismissal flag.
+- **Cookie banner** (only when `POSTHOG_KEY` is configured; docs/ANALYTICS.md §4): browser-only after hydration, a panel at the bottom (full width on phones, a 440 px card at the bottom left from 768 px), not a modal. Shown while the visitor has not decided (`ConsentService`, `localStorage.consent`, asked again after 12 months); two equal ghost pills, Accept and Reject; a link to the privacy policy. "Cookie settings" in the footer reopens it with the current choice. A Global Privacy Control signal counts as Reject. Never on `/admin`.
+- **Remembered language:** the language pill and "Switch to English" store the chosen language as `localStorage.lang` (`LanguageService.rememberLang`). With `en` stored, a script in `index.html` sends the bare `/` (query and fragment kept) to `/en` before the first paint; deep links stay as they are, and choosing PL with the pill makes `/` Polish again. No redirect by browser language or country (ARCHITECTURE.md §7).
 - **Menu sheet:** native `<dialog>` with `showModal()`, closes on `Esc`, on link click and on backdrop click; focus returns to the Menu button.
 - **Scroll:** scroll to top on navigation, restore on back (`withInMemoryScrolling({ scrollPositionRestoration: 'enabled', anchorScrolling: 'enabled' })`).
 
@@ -117,7 +125,9 @@ The shell itself sets nothing page-specific. It renders the `<link rel="alternat
 - [ ] On `/projekty/<slug>` with an English version, the switcher links to `/en/projects/<english-slug>`; without one, it links to `/en/projects?notTranslated=1`.
 - [ ] Switching language keeps query parameters on list pages.
 - [ ] A first visit follows the system colour scheme; the toggle switches dark/light, the choice persists across reloads with no flash of the other theme, and both themes pass axe and `npm run check:contrast`.
-- [ ] The English hint appears only on Polish pages for English-preferring browsers, and never again after dismissing or switching.
+- [ ] The English hint appears only on Polish pages for browsers that do not prefer Polish, and never again after dismissing or switching.
+- [ ] After choosing English (pill or hint), `/` opens `/en` with the query kept; deep Polish links stay Polish; choosing PL makes `/` Polish again; without a choice `/` is Polish.
+- [ ] With analytics configured, the cookie banner asks a first-time visitor, closes after Accept or Reject, stays closed on later visits, and reopens from the footer showing the current choice; without `POSTHOG_KEY` there is no banner and no footer link.
 - [ ] The menu sheet works with keyboard only and returns focus to the Menu button.
 - [ ] `<html lang>` is `pl` on Polish pages and `en` on English pages in the SSR output.
 - [ ] Five Polish tab labels fit on one line at 900 px and wider; below that they move into the Menu sheet and the language pill stays visible.

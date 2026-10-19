@@ -1,5 +1,7 @@
 import { DOCUMENT, Injectable, inject, signal } from '@angular/core';
 
+import { AnalyticsService } from '../analytics/analytics.service';
+
 export type Theme = 'dark' | 'light';
 
 /** localStorage key; index.html reads the same key before the first paint. */
@@ -13,12 +15,15 @@ export const THEME_STORAGE_KEY = 'theme';
 @Injectable({ providedIn: 'root' })
 export class ThemeService {
   private readonly document = inject(DOCUMENT);
+  private readonly analytics = inject(AnalyticsService);
   private readonly current = signal<Theme>(this.applied());
 
   readonly theme = this.current.asReadonly();
 
   toggle(): void {
-    this.set(this.current() === 'dark' ? 'light' : 'dark');
+    const to: Theme = this.current() === 'dark' ? 'light' : 'dark';
+    this.set(to);
+    this.analytics.track('theme_toggled', { to });
   }
 
   set(theme: Theme): void {

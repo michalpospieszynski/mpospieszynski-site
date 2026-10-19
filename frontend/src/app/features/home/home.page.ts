@@ -11,6 +11,7 @@ import {
 import { RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
 
+import { AnalyticsService } from '../../core/analytics/analytics.service';
 import { LanguageService } from '../../core/i18n/language.service';
 import { LocalizedPathPipe } from '../../core/i18n/localized-path.pipe';
 import { personJsonLd } from '../../core/seo/json-ld';
@@ -56,6 +57,7 @@ export class HomePage {
 
   private readonly language = inject(LanguageService);
   private readonly document = inject(DOCUMENT);
+  protected readonly analytics = inject(AnalyticsService);
 
   protected readonly lang = this.language.lang;
   protected readonly profile = computed(() => this.data().profile);
@@ -95,6 +97,13 @@ export class HomePage {
   constructor() {
     const seo = inject(SeoService);
     const origin = inject(SITE_ORIGIN);
+    // Chips, the canvas and "Pokaż na grafie" all go through selectedId.
+    effect(() => {
+      const link = this.selected()?.link;
+      if (link) {
+        this.analytics.track('graph_project_selected', { slug: link.split('/').pop() ?? '' });
+      }
+    });
     effect(() => {
       const profile = this.profile();
       const name = profile.fullName ?? '';

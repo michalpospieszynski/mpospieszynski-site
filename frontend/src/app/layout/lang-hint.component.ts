@@ -9,11 +9,12 @@ import {
 import { Router, RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
 
+import { AnalyticsService } from '../core/analytics/analytics.service';
 import { LanguageService } from '../core/i18n/language.service';
 import { SeoService } from '../core/seo/seo.service';
 
 /**
- * "This site is also available in English." on Polish pages, for browsers whose first language is English
+ * "This site is also available in English." on Polish pages, for browsers whose first language is not Polish
  * (app-shell spec). Browser-only, so the server HTML never contains it; written in English on purpose.
  */
 @Component({
@@ -32,7 +33,7 @@ import { SeoService } from '../core/seo/seo.service';
         <a
           [routerLink]="target()"
           hreflang="en"
-          (click)="dismiss()"
+          (click)="switchToEnglish()"
           data-testid="lang-hint-switch"
           >{{ 'shell.langHint.action' | transloco }}</a
         >
@@ -75,8 +76,9 @@ export class LangHintComponent {
   private readonly language = inject(LanguageService);
   private readonly seo = inject(SeoService);
   private readonly router = inject(Router);
+  private readonly analytics = inject(AnalyticsService);
 
-  /** Set once in the browser: English-first visitor who hasn't dismissed the hint before. */
+  /** Set once in the browser: a visitor whose browser does not put Polish first, who hasn't dismissed the hint. */
   private readonly eligible = signal(false);
 
   protected readonly visible = computed(() => this.eligible() && this.language.lang() === 'pl');
@@ -88,9 +90,15 @@ export class LangHintComponent {
     afterNextRender(() => {
       const first = navigator.languages?.[0] ?? navigator.language ?? '';
       this.eligible.set(
-        first.toLowerCase().startsWith('en') && !this.language.isLangHintDismissed(),
+        !!first && !first.toLowerCase().startsWith('pl') && !this.language.isLangHintDismissed(),
       );
     });
+  }
+
+  protected switchToEnglish(): void {
+    this.language.rememberLang('en');
+    this.analytics.track('language_switched', { to: 'en' });
+    this.dismiss();
   }
 
   protected dismiss(): void {

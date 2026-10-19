@@ -28,6 +28,7 @@ import {
   ContactRequestTopicEnum,
   PublicContactControllerService,
 } from '../../api';
+import { AnalyticsService } from '../../core/analytics/analytics.service';
 import { ApiError } from '../../core/http/api-error';
 import { LanguageService } from '../../core/i18n/language.service';
 import { LocalizedPathPipe } from '../../core/i18n/localized-path.pipe';
@@ -96,6 +97,7 @@ export class ContactFormComponent {
   private readonly document = inject(DOCUMENT);
   private readonly turnstile = inject(TurnstileWidget);
   private readonly language = inject(LanguageService);
+  private readonly analytics = inject(AnalyticsService);
   private readonly profile = inject(ProfileStore).profile;
 
   protected readonly form = new FormGroup({
@@ -237,6 +239,10 @@ export class ContactFormComponent {
       );
       this.sentTo.set(value.email.trim());
       this.status.set('sent');
+      this.analytics.track('contact_submitted', {
+        source: this.idPrefix().startsWith('home') ? 'home' : 'contact',
+        topic: this.topic(),
+      });
       setTimeout(() => this.successHeading()?.nativeElement.focus());
     } catch (error) {
       this.handleError(error);
@@ -262,6 +268,7 @@ export class ContactFormComponent {
       this.status.set('idle');
       this.turnstile.reset();
       this.focusFirstInvalid();
+      this.analytics.track('contact_failed', { reason: 'validation' });
       return;
     }
     const status = error instanceof ApiError ? error.status : 0;
@@ -269,6 +276,7 @@ export class ContactFormComponent {
   }
 
   private fail(kind: 'bot' | 'rateLimit' | 'server'): void {
+    this.analytics.track('contact_failed', { reason: kind === 'rateLimit' ? 'rate_limit' : kind });
     this.failure.set(kind);
     this.status.set('idle');
     this.turnstile.reset();

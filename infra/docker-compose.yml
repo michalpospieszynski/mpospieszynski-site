@@ -47,6 +47,8 @@ services:
       SUPABASE_URL: ${SUPABASE_URL:?}
       SUPABASE_PUBLISHABLE_KEY: ${SUPABASE_PUBLISHABLE_KEY:?}
       TURNSTILE_SITE_KEY: ${TURNSTILE_SITE_KEY:?}
+      # PostHog project key (docs/ANALYTICS.md); empty = analytics off (no banner, no /ingest proxy).
+      POSTHOG_KEY: ${POSTHOG_KEY:-}
     mem_limit: 512m
     read_only: true
     security_opt:

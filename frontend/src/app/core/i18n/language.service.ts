@@ -15,11 +15,14 @@ import {
 } from './route-table';
 
 const HINT_DISMISSED_KEY = 'langHintDismissed';
+/** The language the visitor chose with the pill or the hint; index.html reads the same key to open /en from /. */
+const LANG_STORAGE_KEY = 'lang';
 
 /**
  * The page language comes from the URL (route data), never from the browser setting.
  * `use()` is called by the language resolver on each language root, so the right
  * translations and <html lang> are in place before the first (server) render.
+ * The only exception is the bare `/` after an explicit choice of English (`rememberLang`, index.html).
  */
 @Injectable({ providedIn: 'root' })
 export class LanguageService {
@@ -87,6 +90,18 @@ export class LanguageService {
 
   otherLang(): Lang {
     return LANGS.find((lang) => lang !== this.currentLang()) ?? DEFAULT_LANG;
+  }
+
+  /** Called when the visitor picks a language (pill or hint), so the next visit to `/` opens it. */
+  rememberLang(lang: Lang): void {
+    if (!this.isBrowser) {
+      return;
+    }
+    try {
+      localStorage.setItem(LANG_STORAGE_KEY, lang);
+    } catch {
+      // Storage blocked: `/` stays Polish on the next visit.
+    }
   }
 
   isLangHintDismissed(): boolean {

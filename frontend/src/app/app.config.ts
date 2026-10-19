@@ -14,6 +14,7 @@ import { provideRouter, withComponentInputBinding, withInMemoryScrolling } from 
 
 import { BASE_PATH } from './api';
 import { routes } from './app.routes';
+import { ANALYTICS_CONFIG, browserAnalyticsConfig } from './core/analytics/analytics-config';
 import { API_BASE_URL } from './core/api-base-url';
 import { adminAuthInterceptor } from './core/auth/admin-session';
 import { apiErrorInterceptor } from './core/http/api-error';
@@ -46,5 +47,7 @@ export const appConfig: ApplicationConfig = {
     { provide: BASE_PATH, useFactory: () => inject(API_BASE_URL) },
     // The public Turnstile key arrives from the server (TransferState); the test key is the fallback.
     { provide: TURNSTILE_SITE_KEY, useFactory: browserSiteKey },
+    // The PostHog key arrives from the server (TransferState); without it analytics is off.
+    { provide: ANALYTICS_CONFIG, useFactory: browserAnalyticsConfig },
   ],
 };

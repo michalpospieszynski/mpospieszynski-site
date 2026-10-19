@@ -38,7 +38,8 @@
       "label": "Profile i kontakt"
     },
     "copyright": "© {year} {name}",
-    "domain": "mpospieszynski.pl"
+    "domain": "mpospieszynski.pl",
+    "cookieSettings": "Ustawienia cookies"
   },
   "home": {
     "hero": {
@@ -280,5 +281,16 @@
     "noscript": "Wysłanie formularza wymaga JavaScriptu. Możesz też napisać bezpośrednio na {email}.",
     "heading": "Masz projekt? Porozmawiajmy.",
     "aboutService": "Dotyczy usługi: {service}"
+  },
+  "consent": {
+    "label": "Zgoda na pliki cookies",
+    "text": "Za Twoją zgodą używam plików cookies, żeby zobaczyć, jak korzystasz ze strony: mapy kliknięć i nagrania wizyt, bez tego, co wpisujesz. Bez zgody liczę tylko anonimowe odsłony, bez cookies.",
+    "policy": "Polityka prywatności",
+    "accept": "Akceptuję",
+    "reject": "Odrzucam",
+    "current": {
+      "accepted": "Obecnie: zgoda wyrażona.",
+      "rejected": "Obecnie: bez zgody."
+    }
   }
 }

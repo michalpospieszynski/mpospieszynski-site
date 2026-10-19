@@ -190,7 +190,10 @@ test.describe('language hint', () => {
     await page.getByTestId('lang-hint-switch').click();
     await expect(page).toHaveURL(/\/en$/);
     await expect(page.getByTestId('lang-hint')).toHaveCount(0);
+    // The choice is remembered: the bare home address now opens the English home page.
     await open(page, '/');
+    await expect(page).toHaveURL(/\/en$/);
+    await open(page, '/projekty');
     await expect(page.getByTestId('lang-hint')).toHaveCount(0);
   });
 
@@ -258,5 +261,39 @@ test.describe('accessibility', () => {
     await page.keyboard.press('Enter');
     await expect(page.locator('main#content')).toBeFocused();
     await expect(page).toHaveURL(/\/projekty$/);
+  });
+});
+
+test.describe('remembered language', () => {
+  async function choose(page: Page, lang: 'pl' | 'en'): Promise<void> {
+    await open(page, '/en');
+    await page.evaluate((value) => localStorage.setItem('lang', value), lang);
+  }
+
+  test('after choosing English, the bare home address opens /en and keeps the query', async ({ page }) => {
+    await choose(page, 'en');
+    await open(page, '/?utm_source=test');
+    await expect(page).toHaveURL(/\/en\?utm_source=test$/);
+    await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+  });
+
+  test('deep Polish links stay Polish', async ({ page }) => {
+    await choose(page, 'en');
+    await open(page, '/projekty');
+    await expect(page).toHaveURL(/\/projekty$/);
+  });
+
+  test('choosing Polish with the pill keeps / Polish again', async ({ page }) => {
+    await choose(page, 'en');
+    await page.getByTestId('switch-pl').click();
+    await expect(page).toHaveURL(/\/$/);
+    await open(page, '/');
+    await expect(page).toHaveURL(/\/$/);
+    await expect(page.locator('html')).toHaveAttribute('lang', 'pl');
+  });
+
+  test('without a choice / is Polish', async ({ page }) => {
+    await open(page, '/');
+    await expect(page).toHaveURL(/\/$/);
   });
 });

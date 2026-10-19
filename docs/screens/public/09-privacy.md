@@ -24,12 +24,12 @@ frontend/src/assets/content/privacy.en.md
 Sections to cover (the owner writes or reviews the final wording):
 
 1. Administrator danych / Data controller – name and contact email.
-2. Jakie dane zbieram / What data is collected – contact form fields; hashed IP for spam protection; no tracking cookies.
-3. Cel i podstawa prawna / Purpose and legal basis – replying to messages (consent, Art. 6(1)(a) GDPR; steps before a contract, Art. 6(1)(b)).
-4. Okres przechowywania / Retention – contact messages deleted after 12 months.
-5. Odbiorcy danych / Processors – Supabase (database, authentication, storage; region), Cloudflare (delivery, security, bot protection, cookieless analytics), the SMTP provider.
+2. Jakie dane zbieram / What data is collected – contact form fields; hashed IP for spam protection; Cloudflare Web Analytics; PostHog usage statistics by consent state (accepted: cookie, heatmaps, masked recordings; rejected: cookieless counting; undecided: nothing; never the admin).
+3. Cel i podstawa prawna / Purpose and legal basis – replying to messages (consent, Art. 6(1)(a) GDPR; steps before a contract, Art. 6(1)(b)); analytics with cookies (consent, Art. 6(1)(a)); cookieless counting (legitimate interest, Art. 6(1)(f)).
+4. Okres przechowywania / Retention – contact messages deleted after 12 months; PostHog recordings 30 days, statistics 12 months.
+5. Odbiorcy danych / Processors – Supabase (database, authentication, storage; region), Cloudflare (delivery, security, bot protection, cookieless analytics), PostHog (usage analytics; EU hosting, SCCs and the Data Privacy Framework), the SMTP provider.
 6. Prawa osoby / Your rights – access, rectification, erasure, restriction, objection, withdrawal of consent, complaint to the supervisory authority (in Poland: Prezes UODO).
-7. Pliki cookies / Cookies – none for analytics; `localStorage` only for theme and the language-hint dismissal; Turnstile may set what it needs for bot protection on the contact page.
+7. Pliki cookies / Cookies – none for advertising; `localStorage` for the theme, the chosen language, the language-hint dismissal and the cookie-banner answer; PostHog's `ph_…_posthog` cookie only after Accept; how to change the choice (footer "Cookie settings") and that GPC counts as a rejection; Turnstile may set what it needs for bot protection on the contact page.
 8. Zmiany / Changes – date of last update.
 
 | Key | PL | EN |
@@ -58,7 +58,7 @@ Bundled Markdown imported at build time (`?raw` import or a JSON wrapper), so SS
 
 ## Out of scope
 
-Cookie consent banner (not needed with cookieless analytics), terms of service.
+Terms of service. (The cookie banner is part of the app shell, docs/ANALYTICS.md.)
 
 ## Implementation notes (S9, 2026-10-15)
 

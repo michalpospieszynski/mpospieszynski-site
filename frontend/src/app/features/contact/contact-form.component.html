@@ -1,4 +1,5 @@
-<div class="card form-card">
+<!-- data-ph-mask: the form and its result are masked in session recordings (docs/ANALYTICS.md §5.4). -->
+<div class="card form-card" data-ph-mask>
   @if (status() === 'sent') {
     <div class="sent" role="status" data-testid="success">
       <h2 id="{{ idPrefix() }}-success" #successHeading tabindex="-1">{{ 'contact.success.title' | transloco }}</h2>

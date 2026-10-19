@@ -39,6 +39,7 @@
         [attr.hreflang]="other"
         [attr.aria-label]="'nav.switchTo.' + other | transloco"
         [attr.data-testid]="'switch-' + other"
+        (click)="switchLanguage(other)"
         >{{ 'nav.languageShort.' + other | transloco }}</a
       >
 

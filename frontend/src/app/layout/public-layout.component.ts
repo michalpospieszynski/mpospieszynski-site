@@ -1,11 +1,13 @@
-import { ChangeDetectionStrategy, Component, effect, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, afterNextRender, effect, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
+import { AnalyticsService } from '../core/analytics/analytics.service';
 import { LanguageService } from '../core/i18n/language.service';
 import { localizedUrl } from '../core/i18n/route-table';
 import { ProfileStore } from '../core/profile/profile.store';
 import { websiteJsonLd } from '../core/seo/json-ld';
 import { SITE_ORIGIN, SeoService } from '../core/seo/seo.service';
+import { ConsentBannerComponent } from './consent-banner.component';
 import { LangHintComponent } from './lang-hint.component';
 import { SiteFooterComponent } from './site-footer.component';
 import { SiteHeaderComponent } from './site-header.component';
@@ -16,7 +18,13 @@ import { SiteHeaderComponent } from './site-header.component';
  */
 @Component({
   selector: 'app-public-layout',
-  imports: [RouterOutlet, SiteHeaderComponent, LangHintComponent, SiteFooterComponent],
+  imports: [
+    RouterOutlet,
+    SiteHeaderComponent,
+    LangHintComponent,
+    SiteFooterComponent,
+    ConsentBannerComponent,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <app-site-header />
@@ -25,6 +33,7 @@ import { SiteHeaderComponent } from './site-header.component';
       <router-outlet />
     </main>
     <app-site-footer />
+    <app-consent-banner />
   `,
   styles: `
     :host {
@@ -46,6 +55,10 @@ export class PublicLayoutComponent {
     const seo = inject(SeoService);
     const language = inject(LanguageService);
     const origin = inject(SITE_ORIGIN);
+    const analytics = inject(AnalyticsService);
+
+    // Analytics starts with the public site only, never in the admin (docs/ANALYTICS.md).
+    afterNextRender(() => analytics.start());
 
     effect(() => {
       const name = store.profile()?.fullName;

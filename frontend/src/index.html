@@ -9,6 +9,17 @@
   <link rel="icon" href="favicon.ico" sizes="32x32">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <!-- The bare home address follows the visitor's explicit language choice (LanguageService.rememberLang, the
+       pill or the language hint). Only `/`, never deep links, and only after a choice, so crawlers always get Polish. -->
+  <script>
+    (function () {
+      try {
+        if (location.pathname === '/' && localStorage.getItem('lang') === 'en') {
+          location.replace('/en' + location.search + location.hash);
+        }
+      } catch (e) {}
+    })();
+  </script>
   <!-- Theme before the first paint (core/theme/theme.service.ts): the stored choice, else the system preference.
        The SSR server puts its CSP nonce on this script (server-security.ts, addNonce). -->
   <script>

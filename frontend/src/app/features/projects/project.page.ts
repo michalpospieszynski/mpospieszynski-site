@@ -3,6 +3,7 @@ import { RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { ProjectDetail } from '../../api';
+import { AnalyticsService } from '../../core/analytics/analytics.service';
 import { LocalizedPathPipe } from '../../core/i18n/localized-path.pipe';
 import { Lang, localizedUrl } from '../../core/i18n/route-table';
 import { ProfileStore } from '../../core/profile/profile.store';
@@ -84,6 +85,9 @@ export class ProjectPage {
     const seo = inject(SeoService);
     const origin = inject(SITE_ORIGIN);
     const profile = inject(ProfileStore).profile;
+    const analytics = inject(AnalyticsService);
+
+    effect(() => analytics.track('project_opened', { slug: this.project().slug ?? '' }));
 
     effect(() => {
       const p = this.project();

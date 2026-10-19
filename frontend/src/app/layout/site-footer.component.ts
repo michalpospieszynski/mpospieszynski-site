@@ -2,6 +2,8 @@ import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/c
 import { RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
 
+import { AnalyticsService } from '../core/analytics/analytics.service';
+import { ConsentService } from '../core/consent/consent.service';
 import { LocalizedPathPipe } from '../core/i18n/localized-path.pipe';
 import { Lang } from '../core/i18n/route-table';
 import { ProfileStore } from '../core/profile/profile.store';
@@ -39,9 +41,25 @@ const SOCIAL_ORDER = ['github', 'linkedin', 'email'] as const;
             <li>
               <a [routerLink]="'privacy' | localizedPath">{{ 'footer.privacy' | transloco }}</a>
             </li>
+            @if (analyticsEnabled) {
+              <li>
+                <button
+                  type="button"
+                  class="footer__button"
+                  (click)="consent.openSettings()"
+                  data-testid="cookie-settings"
+                >
+                  {{ 'footer.cookieSettings' | transloco }}
+                </button>
+              </li>
+            }
           </ul>
           @if (social().length) {
-            <ul role="list" class="footer__list" [attr.aria-label]="'footer.social.label' | transloco">
+            <ul
+              role="list"
+              class="footer__list"
+              [attr.aria-label]="'footer.social.label' | transloco"
+            >
               @for (link of social(); track link.kind) {
                 <li>
                   <a [href]="link.href" [attr.rel]="link.kind === 'email' ? null : 'me noopener'">{{
@@ -53,7 +71,9 @@ const SOCIAL_ORDER = ['github', 'linkedin', 'email'] as const;
           }
         </nav>
         <p class="footer__legal">
-          <span>{{ 'footer.copyright' | transloco: { year: year, name: profile()?.fullName ?? '' } }}</span>
+          <span>{{
+            'footer.copyright' | transloco: { year: year, name: profile()?.fullName ?? '' }
+          }}</span>
           <span>{{ 'footer.domain' | transloco }}</span>
         </p>
       </div>
@@ -93,9 +113,22 @@ const SOCIAL_ORDER = ['github', 'linkedin', 'email'] as const;
         text-decoration: none;
       }
 
-      a:hover {
+      a:hover,
+      .footer__button:hover {
         color: var(--color-ink);
       }
+    }
+    .footer__button {
+      display: inline-flex;
+      align-items: center;
+      min-height: var(--tap);
+      padding: 0;
+      border: 0;
+      background: none;
+      color: var(--color-muted);
+      font: inherit;
+      cursor: pointer;
+      transition: color var(--dur-hover) ease;
     }
     .footer__legal {
       display: flex;
@@ -107,6 +140,8 @@ const SOCIAL_ORDER = ['github', 'linkedin', 'email'] as const;
 })
 export class SiteFooterComponent {
   private readonly store = inject(ProfileStore);
+  protected readonly consent = inject(ConsentService);
+  protected readonly analyticsEnabled = inject(AnalyticsService).enabled;
 
   protected readonly navItems = NAV_ITEMS;
   protected readonly year = new Date().getFullYear();

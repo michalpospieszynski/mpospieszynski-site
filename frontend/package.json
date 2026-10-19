@@ -39,6 +39,7 @@
     "isomorphic-dompurify": "^4.5.0",
     "marked": "^18.1.1",
     "marked-highlight": "^2.2.4",
+    "posthog-js": "1.435.8",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"
   },

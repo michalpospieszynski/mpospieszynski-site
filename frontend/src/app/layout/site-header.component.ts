@@ -10,10 +10,11 @@ import {
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
 
+import { AnalyticsService } from '../core/analytics/analytics.service';
 import { LanguageService } from '../core/i18n/language.service';
 import { LocalizedPathPipe } from '../core/i18n/localized-path.pipe';
 import { ProfileStore } from '../core/profile/profile.store';
-import { RouteKey } from '../core/i18n/route-table';
+import { Lang, RouteKey } from '../core/i18n/route-table';
 import { SeoService } from '../core/seo/seo.service';
 import { ThemeToggleComponent } from '../shared/ui/theme-toggle.component';
 
@@ -57,6 +58,7 @@ export class SiteHeaderComponent {
   private readonly seo = inject(SeoService);
   private readonly router = inject(Router);
   private readonly document = inject(DOCUMENT);
+  private readonly analytics = inject(AnalyticsService);
 
   protected readonly navItems = NAV_ITEMS;
   protected readonly sectionMatch = SECTION_MATCH;
@@ -74,6 +76,12 @@ export class SiteHeaderComponent {
 
   private readonly menu = viewChild.required<ElementRef<HTMLDialogElement>>('menu');
   private readonly menuButton = viewChild.required<ElementRef<HTMLButtonElement>>('menuButton');
+
+  /** The pill: remember the choice for the next visit to `/` (LanguageService.rememberLang). */
+  protected switchLanguage(to: Lang): void {
+    this.language.rememberLang(to);
+    this.analytics.track('language_switched', { to });
+  }
 
   /** With <base href="/">, "#content" would lead to the home page; move focus to <main> directly instead. */
   protected skipToContent(event: MouseEvent): void {

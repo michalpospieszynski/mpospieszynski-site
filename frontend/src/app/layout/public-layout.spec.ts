@@ -1,10 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, Provider } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
 import { of } from 'rxjs';
 
 import { ProfileResponse, PublicProfileControllerService } from '../api';
+import { ANALYTICS_CONFIG } from '../core/analytics/analytics-config';
+import { POSTHOG_LOADER } from '../core/analytics/analytics.service';
 import { provideI18n } from '../core/i18n/i18n.providers';
 import { languageResolver } from '../core/i18n/language.resolver';
 import { buildLocalizedRoutes } from '../core/i18n/route-table';
@@ -25,9 +27,10 @@ const PROFILE: ProfileResponse = {
 describe('Public layout (app shell)', () => {
   let profile: ProfileResponse;
 
-  function setUp() {
+  function setUp(extra: Provider[] = []) {
     TestBed.configureTestingModule({
       providers: [
+        ...extra,
         provideI18n(),
         { provide: SITE_ORIGIN, useValue: 'https://example.test' },
         {
@@ -133,10 +136,61 @@ describe('Public layout (app shell)', () => {
     expect(q(el, 'brand')?.textContent?.trim()).toBe('Studio');
   });
 
+  it('remembers the language chosen with the pill, both ways', async () => {
+    const { harness, el } = await open('/');
+    q(el, 'switch-en')!.click();
+    expect(localStorage.getItem('lang')).toBe('en');
+
+    await harness.navigateByUrl('/en');
+    harness.detectChanges();
+    q(el, 'switch-pl')!.click();
+    expect(localStorage.getItem('lang')).toBe('pl');
+  });
+
   it('hides "How this site is built" without a site project', async () => {
     profile = { ...PROFILE };
     const { el } = await open('/');
     expect(q(el, 'how-built')).toBeNull();
+  });
+
+  describe('cookie banner', () => {
+    function withAnalytics() {
+      TestBed.resetTestingModule();
+      setUp([
+        { provide: ANALYTICS_CONFIG, useValue: { key: 'phc_test' } },
+        // PostHog itself is never loaded here; AnalyticsService has its own spec.
+        { provide: POSTHOG_LOADER, useValue: () => new Promise(() => undefined) },
+      ]);
+    }
+
+    it('is absent, with no footer link, when analytics is not configured', async () => {
+      const { el } = await open('/');
+      expect(q(el, 'consent-banner')).toBeNull();
+      expect(q(el, 'cookie-settings')).toBeNull();
+    });
+
+    it('asks a first-time visitor and stays closed after the choice', async () => {
+      withAnalytics();
+      const { harness, el } = await open('/');
+      expect(q(el, 'consent-banner')?.textContent).toContain('Akceptuję');
+      expect(q(el, 'consent-banner')?.querySelector('a')?.getAttribute('href')).toBe('/polityka-prywatnosci');
+
+      q(el, 'consent-reject')!.querySelector('button')!.click();
+      harness.detectChanges();
+      expect(q(el, 'consent-banner')).toBeNull();
+      expect(JSON.parse(localStorage.getItem('consent')!).choice).toBe('rejected');
+    });
+
+    it('reopens from the footer showing the current choice', async () => {
+      withAnalytics();
+      const { harness, el } = await open('/en');
+      q(el, 'consent-accept')!.querySelector('button')!.click();
+      harness.detectChanges();
+
+      q(el, 'cookie-settings')!.click();
+      harness.detectChanges();
+      expect(q(el, 'consent-current')?.textContent).toContain('consent given');
+    });
   });
 
   describe('language hint', () => {
@@ -158,6 +212,19 @@ describe('Public layout (app shell)', () => {
       harness.detectChanges();
       expect(q(el, 'lang-hint')).toBeNull();
       expect(localStorage.getItem('langHintDismissed')).toBe('1');
+    });
+
+    it('appears for any browser whose first language is not Polish', async () => {
+      prefer('de-DE', 'pl');
+      const { el } = await open('/');
+      expect(q(el, 'lang-hint')).not.toBeNull();
+    });
+
+    it('remembers English when "Switch to English" is used', async () => {
+      prefer('en-GB');
+      const { el } = await open('/');
+      q(el, 'lang-hint-switch')!.click();
+      expect(localStorage.getItem('lang')).toBe('en');
     });
 
     it('stays hidden for Polish-first browsers', async () => {

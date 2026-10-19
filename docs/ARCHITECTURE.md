@@ -392,6 +392,7 @@ Set `management.endpoints.web.base-path=/api/actuator` and expose only `health`,
 | API client | Generated from the backend's OpenAPI spec |
 | Auth | `@supabase/supabase-js`, lazy-loaded only in the admin bundle |
 | Fonts | Self-hosted via `@fontsource`, `latin-ext` subset for Polish characters |
+| Analytics | PostHog (`posthog-js`, lazy-loaded after the cookie banner's answer) behind `ConsentService`/`AnalyticsService`, events through the SSR server's `/ingest` proxy; off without `POSTHOG_KEY` ([ANALYTICS.md](ANALYTICS.md)) |
 | Testing | Vitest/Jest, Playwright (including both languages) |
 
 ### Routes
@@ -430,7 +431,7 @@ During SSR, `HttpClient` calls the API on the Docker network (`http://api:8080`)
 ### Principles
 
 1. **Polish is the default and the source of truth.** Every piece of content must exist in Polish. English is optional per item.
-2. **The URL decides the language.** `/` is always Polish. There is no automatic redirect based on the browser language, because redirects confuse crawlers and frustrate people who chose a language on purpose.
+2. **The URL decides the language.** There is no automatic redirect based on the browser language or the visitor's country, because redirects confuse crawlers and frustrate people who chose a language on purpose. The one exception follows the visitor's own choice: after they pick English (the language pill or the language hint, stored as `localStorage.lang`), the bare home address `/` opens `/en` (a script in `index.html`, before the first paint). Deep links are never redirected, and crawlers, which store nothing, always get Polish at `/`.
 3. **Two kinds of text:**
    - **UI strings** (navigation, labels, buttons, errors) are kept in `pl.json` and `en.json` in the repo. They are always complete in both languages, and CI fails if a key is missing.
    - **Content** (projects, skills, services, about texts) lives in the database in translation tables and is edited in the admin.
@@ -785,12 +786,13 @@ Mail is sent from a `@TransactionalEventListener(phase = AFTER_COMMIT)` running 
 - Actuator health at `/api/actuator/health` (liveness and readiness).
 - JSON logs to stdout (`docker compose logs`).
 - External free uptime monitor probing the home page and the health endpoint in both languages (`/` and `/en`).
-- Cloudflare Web Analytics for traffic, the Supabase dashboard for database and auth usage.
+- Cloudflare Web Analytics for traffic, PostHog for product analytics, heatmaps and recordings (with consent, [ANALYTICS.md](ANALYTICS.md)), the Supabase dashboard for database and auth usage.
 
 ### Privacy (GDPR)
 
-- Cookieless analytics, self-hosted fonts, no third-party requests on public pages except Turnstile on the contact page.
-- The privacy policy (`/polityka-prywatnosci`, `/en/privacy`) names the processors: Supabase (database, auth, storage), Cloudflare (delivery, bot protection, analytics) and the SMTP provider. It also states what the form stores, why, for how long, and how to request deletion.
+- Self-hosted fonts, no third-party requests on public pages except Turnstile on the contact page; PostHog goes through the site's own `/ingest` proxy.
+- A cookie banner asks before anything is stored: cookies, heatmaps and recordings only after **Accept**; after **Reject** (or a Global Privacy Control signal) only cookieless counting; before an answer nothing is loaded ([ANALYTICS.md](ANALYTICS.md) §2).
+- The privacy policy (`/polityka-prywatnosci`, `/en/privacy`) names the processors: Supabase (database, auth, storage), Cloudflare (delivery, bot protection, analytics), PostHog (usage analytics, EU hosting) and the SMTP provider. It also states what the form stores, why, for how long, and how to request deletion.
 - An EU Supabase region keeps the data inside the EU.
 
 ---
@@ -849,9 +851,10 @@ No credential is ever written into the repository, an image or a workflow file. 
 | ADR-008 | **Modular monolith** | One deployable for one developer; feature packages keep boundaries clear. |
 | ADR-009 | **GitHub Actions + GHCR** for CI/CD, not Codemagic | Free Linux runners with Docker (Testcontainers, image builds); Codemagic's free plan is macOS-only, which cannot run Docker. Registry authentication needs no stored password (`GITHUB_TOKEN`). |
 | ADR-010 | **Runtime secrets only on the VPS**, deployment secrets only in a GitHub environment | Nothing secret in the repository or images; CI never sees production credentials, so a leaked CI log cannot expose them. |
-| ADR-009 | **Cloudflare Web Analytics** | Free, cookieless, no extra container. |
-| ADR-010 | **Skills backed by project evidence** | Technologies and expertise areas link to the projects that use them, so the skillset is demonstrated rather than claimed. |
-| ADR-011 | **No CV or job-seeking features** | The site advertises skills and services; it is not an application form. |
+| ADR-011 | **Cloudflare Web Analytics** | Free, cookieless, no extra container. |
+| ADR-012 | **Skills backed by project evidence** | Technologies and expertise areas link to the projects that use them, so the skillset is demonstrated rather than claimed. |
+| ADR-013 | **No CV or job-seeking features** | The site advertises skills and services; it is not an application form. |
+| ADR-014 | **PostHog Cloud EU with a consent banner**, next to Cloudflare Web Analytics | Heatmaps, recordings and funnels need consent; PostHog does both modes in one tool (`cookieless_mode: 'on_reject'`), has a free tier and EU hosting. Loaded only after an answer, through a first-party proxy. Details: [ANALYTICS.md](ANALYTICS.md). |
 
 ---
 

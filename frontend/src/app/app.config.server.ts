@@ -6,11 +6,13 @@ import {
   inject,
   isDevMode,
   mergeApplicationConfig,
+  provideEnvironmentInitializer,
 } from '@angular/core';
 import { provideServerRendering, withRoutes } from '@angular/ssr';
 
 import { appConfig } from './app.config';
 import { serverRoutes } from './app.routes.server';
+import { ANALYTICS_CONFIG, ANALYTICS_CONFIG_STATE } from './core/analytics/analytics-config';
 import { API_BASE_URL } from './core/api-base-url';
 import { SITE_ORIGIN } from './core/seo/seo.service';
 import { TURNSTILE_KEY_STATE, TURNSTILE_SITE_KEY, TURNSTILE_TEST_SITE_KEY } from './core/turnstile/turnstile';
@@ -51,6 +53,17 @@ const serverConfig: ApplicationConfig = {
         return key;
       },
     },
+    // Public PostHog project key from the environment (docs/ANALYTICS.md), handed to the browser on every page.
+    {
+      provide: ANALYTICS_CONFIG,
+      useFactory: () => {
+        const key = process.env['POSTHOG_KEY'];
+        const config = key ? { key } : null;
+        inject(TransferState).set(ANALYTICS_CONFIG_STATE, config);
+        return config;
+      },
+    },
+    provideEnvironmentInitializer(() => inject(ANALYTICS_CONFIG)),
     {
       provide: HTTP_TRANSFER_CACHE_ORIGIN_MAP,
       useFactory: () => ({ [new URL(apiInternalUrl()).origin]: publicOrigin() }),

@@ -178,6 +178,7 @@ Built in `frontend/src/app/shared/ui/`. Screen specs refer to them by name.
 | Language fallback | `ui-lang-fallback` | Wraps text shown in Polish on English pages (`lang="pl"`) |
 | Project graph | `app-project-graph` | Home only: canvas graph of projects and technologies; see the home spec |
 | Contact form | `app-contact-form` | Home and contact page; see the contact spec |
+| Cookie banner | `app-consent-banner` | App shell only, when analytics is configured: bottom panel with two equal ghost pills (Accept, Reject) and a privacy link; reopened from the footer. See the app-shell spec and [ANALYTICS.md](ANALYTICS.md) |
 
 ---
 

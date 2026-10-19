@@ -6,10 +6,10 @@
         <ui-markdown class="hero__sub" [markdown]="profile().introMd!" />
       }
       <div class="hero__ctas">
-        <ui-button size="lg" [link]="'home' | localizedPath" fragment="kontakt" data-testid="hero-contact">{{
+        <ui-button size="lg" [link]="'home' | localizedPath" fragment="kontakt" data-testid="hero-contact" (click)="analytics.track('cta_clicked', { cta: 'hero_contact' })">{{
           'home.hero.ctaContact' | transloco
         }}</ui-button>
-        <ui-button size="lg" variant="ghost" [link]="'home' | localizedPath" fragment="projekty" data-testid="hero-projects">{{
+        <ui-button size="lg" variant="ghost" [link]="'home' | localizedPath" fragment="projekty" data-testid="hero-projects" (click)="analytics.track('cta_clicked', { cta: 'hero_projects' })">{{
           'home.hero.ctaProjects' | transloco
         }}</ui-button>
       </div>

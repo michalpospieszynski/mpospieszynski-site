@@ -7,6 +7,9 @@ import {
 import express from 'express';
 import { join } from 'node:path';
 
+import { POSTHOG_PROXY_PATH } from './app/core/analytics/analytics-config';
+import { posthogProxy } from './server-analytics';
+
 import {
   STATIC_HEADERS,
   addNonce,
@@ -39,6 +42,15 @@ app.use((_req, res, next) => {
 app.get('/healthz', (_req, res) => {
   res.set('Cache-Control', 'no-store').type('text/plain').send('ok');
 });
+
+/** PostHog events and scripts through the site's own origin (docs/ANALYTICS.md); only with a project key. */
+if (process.env['POSTHOG_KEY']) {
+  app.use(
+    POSTHOG_PROXY_PATH,
+    express.raw({ type: () => true, limit: '10mb' }),
+    posthogProxy(),
+  );
+}
 
 /** Static files of the browser build: hashed ones for a year, fixed names (favicons) hourly. */
 app.use(
